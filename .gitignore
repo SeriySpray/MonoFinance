@@ -1,0 +1,14 @@
+.env
+*.env
+*.db
+cookies.txt
+__pycache__/
+*.pyc
+node_modules/
+
+# Android build artifacts
+MonoFinanceAndroid/.gradle/
+MonoFinanceAndroid/**/build/
+MonoFinanceAndroid/.idea/
+MonoFinanceAndroid/local.properties
+

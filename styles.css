@@ -1,0 +1,891 @@
+/* MonoFinance - Metric Flow (72c801b1a27aef0e177c4bef1082eb7b.jpg) Stylesheet */
+
+/* Font Family mappings */
+html, body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0A0A0C;
+    color: #ffffff;
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    width: 100% !important;
+    position: relative;
+    touch-action: pan-y;
+}
+
+#app-container, .dashboard-view {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+.font-outfit {
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Custom Scrollbars */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #202024;
+    border-radius: 10px;
+}
+
+/* Hide scrollbar for carousel slider */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Limit Carousel styling & swipe sensitivity control */
+#limit-carousel-track {
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
+}
+
+#limit-carousel-track > div {
+    scroll-snap-align: center;
+    scroll-snap-stop: always; /* Prevents fast over-scrolling and forces single slide snap */
+}
+
+/* SPA Screen display handling */
+.dashboard-view {
+    display: none !important;
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+}
+.dashboard-view.active {
+    display: flex !important;
+    flex-direction: column;
+    gap: 16px;
+    animation: viewFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+}
+
+@keyframes viewFadeIn {
+    from { opacity: 0; transform: translate3d(0, 8px, 0); }
+    to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes slideInFromRight {
+    0% {
+        opacity: 0.1;
+        transform: translate3d(40px, 0, 0) scale(0.985);
+    }
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+@keyframes slideInFromLeft {
+    0% {
+        opacity: 0.1;
+        transform: translate3d(-40px, 0, 0) scale(0.985);
+    }
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+.dashboard-view.active.slide-from-right {
+    animation: slideInFromRight 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+.dashboard-view.active.slide-from-left {
+    animation: slideInFromLeft 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+/* Sidebar Nav Button Styles (Metric Flow Theme) */
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    color: #8E8E93; /* text-brand-textSecondary */
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    transition: color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+}
+
+.nav-item span.material-symbols-outlined {
+    color: #8E8E93;
+    transition: color 0.15s ease;
+}
+
+.nav-item:hover {
+    color: #ffffff;
+    background-color: #161619; /* bg-[#161619] */
+}
+
+.nav-item:hover span.material-symbols-outlined {
+    color: #ffffff;
+}
+
+.nav-item.active {
+    color: #FF5A36; /* Orange-Red accent from Metric Flow */
+    background-color: #2E1B18; /* Accent Dim background */
+    font-weight: 600;
+    transform: scale(0.97);
+}
+
+.nav-item.active span.material-symbols-outlined {
+    color: #FF5A36;
+    font-variation-settings: 'FILL' 1;
+}
+
+/* Premium Segmented Filter Tabs with Minimalist Sliding Pill & Category Colors */
+.filter-tabs {
+    position: relative;
+    isolation: isolate;
+}
+
+.filter-tabs-pill {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 0;
+    width: 0;
+    border-radius: 12px;
+    z-index: 1;
+    pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease, border-color 0.25s ease;
+    border: 1px solid #383840;
+    box-shadow: none;
+}
+
+.filter-tabs-pill[data-active-filter="all"] {
+    background-color: #242429;
+    border-color: #383840;
+}
+
+.filter-tabs-pill[data-active-filter="income"] {
+    background-color: rgba(255, 90, 54, 0.12);
+    border-color: rgba(255, 90, 54, 0.25);
+}
+
+.filter-tabs-pill[data-active-filter="expense"] {
+    background-color: rgba(139, 92, 246, 0.12);
+    border-color: rgba(139, 92, 246, 0.25);
+}
+
+.filter-tabs-pill[data-active-filter="savings"] {
+    background-color: rgba(34, 211, 238, 0.12);
+    border-color: rgba(34, 211, 238, 0.25);
+}
+
+.filter-tab {
+    position: relative;
+    z-index: 2;
+    background-color: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    color: var(--color-text-secondary);
+    transition: color 0.2s ease;
+}
+
+.filter-tab span.material-symbols-outlined {
+    color: inherit;
+    transition: color 0.2s ease;
+}
+
+.filter-tab:hover {
+    color: #FFFFFF;
+}
+
+.filter-tab.active {
+    font-weight: 600;
+}
+
+.filter-tab.active[data-filter="all"] {
+    color: #FFFFFF;
+}
+
+.filter-tab.active[data-filter="income"] {
+    color: #FF5A36;
+}
+
+.filter-tab.active[data-filter="expense"] {
+    color: #8B5CF6;
+}
+
+.filter-tab.active[data-filter="savings"] {
+    color: #22D3EE;
+}
+
+/* History table content swipe animation */
+.swipe-animate-left {
+    animation: swipeSlideLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.swipe-animate-right {
+    animation: swipeSlideRight 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes swipeSlideLeft {
+    from { opacity: 0.4; transform: translateX(14px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes swipeSlideRight {
+    from { opacity: 0.4; transform: translateX(-14px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* SVG Chart styles */
+svg line {
+    stroke: #202024;
+    stroke-width: 1;
+    stroke-dasharray: 4, 4;
+}
+
+.chart-point {
+    fill: #111113;
+    stroke-width: 2.5;
+    cursor: pointer;
+    transition: r 0.2s ease, stroke-width 0.2s ease;
+}
+
+.chart-point.income-point {
+    stroke: #FF5A36; /* Orange-Red income stroke */
+}
+
+.chart-point.expense-point {
+    stroke: #8B5CF6; /* Purple expense stroke */
+}
+
+.chart-point:hover {
+    r: 6.5;
+    stroke-width: 3.5;
+}
+
+/* Modals System Styles - Ultra-Smooth Native Sheet & Spring Popup */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 99999 !important;
+    padding: 16px;
+}
+
+.modal-overlay.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    display: flex !important;
+}
+
+#category-details-modal.active,
+#category-details-modal.modal-overlay.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: flex !important;
+    pointer-events: auto !important;
+    z-index: 999999 !important;
+}
+
+#custom-confirm-modal {
+    z-index: 9999999 !important;
+}
+
+.modal {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+}
+
+.modal-overlay.active .modal,
+#category-details-modal.active .modal {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) scale(1) !important;
+}
+
+/* Auth Screen & App Shell Smooth Crossfade Transition */
+#auth-container {
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 1;
+    transform: scale(1);
+}
+
+#auth-container.auth-hiding {
+    opacity: 0;
+    transform: scale(0.96);
+    pointer-events: none;
+}
+
+#app-container {
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#app-container.app-entering {
+    animation: appSmoothEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes appSmoothEnter {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.985);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Toast Notifications styling (Positioned at top to avoid blocking bottom navigation) */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.toast {
+    pointer-events: auto;
+    background-color: #161619;
+    color: #ffffff;
+    border: 1px solid #202024;
+    padding: 12px 18px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 500;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toast.toast-success {
+    border-left: 3px solid #FF5A36;
+}
+
+.toast.toast-success span.material-symbols-outlined {
+    color: #FF5A36;
+}
+
+.toast.toast-recurring {
+    border-left: 3px solid #8B5CF6;
+}
+
+.toast.toast-recurring span.material-symbols-outlined {
+    color: #8B5CF6;
+}
+
+.toast.toast-delete {
+    border-left: 3px solid #EF4444;
+}
+
+.toast.toast-delete span.material-symbols-outlined {
+    color: #EF4444;
+}
+
+.toast.toast-info {
+    border-left: 3px solid #8B5CF6;
+}
+
+.toast.toast-info span.material-symbols-outlined {
+    color: #8B5CF6;
+}
+
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Sun and Moon icon display selectors */
+html.dark .sun-icon {
+    display: inline-block;
+}
+html.dark .moon-icon {
+    display: none;
+}
+html:not(.dark) .sun-icon {
+    display: none;
+}
+html:not(.dark) .moon-icon {
+    display: inline-block;
+}
+
+/* Light Theme Overrides (Metric Flow theme translation) */
+html:not(.dark) body {
+    background-color: #F6F6F8 !important;
+    color: #0F0F11 !important;
+}
+
+html:not(.dark) aside,
+html:not(.dark) header,
+html:not(.dark) .bg-\[\#111113\],
+html:not(.dark) .bg-brand-sidebar {
+    background-color: #ffffff !important;
+    border-color: #E2E2E6 !important;
+}
+
+html:not(.dark) header {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+html:not(.dark) .border-\[\#202024\],
+html:not(.dark) .divide-\[\#202024\]\/30 > * + * {
+    border-color: #E2E2E6 !important;
+}
+
+html:not(.dark) .text-white,
+html:not(.dark) h1,
+html:not(.dark) h2,
+html:not(.dark) h3,
+html:not(.dark) td {
+    color: #0F0F11 !important;
+}
+
+html:not(.dark) .text-brand-textSecondary {
+    color: #6E6E73 !important;
+}
+
+html:not(.dark) .nav-item {
+    color: #6E6E73 !important;
+}
+
+html:not(.dark) .nav-item span.material-symbols-outlined {
+    color: #6E6E73 !important;
+}
+
+html:not(.dark) .nav-item:hover {
+    background-color: #F1F1F5 !important;
+    color: #0F0F11 !important;
+}
+
+html:not(.dark) .nav-item:hover span.material-symbols-outlined {
+    color: #0F0F11 !important;
+}
+
+html:not(.dark) .nav-item.active {
+    background-color: #FFEFEA !important;
+    color: #FF5A36 !important;
+}
+
+html:not(.dark) .nav-item.active span.material-symbols-outlined {
+    color: #FF5A36 !important;
+}
+
+html:not(.dark) input {
+    background-color: #ffffff !important;
+    border-color: #E2E2E6 !important;
+    color: #0F0F11 !important;
+}
+
+html:not(.dark) input:focus {
+    border-color: #FF5A36 !important;
+    --tw-ring-color: #FF5A36 !important;
+}
+
+html:not(.dark) .bg-\[\#161619\],
+html:not(.dark) .hover\:bg-\[\#161619\]:hover,
+html:not(.dark) tr.hover\:bg-\[\#1C1C1E\]:hover,
+html:not(.dark) tr.hover\:bg-\[\#161619\]:hover,
+html:not(.dark) .bg-\[\#161619\]\/90,
+html:not(.dark) .bg-\[\#1C1C1F\] {
+    background-color: #F6F6F8 !important;
+}
+
+html:not(.dark) .filter-tabs {
+    background-color: #F6F6F8 !important;
+    border-color: #E2E2E6 !important;
+}
+
+html:not(.dark) .filter-tab.active {
+    background-color: #0F0F11 !important;
+    color: #ffffff !important;
+}
+
+html:not(.dark) .toast {
+    background-color: #ffffff !important;
+    color: #0F0F11 !important;
+    border-color: #E2E2E6 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+html:not(.dark) .chart-point {
+    fill: #ffffff !important;
+}
+
+html:not(.dark) .chart-point.income-point {
+    stroke: #FF5A36 !important;
+}
+
+html:not(.dark) .chart-point.expense-point {
+    stroke: #8B5CF6 !important;
+}
+
+html:not(.dark) #finance-chart path[stroke="#FF5A36"],
+html:not(.dark) #dashboard-mini-chart path[stroke="#FF5A36"] {
+    stroke: #FF5A36 !important;
+}
+
+html:not(.dark) #finance-chart path[stroke="#8B5CF6"],
+html:not(.dark) #dashboard-mini-chart path[stroke="#8B5CF6"] {
+    stroke: #8B5CF6 !important;
+}
+
+html:not(.dark) svg line {
+    stroke: #E2E2E6 !important;
+}
+
+html:not(.dark) .bg-black {
+    background-color: #F6F6F8 !important;
+}
+
+html:not(.dark) .bg-brand-accentDim,
+html:not(.dark) .envelope-badge-chip {
+    background-color: #FFEFEA !important;
+    color: #FF5A36 !important;
+    border-color: rgba(255, 90, 54, 0.3) !important;
+}
+
+html:not(.dark) .bg-brand-purpleDim {
+    background-color: #F3E8FF !important;
+}
+
+html:not(.dark) .bg-\[\#2E1619\] {
+    background-color: #FEE2E2 !important;
+}
+
+html:not(.dark) .btn-deposit-envelope {
+    background-color: #FF5A36 !important;
+    color: #ffffff !important;
+}
+
+html:not(.dark) .btn-deposit-envelope:hover {
+    background-color: #E04826 !important;
+}
+
+html:not(.dark) .btn-withdraw-envelope {
+    background-color: #F1F1F5 !important;
+    border-color: #E2E2E6 !important;
+    color: #0F0F11 !important;
+}
+
+html:not(.dark) .btn-withdraw-envelope:hover {
+    background-color: #E2E2E6 !important;
+    color: #0F0F11 !important;
+}
+
+/* Light Theme Overrides for Daily Details Modal */
+html:not(.dark) #daily-details-modal .bg-black\/40 {
+    background-color: #F6F6F8 !important;
+    border-color: #E2E2E6 !important;
+}
+html:not(.dark) #daily-details-modal .border-\[\#202024\],
+html:not(.dark) #daily-details-modal .border-\[\#202024\]\/50 {
+    border-color: #E2E2E6 !important;
+}
+
+/* Hide default browser spinner buttons (arrows) for numeric inputs */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* Mobile Bottom Navigation Styles */
+.mobile-bottom-nav-container {
+    position: fixed;
+    bottom: max(16px, env(safe-area-inset-bottom, 16px));
+    left: 16px;
+    right: 16px;
+    z-index: 40;
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    contain: layout style paint;
+}
+
+.mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 12px;
+    color: #8E8E93;
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.mobile-nav-item span.material-symbols-outlined {
+    color: #8E8E93;
+    transition: color 0.15s ease;
+}
+
+.mobile-nav-item:hover {
+    color: #ffffff;
+}
+
+.mobile-nav-item.active {
+    color: #FF5A36;
+    font-weight: 600;
+}
+
+.mobile-nav-item.active span.material-symbols-outlined {
+    color: #FF5A36;
+    font-variation-settings: 'FILL' 1;
+}
+
+/* Light Theme Overrides for Mobile Elements */
+html:not(.dark) header.md\:hidden,
+html:not(.dark) nav.md\:hidden {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border-color: #E2E2E6 !important;
+}
+
+html:not(.dark) .mobile-nav-item {
+    color: #6E6E73 !important;
+}
+
+html:not(.dark) .mobile-nav-item span.material-symbols-outlined {
+    color: #6E6E73 !important;
+}
+
+html:not(.dark) .mobile-nav-item:hover {
+    color: #0F0F11 !important;
+}
+
+html:not(.dark) .mobile-nav-item.active {
+    background-color: transparent !important;
+    color: #FF5A36 !important;
+}
+
+html:not(.dark) .mobile-nav-item.active span.material-symbols-outlined {
+    color: #FF5A36 !important;
+}
+
+/* Mobile responsive fixes for iPhone 13 & POCO X6 (under 640px) */
+@media (max-width: 640px) {
+    body {
+        padding: 12px !important;
+    }
+    
+    .rounded-3xl {
+        border-radius: 20px !important;
+    }
+    
+    .p-6 {
+        padding: 16px !important;
+    }
+    
+    .p-8 {
+        padding: 20px !important;
+    }
+    
+    .text-3xl {
+        font-size: 1.5rem !important;
+        line-height: 2rem !important;
+    }
+    
+    .text-4xl {
+        font-size: 1.875rem !important;
+        line-height: 2.25rem !important;
+    }
+}
+
+/* Light Theme Readability & Styling Enhancements */
+html:not(.dark) button.bg-brand-accent,
+html:not(.dark) button.bg-brand-accent *,
+html:not(.dark) button.bg-brand-purple,
+html:not(.dark) button.bg-brand-purple *,
+html:not(.dark) button.bg-\[\#FF5A36\],
+html:not(.dark) button.bg-\[\#FF5A36\] *,
+html:not(.dark) button[type="submit"]:not(#daily-limit-cancel-btn),
+html:not(.dark) button[type="submit"]:not(#daily-limit-cancel-btn) *,
+html:not(.dark) #auth-submit-btn,
+html:not(.dark) #auth-submit-btn *,
+html:not(.dark) #mobile-voice-btn,
+html:not(.dark) #mobile-voice-btn *,
+html:not(.dark) #voice-save-btn,
+html:not(.dark) #voice-save-btn *,
+html:not(.dark) #confirm-btn-ok,
+html:not(.dark) #confirm-btn-ok *,
+html:not(.dark) #submit-transfer-btn,
+html:not(.dark) #submit-transfer-btn *,
+html:not(.dark) #transfer-tab-deposit,
+html:not(.dark) #transfer-tab-deposit *,
+html:not(.dark) .btn-deposit-envelope,
+html:not(.dark) .btn-deposit-envelope *,
+html:not(.dark) .envelope-icon-box,
+html:not(.dark) .envelope-icon-box * {
+    color: #ffffff !important;
+}
+
+html:not(.dark) .opacity-70 {
+    opacity: 1 !important;
+}
+
+html:not(.dark) #modal-btn-logout {
+    background-color: #FEE2E2 !important;
+    border-color: #FCA5A5 !important;
+    color: #EF4444 !important;
+}
+
+html:not(.dark) #modal-btn-import-local {
+    background-color: #F3E8FF !important;
+    border-color: #D8B4FE !important;
+    color: #8B5CF6 !important;
+}
+
+html:not(.dark) .progress-track,
+html:not(.dark) .bg-\[\#161619\]\.h-1\.5,
+html:not(.dark) .bg-\[\#202024\] {
+    background-color: #E2E2E6 !important;
+}
+
+/* Mobile responsive list items light theme styling */
+html:not(.dark) #mobile-history-list > div,
+html:not(.dark) #mobile-savings-list > div,
+html:not(.dark) #mobile-income-list > div,
+html:not(.dark) #mobile-expenses-list > div {
+    background-color: #ffffff !important;
+    border-color: #E2E2E6 !important;
+}
+
+html:not(.dark) #mobile-history-list > div:hover,
+html:not(.dark) #mobile-savings-list > div:hover,
+html:not(.dark) #mobile-income-list > div:hover,
+html:not(.dark) #mobile-expenses-list > div:hover {
+    border-color: #8B5CF6 !important;
+}
+
+/* Custom Savings Icon Styles */
+.bg-brand-savingsDim {
+    background-color: rgba(59, 130, 246, 0.1) !important;
+    color: #60A5FA !important;
+}
+
+html:not(.dark) .bg-brand-savingsDim {
+    background-color: #EFF6FF !important;
+    color: #2563EB !important;
+}
+
+/* Light Theme Category Breakdown & Amount Pill Styling */
+html:not(.dark) .category-row-item {
+    background-color: #FFFFFF !important;
+    border-color: #E2E2E6 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+html:not(.dark) .category-row-item:hover {
+    background-color: #F8F8FA !important;
+    border-color: #8B5CF6 !important;
+}
+
+html:not(.dark) .category-row-item span.inline-flex,
+html:not(.dark) #stats-category-breakdown-container .inline-flex {
+    background-color: #F1F1F5 !important;
+    border-color: #E2E2E6 !important;
+}
+
+html:not(.dark) .category-row-item span.inline-flex strong,
+html:not(.dark) #stats-category-breakdown-container .inline-flex strong {
+    color: #0F0F11 !important;
+}
+
+html:not(.dark) .category-row-item span.inline-flex span,
+html:not(.dark) #stats-category-breakdown-container .inline-flex span {
+    color: #6E6E73 !important;
+}
+
+html:not(.dark) .bg-\[\#161619\]\/60 {
+    background-color: #FFFFFF !important;
+    border-color: #E2E2E6 !important;
+}
+
+html:not(.dark) #stats-top-expenses-container > div,
+html:not(.dark) #stats-income-sources-container > div {
+    background-color: #FFFFFF !important;
+    border-color: #E2E2E6 !important;
+}
+
+/* Voice Microphone Animation Styles */
+@keyframes micPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 90, 54, 0.7);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 0 18px rgba(255, 90, 54, 0);
+        transform: scale(1.08);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 90, 54, 0);
+        transform: scale(1);
+    }
+}
+
+.mic-recording {
+    animation: micPulse 1.5s infinite !important;
+    background-color: #EF4444 !important;
+    color: #ffffff !important;
+}
+
+/* Multi-line truncation for long titles */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

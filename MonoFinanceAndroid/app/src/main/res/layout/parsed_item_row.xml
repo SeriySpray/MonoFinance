@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_marginBottom="8dp">
+
+    <EditText
+        android:id="@+id/et_item_description"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:layout_weight="3"
+        android:background="@drawable/edit_text_bg"
+        android:hint="Назва витрати"
+        android:textColorHint="@color/text_secondary"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp"
+        android:paddingHorizontal="10dp"
+        android:inputType="text"
+        android:layout_marginEnd="6dp" />
+
+    <EditText
+        android:id="@+id/et_item_amount"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:layout_weight="1.5"
+        android:background="@drawable/edit_text_bg"
+        android:hint="Сума"
+        android:textColorHint="@color/text_secondary"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp"
+        android:paddingHorizontal="10dp"
+        android:inputType="numberDecimal"
+        android:layout_marginEnd="6dp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_delete_item"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:background="@drawable/btn_secondary_bg"
+        android:text="Вилучити"
+        android:textColor="@color/type_expense"
+        android:textSize="14sp"
+        android:textAllCaps="false"
+        android:paddingHorizontal="12dp" />
+
+</LinearLayout>

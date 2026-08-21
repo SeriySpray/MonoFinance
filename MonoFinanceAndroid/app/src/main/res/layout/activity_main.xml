@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_dark">
+
+    <!-- LAYER 2: Main UI Content (shares same system window bounds for perfect centering) -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <!-- Fullscreen ASCII ripple animation placed inside the same layout to align centers -->
+        <TextView
+            android:id="@+id/tv_ascii_animation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:typeface="monospace"
+            android:textSize="10sp"
+            android:lineSpacingMultiplier="0.8"
+            android:includeFontPadding="false"
+            android:gravity="center"
+            android:textColor="@color/accent_orange"
+            android:alpha="0.25"
+            android:text="" />
+
+        <!-- HEADER: STREAK / LOGO / NOTIFICATION (Clean centered branding) -->
+        <RelativeLayout
+            android:id="@+id/rl_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="16dp"
+            android:layout_alignParentTop="true">
+
+            <!-- Center Brand Name -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="monofinance"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                android:layout_centerHorizontal="true" />
+        </RelativeLayout>
+
+        <!-- BOTTOM CONTROLS: Left Small / Center Large / Right Small -->
+        <LinearLayout
+            android:id="@+id/ll_bottom_controls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="24dp">
+
+            <!-- Left Button: List Logs (Enlarged to 64dp) -->
+            <ImageButton
+                android:id="@+id/btn_logs"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/btn_circle_small"
+                android:src="@drawable/ic_list"
+                android:scaleType="centerInside"
+                android:layout_marginEnd="32dp" />
+
+            <!-- Center Button: Start / Stop Voice Record (Enlarged to 130dp) -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_record"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:background="@drawable/btn_record_breathwrk"
+                android:text="Запис"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textAllCaps="false" />
+
+            <!-- Right Button: Server Connection Settings (Enlarged to 64dp) -->
+            <ImageButton
+                android:id="@+id/btn_settings"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/btn_circle_small"
+                android:src="@drawable/ic_sliders"
+                android:scaleType="centerInside"
+                android:layout_marginStart="32dp" />
+
+        </LinearLayout>
+
+        <!-- Small recording status label positioned above buttons -->
+        <TextView
+            android:id="@+id/tv_record_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/ll_bottom_controls"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"
+            android:text=""
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+</FrameLayout>

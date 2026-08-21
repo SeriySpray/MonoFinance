@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">MonoFinance Mobile</string>
+    <string name="title_server_settings">Налаштування сервера</string>
+    <string name="hint_server_url">Адреса сервера (наприклад, https://monofinance.duckdns.org)</string>
+    <string name="hint_username">Ім\'я користувача</string>
+    <string name="hint_password">Пароль</string>
+    <string name="btn_login">Увійти</string>
+    <string name="btn_logout">Вийти</string>
+    <string name="status_connected">Підключено як: %s</string>
+    <string name="status_disconnected">Не підключено</string>
+    
+    <string name="title_voice_input">Голосове введення</string>
+    <string name="btn_record_start">Записати витрату</string>
+    <string name="btn_record_listening">Слухаю...</string>
+    
+    <string name="hint_dictation_result">Розпізнаний текст з\'явиться тут</string>
+    <string name="hint_parsed_description">Назва витрати (наприклад, Кава)</string>
+    <string name="hint_parsed_amount">Сума (грн)</string>
+    
+    <string name="btn_submit">Додати витрату</string>
+    <string name="title_recent_transactions">Останні транзакції</string>
+    <string name="empty_transactions">Немає транзакцій</string>
+</resources>

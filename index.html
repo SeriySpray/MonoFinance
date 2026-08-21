@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="uk" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MonoFinance - Панель фінансового обліку</title>
+    <!-- Tailwind CSS with Forms plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=101">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MonoFinance">
+    <link rel="apple-touch-icon" href="favicon.svg">
+    
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: "#0A0A0C",
+                            sidebar: "#111113",
+                            card: "#161619",
+                            accent: "#FF5A36",       /* Orange-Red accent from reference */
+                            accentDim: "#2E1B18",    /* Dark red accent container fill */
+                            accentLight: "#FFA08A",
+                            purple: "#8B5CF6",       /* Purple chart/badge color from reference */
+                            purpleDim: "#231B35",    /* Purple badge container fill */
+                            border: "#202024",
+                            textSecondary: "#8E8E93"
+                        }
+                    },
+                    borderRadius: {
+                        "2xl": "16px",
+                        "3xl": "24px"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#0A0A0C] text-white antialiased min-h-screen overflow-x-hidden font-sans custom-scrollbar p-6">
+    <div id="app-container" class="flex flex-col md:flex-row gap-6 max-w-[1600px] mx-auto min-h-[calc(100vh-3rem)] pb-24 md:pb-0">
+        
+        <!-- Sidebar Navigation (Left Panel) -->
+        <aside class="hidden md:flex w-64 bg-[#111113] rounded-3xl p-6 flex flex-col justify-between flex-shrink-0 border border-[#202024]">
+            <div>
+                <!-- Brand logo area -->
+                <div class="flex items-center gap-3 mb-10 px-2">
+                    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L4 10L12 18L20 10L12 2Z" fill="#FF5A36"/>
+                        <path d="M12 9L9 12L12 15L15 12L12 9Z" fill="#FFFFFF"/>
+                    </svg>
+                    <span class="font-outfit font-bold text-[20px] tracking-tight text-white">MonoFinance</span>
+                </div>
+                
+                <!-- Nav items -->
+                <nav class="space-y-2">
+                    <button class="nav-item active" data-view="dashboard">
+                        <span class="material-symbols-outlined text-[22px]">dashboard</span>
+                        <span class="font-medium">Панель керування</span>
+                    </button>
+                    <button class="nav-item" data-view="savings">
+                        <span class="material-symbols-outlined text-[22px]">account_balance_wallet</span>
+                        <span class="font-medium">Збереження</span>
+                    </button>
+                    <button class="nav-item" data-view="income">
+                        <span class="material-symbols-outlined text-[22px]">payments</span>
+                        <span class="font-medium">Доходи</span>
+                    </button>
+                    <button class="nav-item" data-view="expenses">
+                        <span class="material-symbols-outlined text-[22px]">receipt_long</span>
+                        <span class="font-medium">Витрати</span>
+                    </button>
+                    <button class="nav-item" data-view="statistics">
+                        <span class="material-symbols-outlined text-[22px]">monitoring</span>
+                        <span class="font-medium">Статистика</span>
+                    </button>
+                    <button class="hidden w-full py-3 bg-[#FF5A36] hover:bg-[#FF5A36]/90 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#FF5A36]/20 mt-4" id="sidebar-voice-btn" title="Голосовий ввід">
+                        <span class="material-symbols-outlined text-[18px]">mic</span>
+                        <span>Голосовий ввід</span>
+                    </button>
+                </nav>
+            </div>
+
+            <div class="space-y-2 pt-6 border-t border-[#202024]">
+                <button class="nav-item text-brand-textSecondary" id="theme-toggle" title="Змінити тему">
+                    <span class="material-symbols-outlined text-[22px] sun-icon">light_mode</span>
+                    <span class="material-symbols-outlined text-[22px] moon-icon">dark_mode</span>
+                    <span class="font-medium">Змінити тему</span>
+                </button>
+                <button class="nav-item text-brand-textSecondary" id="btn-settings">
+                    <span class="material-symbols-outlined text-[22px]">settings</span>
+                    <span class="font-medium">Налаштування</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-grow flex flex-col gap-6">
+            <!-- Mobile Header (Top Bar) -->
+            <header class="flex md:hidden items-center justify-between bg-[#111113] border border-[#202024] px-4 py-3 rounded-2xl w-full">
+                <div class="flex items-center gap-2">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L4 10L12 18L20 10L12 2Z" fill="#FF5A36"/>
+                        <path d="M12 9L9 12L12 15L15 12L12 9Z" fill="#FFFFFF"/>
+                    </svg>
+                    <span class="font-outfit font-bold text-base tracking-tight text-white">MonoFinance</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="btn-mobile-settings" class="w-8 h-8 rounded-lg bg-[#161619] border border-[#202024] flex items-center justify-center text-brand-textSecondary hover:text-white transition-colors" title="Налаштування">
+                        <span class="material-symbols-outlined text-[18px]">settings</span>
+                    </button>
+                    <button id="theme-toggle-mobile" class="w-8 h-8 rounded-lg bg-[#161619] border border-[#202024] flex items-center justify-center text-brand-textSecondary hover:text-white transition-colors" title="Змінити тему">
+                        <span class="material-symbols-outlined text-[18px] sun-icon">light_mode</span>
+                        <span class="material-symbols-outlined text-[18px] moon-icon">dark_mode</span>
+                    </button>
+                </div>
+            </header>
+            
+
+
+            <!-- Screen Views Container -->
+            <div class="flex-grow flex flex-col">
+                
+                <!-- VIEW 1: Overview Dashboard -->
+                <div class="dashboard-view active" id="view-dashboard">
+                    <!-- Metric Cards row -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                        <!-- Balance Metric Card -->
+                        <div class="bg-[#111113] border border-[#202024] rounded-3xl p-4 sm:p-6 relative hover:bg-[#161619] transition-colors cursor-pointer" data-go-view="dashboard">
+                            <p class="text-brand-textSecondary text-[11px] font-bold uppercase tracking-wider mb-2 sm:mb-3">Загальний баланс</p>
+                            <h2 class="font-outfit font-bold text-2xl sm:text-3xl text-white mb-1.5" id="total-balance">0.00 ₴</h2>
+                            <div class="flex justify-between items-center mt-3 sm:mt-4">
+                                <span class="text-[10px] text-brand-textSecondary">Вільні кошти</span>
+                                <span class="inline-flex px-2 py-0.5 rounded-full bg-brand-accentDim text-brand-accent font-semibold text-[10px]">Активний</span>
+                            </div>
+                        </div>
+
+                        <!-- Savings Metric Card -->
+                        <div class="bg-[#111113] border border-[#202024] rounded-3xl p-4 sm:p-6 relative hover:bg-[#161619] transition-colors cursor-pointer" data-go-view="savings">
+                            <p class="text-brand-textSecondary text-[11px] font-bold uppercase tracking-wider mb-2 sm:mb-3">Загальні збереження</p>
+                            <h2 class="font-outfit font-bold text-2xl sm:text-3xl text-white mb-1.5" id="total-savings">0.00 ₴</h2>
+                            <div class="flex justify-between items-center mt-3 sm:mt-4">
+                                <span class="text-[10px] text-brand-textSecondary">Накопичення</span>
+                                <span class="inline-flex px-2.5 py-0.5 rounded-full bg-brand-purpleDim text-brand-purple font-semibold text-[10px]" id="savings-badge-pct">0%</span>
+                            </div>
+                        </div>
+
+                        <!-- Income Metric Card -->
+                        <div class="bg-[#111113] border border-[#202024] rounded-3xl p-4 sm:p-6 relative hover:bg-[#161619] transition-colors cursor-pointer" data-go-view="income">
+                            <p class="text-brand-textSecondary text-[11px] font-bold uppercase tracking-wider mb-2 sm:mb-3">Доходи за місяць</p>
+                            <h2 class="font-outfit font-bold text-2xl sm:text-3xl text-white mb-1.5" id="total-income">0.00 ₴</h2>
+                            <div class="flex justify-between items-center mt-3 sm:mt-4 gap-1">
+                                <span class="text-[9px] sm:text-[10px] text-brand-textSecondary truncate max-w-[65%] sm:max-w-none" title="Порівняно з минулим місяцем">відносно минулого місяця</span>
+                                <span id="income-trend-badge" class="inline-flex px-2.5 py-0.5 rounded-full bg-brand-purpleDim text-brand-purple font-semibold text-[10px] flex-shrink-0">0%</span>
+                            </div>
+                        </div>
+
+                        <!-- Expenses Metric Card -->
+                        <div class="bg-[#111113] border border-[#202024] rounded-3xl p-4 sm:p-6 relative hover:bg-[#161619] transition-colors cursor-pointer" data-go-view="expenses">
+                            <p class="text-brand-textSecondary text-[11px] font-bold uppercase tracking-wider mb-2 sm:mb-3">Витрати за місяць</p>
+                            <h2 class="font-outfit font-bold text-2xl sm:text-3xl text-white mb-1.5" id="total-expenses">0.00 ₴</h2>
+                            <div class="flex justify-between items-center mt-3 sm:mt-4 gap-1">
+                                <span class="text-[9px] sm:text-[10px] text-brand-textSecondary truncate max-w-[65%] sm:max-w-none" title="Порівняно з минулим місяцем">відносно минулого місяця</span>
+                                <span id="expenses-trend-badge" class="inline-flex px-2.5 py-0.5 rounded-full bg-[#2E1619] text-[#F87171] font-semibold text-[10px] flex-shrink-0">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Swipeable Expense Limits Carousel (Day, Week, Month) -->
+                    <div id="limit-card-viewport" class="relative my-4 sm:my-6 overflow-hidden rounded-3xl touch-pan-y">
+                        <!-- Transform-based slider track -->
+                        <div id="limit-carousel-track" class="flex w-[300%] transition-transform duration-300 ease-out">
+                            
+                            <!-- Slide 1: Day Limit Card -->
+                            <div id="limit-slide-day" class="w-1/3 flex-shrink-0 bg-[#111113] border border-[#202024] rounded-3xl p-5 sm:p-6 shadow-lg select-none">
+                                <div class="flex justify-between items-center mb-3">
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-[20px] text-brand-purple">track_changes</span>
+                                        <p class="text-brand-textSecondary text-[11px] font-bold uppercase tracking-wider">Денний ліміт витрат</p>
+                                        <button type="button" class="btn-edit-limit-slide w-6 h-6 rounded-lg bg-[#161619] hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-colors flex items-center justify-center ml-0.5" data-period="day" title="Змінити ліміт">
+                                            <span class="material-symbols-outlined text-[14px]">edit</span>
+                                        </button>
+                                    </div>
+                                    <span id="day-limit-badge" class="inline-flex px-2.5 py-0.5 rounded-full bg-brand-purpleDim text-brand-purple font-semibold text-[10px]">0%</span>
+                                </div>
+
+                                <h2 class="font-outfit font-bold text-2xl sm:text-3xl text-white mb-2" id="day-limit-spent-display">0.00 ₴</h2>
+
+                                <div class="flex justify-between items-center mt-3 text-xs text-brand-textSecondary">
+                                    <span>Витрачено сьогодні</span>
+                                    <span>з ліміту <strong id="day-limit-max-display" class="font-outfit font-bold text-white">1 000.00 ₴</strong></span>
+                                </div>
+
+                                <div class="progress-track bg-[#161619] h-2.5 w-full rounded-full border border-[#202024] overflow-hidden mt-3 relative">
+                                    <div id="day-limit-progress-fill" class="progress-thumb bg-gradient-to-r from-brand-purple to-[#FF5A36] h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Slide 2: Week Limit Card -->
+                            <div id="limit-slide-week" class="w-1/3 flex-shrink-0 bg-[#111113] border border-[#202024] rounded-3xl p-5 sm:p-6 shadow-lg select-none">
+                                <div class="flex justify-between items-center mb-3">
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-[20px] text-brand-purple">calendar_view_week</span>
+                                        <p class="text-brand-textSecondary text-[11px] font-bold uppercase tracking-wider">Тижневий ліміт витрат</p>
+                                        <button type="button" class="btn-edit-limit-slide w-6 h-6 rounded-lg bg-[#161619] hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-colors flex items-center justify-center ml-0.5" data-period="week" title="Змінити ліміт">
+                                            <span class="material-symbols-outlined text-[14px]">edit</span>
+                                        </button>
+                                    </div>
+                                    <span id="week-limit-badge" class="inline-flex px-2.5 py-0.5 rounded-full bg-brand-purpleDim text-brand-purple font-semibold text-[10px]">0%</span>
+                                </div>
+
+                                <h2 class="font-outfit font-bold text-2xl sm:text-3xl text-white mb-2" id="week-limit-spent-display">0.00 ₴</h2>
+
+                                <div class="flex justify-between items-center mt-3 text-xs text-brand-textSecondary">
+                                    <span>Витрачено цього тижня</span>
+                                    <span>з ліміту <strong id="week-limit-max-display" class="font-outfit font-bold text-white">7 000.00 ₴</strong></span>
+                                </div>
+
+                                <div class="progress-track bg-[#161619] h-2.5 w-full rounded-full border border-[#202024] overflow-hidden mt-3 relative">
+                                    <div id="week-limit-progress-fill" class="progress-thumb bg-gradient-to-r from-brand-purple to-[#FF5A36] h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Slide 3: Month Limit Card -->
+                            <div id="limit-slide-month" class="w-1/3 flex-shrink-0 bg-[#111113] border border-[#202024] rounded-3xl p-5 sm:p-6 shadow-lg select-none">
+                                <div class="flex justify-between items-center mb-3">
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-[20px] text-brand-purple">calendar_month</span>
+                                        <p class="text-brand-textSecondary text-[11px] font-bold uppercase tracking-wider">Місячний ліміт витрат</p>
+                                        <button type="button" class="btn-edit-limit-slide w-6 h-6 rounded-lg bg-[#161619] hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-colors flex items-center justify-center ml-0.5" data-period="month" title="Змінити ліміт">
+                                            <span class="material-symbols-outlined text-[14px]">edit</span>
+                                        </button>
+                                    </div>
+                                    <span id="month-limit-badge" class="inline-flex px-2.5 py-0.5 rounded-full bg-brand-purpleDim text-brand-purple font-semibold text-[10px]">0%</span>
+                                </div>
+
+                                <h2 class="font-outfit font-bold text-2xl sm:text-3xl text-white mb-2" id="month-limit-spent-display">0.00 ₴</h2>
+
+                                <div class="flex justify-between items-center mt-3 text-xs text-brand-textSecondary">
+                                    <span>Витрачено цього місяця</span>
+                                    <span>з ліміту <strong id="month-limit-max-display" class="font-outfit font-bold text-white">30 000.00 ₴</strong></span>
+                                </div>
+
+                                <div class="progress-track bg-[#161619] h-2.5 w-full rounded-full border border-[#202024] overflow-hidden mt-3 relative">
+                                    <div id="month-limit-progress-fill" class="progress-thumb bg-gradient-to-r from-brand-purple to-[#FF5A36] h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Carousel Indicator Dots & Quick Switcher -->
+                        <div class="flex items-center justify-between mt-2.5 px-1">
+                            <div class="flex items-center gap-1.5 text-xs text-brand-textSecondary">
+                                <span class="material-symbols-outlined text-[14px]">swipe</span>
+                                <span class="text-[11px]">Свайпайте для перемикання</span>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <button type="button" id="limit-dot-day" class="limit-carousel-dot px-2.5 py-0.5 text-[10px] font-semibold rounded-full bg-brand-purple text-white transition-all">День</button>
+                                <button type="button" id="limit-dot-week" class="limit-carousel-dot px-2.5 py-0.5 text-[10px] font-semibold rounded-full bg-[#161619] border border-[#202024] text-brand-textSecondary hover:text-white transition-all">Тиждень</button>
+                                <button type="button" id="limit-dot-month" class="limit-carousel-dot px-2.5 py-0.5 text-[10px] font-semibold rounded-full bg-[#161619] border border-[#202024] text-brand-textSecondary hover:text-white transition-all">Місяць</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Split row: Breakdown & Savings Left / Chart Right -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Left sidebar metrics -->
+                        <div class="lg:col-span-1 flex flex-col">
+                            <!-- Envelope Savings Dashboard Widget -->
+                            <div class="bg-[#111113] border border-[#202024] hover:border-[#FF5A36]/30 transition-all rounded-3xl p-6 cursor-pointer flex flex-col justify-between h-full min-h-[380px]" data-go-view="savings">
+                                <div>
+                                    <div class="flex justify-between items-center mb-4">
+                                        <div class="flex items-center gap-2.5">
+                                            <div class="w-9 h-9 rounded-xl bg-[#FF5A36]/10 border border-[#FF5A36]/20 flex items-center justify-center text-[#FF5A36]">
+                                                <span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+                                            </div>
+                                            <div>
+                                                <h3 class="font-semibold text-sm text-white">Конверти збережень</h3>
+                                                <p class="text-[11px] text-brand-textSecondary mt-0.5">Активні цілі накопичення коштів</p>
+                                            </div>
+                                        </div>
+                                        <span class="text-xs text-[#FF5A36] hover:underline font-semibold flex items-center gap-0.5">
+                                            <span>Усі цілі</span>
+                                            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                                        </span>
+                                    </div>
+
+                                    <div class="flex items-baseline justify-between mt-3 mb-3 p-3.5 bg-[#161619] rounded-2xl border border-[#202024]">
+                                        <div>
+                                            <span class="text-[10px] text-brand-textSecondary block uppercase font-bold tracking-wider mb-1">Зібрано в конвертах</span>
+                                            <span class="text-2xl font-bold font-outfit text-white" id="db-savings-current">0.00 ₴</span>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="text-[10px] text-brand-textSecondary block uppercase font-bold tracking-wider mb-1">Цільова сума</span>
+                                            <span class="text-xs font-semibold font-outfit text-brand-textSecondary" id="db-savings-target">0.00 ₴</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3 pt-3.5 border-t border-[#202024]/60 flex-grow flex flex-col justify-between">
+                                    <div>
+                                        <div class="flex justify-between items-center mb-2.5">
+                                            <span class="text-xs text-brand-textSecondary uppercase font-bold tracking-wider">Мої конверти</span>
+                                            <span class="text-xs text-brand-textSecondary font-semibold" id="db-envelopes-count">0 конвертів</span>
+                                        </div>
+                                        <div id="db-envelopes-mini-list" class="space-y-2 max-h-[220px] overflow-y-auto pr-1 custom-scrollbar">
+                                            <!-- Mini envelope items injected here -->
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4 pt-3 border-t border-[#202024]/40 flex justify-between items-center text-xs">
+                                        <span class="text-brand-textSecondary text-[11px]">Натисніть для відкриття</span>
+                                        <span class="text-[#FF5A36] font-semibold flex items-center gap-1 text-xs">
+                                            <span>Перейти до збережень</span>
+                                            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right double curve chart card -->
+                        <div class="lg:col-span-2 bg-[#111113] border border-[#202024] rounded-3xl p-6 h-[400px] lg:h-full flex flex-col justify-between relative overflow-hidden">
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 z-10">
+                                <div>
+                                    <h3 class="font-semibold text-base text-white">Динаміка фінансових потоків</h3>
+                                    <p id="db-chart-subtitle" class="text-xs text-brand-textSecondary mt-0.5">Порівняння доходів та витрат (Поточний місяць)</p>
+                                </div>
+                                <div class="flex items-center gap-3 self-start sm:self-auto">
+                                    <div class="month-selector-widget flex items-center bg-[#161619] border border-[#202024] rounded-xl p-0.5 shadow-inner gap-0.5">
+                                        <button type="button" class="btn-prev-month w-6 h-6 rounded-lg bg-[#111113] hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-all flex items-center justify-center" title="Попередній місяць">
+                                            <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+                                        </button>
+                                        <div class="px-2 py-0.5 flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity open-month-picker-btn">
+                                            <span class="selected-month-label text-[11px] font-semibold text-white font-outfit whitespace-nowrap">Серпень 2026</span>
+                                        </div>
+                                        <button type="button" class="btn-next-month w-6 h-6 rounded-lg bg-[#111113] hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-all flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed" title="Наступний місяць">
+                                            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                                        </button>
+                                    </div>
+                                    <div class="hidden sm:flex items-center gap-3 text-xs">
+                                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-accent"></span>Доходи</span>
+                                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-purple"></span>Витрати</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex-grow relative w-full h-full my-4">
+                                <svg id="dashboard-mini-chart" class="absolute inset-0 w-full h-full" viewBox="0 0 500 200">
+                                    <defs>
+                                        <linearGradient id="db-income-grad" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stop-color="var(--color-chart-income)" stop-opacity="0.12" />
+                                            <stop offset="100%" stop-color="var(--color-chart-income)" stop-opacity="0.00" />
+                                        </linearGradient>
+                                        <linearGradient id="db-expense-grad" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stop-color="var(--color-chart-expense)" stop-opacity="0.08" />
+                                            <stop offset="100%" stop-color="var(--color-chart-expense)" stop-opacity="0.00" />
+                                        </linearGradient>
+                                    </defs>
+                                    <g id="db-chart-grid-lines"></g>
+                                    <path id="db-chart-income-area" fill="url(#db-income-grad)" d=""></path>
+                                    <path id="db-chart-expense-area" fill="url(#db-expense-grad)" d=""></path>
+                                    <path id="db-chart-income-path" fill="none" stroke="#FF5A36" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path id="db-chart-expense-path" fill="none" stroke="#8B5CF6" stroke-dasharray="4,4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <g id="db-chart-points-group"></g>
+                                </svg>
+                            </div>
+                            
+                            <div class="flex justify-between text-[10px] text-brand-textSecondary pt-2 border-t border-[#202024]/40" id="db-chart-dates-labels">
+                                <!-- Dates injected here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Full-width row: Recent Transactions Table -->
+                    <div id="recent-transactions-card" class="bg-[#111113] border border-[#202024] rounded-3xl overflow-hidden flex flex-col mt-6 touch-pan-y">
+                        <div class="p-6 border-b border-[#202024] flex justify-between items-center flex-wrap gap-4">
+                            <div>
+                                <h3 class="font-semibold text-base text-white">Останні транзакції</h3>
+                                <p class="text-xs text-brand-textSecondary mt-0.5">Останні операції за рахунками</p>
+                            </div>
+                            <div class="filter-tabs relative flex items-center w-full sm:w-auto bg-[#161619]/90 border border-[#26262B] rounded-2xl p-1 gap-1 shadow-inner">
+                                <div id="filter-tabs-pill-indicator" class="filter-tabs-pill"></div>
+                                <button class="filter-tab active flex-1 sm:flex-initial flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl text-[10px] sm:text-xs font-semibold whitespace-nowrap transition-colors relative z-10 cursor-pointer" data-filter="all">
+                                    <span class="material-symbols-outlined text-[14px] sm:text-[15px]">apps</span>
+                                    <span>Всі</span>
+                                </button>
+                                <button class="filter-tab flex-1 sm:flex-initial flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl text-[10px] sm:text-xs font-semibold whitespace-nowrap transition-colors relative z-10 cursor-pointer" data-filter="income">
+                                    <span class="material-symbols-outlined text-[14px] sm:text-[15px]">south_west</span>
+                                    <span>Доходи</span>
+                                </button>
+                                <button class="filter-tab flex-1 sm:flex-initial flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl text-[10px] sm:text-xs font-semibold whitespace-nowrap transition-colors relative z-10 cursor-pointer" data-filter="expense">
+                                    <span class="material-symbols-outlined text-[14px] sm:text-[15px]">north_east</span>
+                                    <span>Витрати</span>
+                                </button>
+                                <button class="filter-tab flex-1 sm:flex-initial flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl text-[10px] sm:text-xs font-semibold whitespace-nowrap transition-colors relative z-10 cursor-pointer" data-filter="savings">
+                                    <span class="material-symbols-outlined text-[14px] sm:text-[15px]">savings</span>
+                                    <span>Збереження</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="hidden sm:block overflow-x-auto custom-scrollbar">
+                            <table class="w-full text-left font-body-sm text-sm border-collapse">
+                                <thead>
+                                    <tr class="text-brand-textSecondary opacity-70 border-b border-[#202024]/50">
+                                        <th class="py-4 px-3 font-medium text-xs">Дата</th>
+                                        <th class="py-4 px-3 font-medium text-xs">Опис операції</th>
+                                        <th class="py-4 px-3 font-medium text-xs hidden sm:table-cell">Категорія</th>
+                                        <th class="py-4 px-3 font-medium text-xs hidden sm:table-cell">Статус</th>
+                                        <th class="py-4 px-3 font-medium text-right text-xs">Сума</th>
+                                        <th class="py-4 px-3 font-medium text-right text-xs">Дія</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="history-list" class="text-white divide-y divide-[#202024]/30">
+                                    <!-- Rows injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Mobile responsive list layout -->
+                        <div id="mobile-history-list" class="sm:hidden space-y-3 p-4">
+                            <!-- Mobile items injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 2: Savings Screen -->
+                <div class="dashboard-view" id="view-savings">
+                    <div class="view-header mb-2 sm:mb-3 flex justify-between items-center flex-wrap gap-2">
+                        <div>
+                            <h2 class="font-outfit font-bold text-xl sm:text-2xl text-white">Конверти збережень</h2>
+                            <p class="text-xs text-brand-textSecondary mt-0.5">Окремі цілі накопичення коштів</p>
+                        </div>
+                        <button id="btn-create-envelope" type="button" class="px-4 py-2.5 bg-[#FF5A36] hover:bg-[#FF5A36]/90 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-md shadow-[#FF5A36]/20 active:scale-95">
+                            <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                            <span>Створити конверт</span>
+                        </button>
+                    </div>
+
+                    <!-- Top Compact Metrics Row -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-[#111113] border border-[#202024] rounded-3xl p-6 flex flex-col justify-between">
+                            <span class="text-[10px] font-bold text-brand-textSecondary uppercase tracking-wider">Накопичено за цілями</span>
+                            <div class="text-2xl font-bold font-outfit text-white mt-1" id="savings-current">0.00 ₴</div>
+                        </div>
+
+                        <div class="bg-[#111113] border border-[#202024] rounded-3xl p-6 flex flex-col justify-between">
+                            <span class="text-[10px] font-bold text-brand-textSecondary uppercase tracking-wider">Загальна ціль конвертів</span>
+                            <div class="text-2xl font-bold font-outfit text-white mt-1" id="savings-target">0.00 ₴</div>
+                        </div>
+
+                        <div class="bg-[#111113] border border-[#202024] rounded-3xl p-6 flex flex-col justify-between">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[10px] font-bold text-brand-textSecondary uppercase tracking-wider">Загальний прогрес</span>
+                                <span id="goal-percentage-text" class="text-xs font-bold text-[#FF5A36]">0%</span>
+                            </div>
+                            <div class="progress-track bg-[#161619] h-2 w-full rounded-full border border-[#202024] overflow-hidden mt-2">
+                                <div class="progress-thumb bg-gradient-to-r from-brand-accent to-brand-accentLight h-full rounded-full" id="goal-progress-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Envelopes Grid -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-semibold text-sm text-white">Мої цільові конверти</h3>
+                        </div>
+                        <div id="envelopes-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Envelope Cards injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Compact Savings History Registry -->
+                    <div class="bg-[#111113] border border-[#202024] rounded-3xl overflow-hidden flex flex-col">
+                        <div class="px-4 py-3 border-b border-[#202024] flex justify-between items-center">
+                            <h3 class="font-semibold text-sm text-white">Історія конвертів</h3>
+                            <span class="text-[11px] text-brand-textSecondary">Останні поповнення та списання</span>
+                        </div>
+                        
+                        <div class="hidden sm:block overflow-x-auto custom-scrollbar flex-grow">
+                            <table class="w-full text-left font-body-sm text-sm border-collapse">
+                                <thead>
+                                    <tr class="text-brand-textSecondary opacity-70 border-b border-[#202024]/50">
+                                        <th class="py-2.5 px-3 font-medium text-xs">Дата</th>
+                                        <th class="py-2.5 px-3 font-medium text-xs">Опис операції</th>
+                                        <th class="py-2.5 px-3 font-medium text-xs hidden sm:table-cell">Категорія</th>
+                                        <th class="py-2.5 px-3 font-medium text-xs hidden sm:table-cell">Статус</th>
+                                        <th class="py-2.5 px-3 font-medium text-right text-xs">Сума</th>
+                                        <th class="py-2.5 px-3 font-medium text-right text-xs">Дія</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ledger-savings-list" class="text-white divide-y divide-[#202024]/30">
+                                    <!-- Rows injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Mobile responsive list layout -->
+                        <div id="mobile-savings-list" class="sm:hidden space-y-2 p-3">
+                            <!-- Mobile items injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 3: Income Screen -->
+                <div class="dashboard-view" id="view-income">
+                    <div class="view-header mb-2 sm:mb-3">
+                        <h2 class="font-outfit font-bold text-2xl text-white">Контроль доходів</h2>
+                        <p class="text-xs text-brand-textSecondary mt-1">Облік та моніторинг надходжень грошових коштів</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+                        <!-- Left split: progress & form -->
+                        <div class="space-y-6 lg:col-span-1">
+                            <!-- Stats card -->
+                            <div class="bg-[#111113] border border-[#202024] rounded-3xl p-6">
+                                <p class="text-brand-textSecondary text-[10px] font-bold uppercase tracking-wider mb-3">Зареєстрований дохід</p>
+                                <h2 class="font-outfit font-bold text-3xl text-white mb-2" id="tab-income-total">0.00 ₴</h2>
+                                <p class="text-[11px] text-brand-textSecondary mt-2">Всього накопичено з усіх джерел прибутку</p>
+                            </div>
+
+                            <!-- Add Income Form -->
+                            <div class="bg-[#111113] border border-[#202024] rounded-3xl p-6">
+                                <h3 class="font-semibold text-base text-white mb-6">Зарахувати новий дохід</h3>
+                                <form id="form-add-income" class="space-y-4">
+                                    <div class="flex flex-col gap-2">
+                                        <label for="income-amount" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Сума надходження (₴)</label>
+                                        <input type="number" id="income-amount" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" placeholder="0.00" min="0.01" step="0.01" required autocomplete="off">
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <label for="income-description" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Джерело приходу / Опис</label>
+                                        <input type="text" id="income-description" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" placeholder="Наприклад, Заробітна плата, Фріланс..." required autocomplete="off">
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <label for="income-date" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Дата зарахування</label>
+                                        <input type="date" id="income-date" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" required>
+                                    </div>
+                                    <button type="submit" class="w-full bg-brand-accent hover:opacity-90 text-white font-semibold py-3.5 rounded-xl transition-all font-outfit text-xs">Провести надходження</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-2 bg-[#111113] border border-[#202024] rounded-3xl p-6 flex flex-col justify-between h-full">
+                            <div>
+                                <div class="mb-4">
+                                    <h3 class="font-semibold text-base text-white">Реєстр доходів</h3>
+                                    <p class="text-xs text-brand-textSecondary mt-0.5">Всі зареєстровані надходження</p>
+                                </div>
+                                
+                                <div class="hidden sm:block overflow-x-auto">
+                                    <table class="w-full text-left font-body-sm text-sm border-collapse">
+                                        <thead>
+                                            <tr class="text-brand-textSecondary opacity-70 border-b border-[#202024]">
+                                                <th class="py-4 px-3 font-medium text-xs">Дата</th>
+                                                <th class="py-4 px-3 font-medium text-xs">Опис операції</th>
+                                                <th class="py-4 px-3 font-medium text-xs hidden sm:table-cell">Категорія</th>
+                                                <th class="py-4 px-3 font-medium text-xs hidden sm:table-cell">Статус</th>
+                                                <th class="py-4 px-3 font-medium text-right text-xs">Сума</th>
+                                                <th class="py-4 px-3 font-medium text-right text-xs">Дія</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="ledger-income-list" class="text-white divide-y divide-[#202024]/30">
+                                            <!-- Rows injected here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <!-- Mobile responsive list layout -->
+                                <div id="mobile-income-list" class="sm:hidden space-y-3">
+                                    <!-- Mobile items injected here -->
+                                </div>
+                            </div>
+
+                            <!-- Bottom Footer Action to show all income modal -->
+                            <div class="mt-4 pt-4 border-t border-[#202024] text-center">
+                                <button id="btn-show-all-income" type="button" class="w-full py-2.5 bg-[#161619] hover:bg-[#202024] border border-[#202024] text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
+                                    <span class="material-symbols-outlined text-[16px] text-brand-accent">read_more</span>
+                                    <span>Побачити більше</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 4: Expenses Screen -->
+                <div class="dashboard-view" id="view-expenses">
+                    <div class="view-header mb-2 sm:mb-3">
+                        <h2 class="font-outfit font-bold text-2xl text-white">Контроль витрат</h2>
+                        <p class="text-xs text-brand-textSecondary mt-1">Моніторинг, списання та категоризація витрат</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+                        <!-- Left split: progress & form -->
+                        <div class="space-y-6 lg:col-span-1">
+                            <!-- Stats card -->
+                            <div class="bg-[#111113] border border-[#202024] rounded-3xl p-6">
+                                <p class="text-brand-textSecondary text-[10px] font-bold uppercase tracking-wider mb-3">Всього витрачено з рахунків</p>
+                                <h2 class="font-outfit font-bold text-3xl text-white mb-2" id="tab-expenses-total">0.00 ₴</h2>
+                                <p class="text-[11px] text-brand-textSecondary mt-2">Сума списаних фінансових коштів</p>
+                            </div>
+
+                            <!-- Add Expense Form -->
+                            <div class="bg-[#111113] border border-[#202024] rounded-3xl p-6">
+                                <h3 class="font-semibold text-base text-white mb-6">Провести списання витрати</h3>
+                                <form id="form-add-expense" class="space-y-4">
+                                    <div class="flex flex-col gap-2">
+                                        <label for="expense-amount" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Сума витрати (₴)</label>
+                                        <input type="number" id="expense-amount" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" placeholder="0.00" min="0.01" step="0.01" required autocomplete="off">
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <label for="expense-description" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Призначення витрати / Опис</label>
+                                        <input type="text" id="expense-description" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" placeholder="Наприклад, Супермаркет, Оренда, Кава..." required autocomplete="off">
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <label for="expense-date" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Дата операції</label>
+                                        <input type="date" id="expense-date" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" required>
+                                    </div>
+                                    <button type="submit" class="w-full bg-brand-accent hover:opacity-90 text-white font-semibold py-3.5 rounded-xl transition-all font-outfit text-xs">Зафіксувати списання</button>
+                                </form>
+                            </div>
+
+                            <!-- Recurring Expenses (Auto Debits) Card -->
+                            <div class="bg-[#111113] border border-[#202024] rounded-3xl p-6">
+                                <h3 class="font-semibold text-base text-white">Автоматичні списання</h3>
+                                <p class="text-xs text-brand-textSecondary mt-0.5 mb-6">Регулярні витрати у заплановані дні місяця</p>
+                                
+                                <form id="form-add-recurring" class="space-y-4">
+                                    <div class="flex flex-col gap-2">
+                                        <label for="recurring-amount" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Сума регулярної витрати (₴)</label>
+                                        <input type="number" id="recurring-amount" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" placeholder="0.00" min="0.01" step="0.01" required autocomplete="off">
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <label for="recurring-description" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Опис / Назва автосписання</label>
+                                        <input type="text" id="recurring-description" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" placeholder="Наприклад, Підписка Spotify, Оренда хостингу..." required autocomplete="off">
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <span class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Оберіть дні місяця на календарі</span>
+                                        <div id="recurring-days-grid" class="grid grid-cols-7 gap-1.5 bg-black border border-[#202024] rounded-2xl p-3">
+                                            <!-- 31 days dynamically populated -->
+                                        </div>
+                                        <input type="hidden" id="recurring-days-selected" value="" required>
+                                    </div>
+                                    <button type="submit" class="w-full bg-brand-purple hover:opacity-90 text-white font-semibold py-3.5 rounded-xl transition-all font-outfit text-xs">Додати автосписання</button>
+                                </form>
+
+                                <div class="mt-6 border-t border-[#202024] pt-6">
+                                    <h4 class="text-xs font-bold uppercase tracking-wider text-brand-textSecondary mb-3">Активні автосписання</h4>
+                                    <div id="recurring-expenses-list" class="space-y-3 max-h-48 overflow-y-auto custom-scrollbar pr-1">
+                                        <!-- Recurring list rows injected here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right split: registry list -->
+                        <div class="lg:col-span-2 bg-[#111113] border border-[#202024] rounded-3xl p-6 flex flex-col justify-between h-full">
+                            <div>
+                                <div class="mb-4">
+                                    <h3 class="font-semibold text-base text-white">Реєстр витрат</h3>
+                                    <p class="text-xs text-brand-textSecondary mt-0.5">Всі проведені списання</p>
+                                </div>
+                                
+                                <div class="hidden sm:block overflow-x-auto">
+                                    <table class="w-full text-left font-body-sm text-sm border-collapse">
+                                        <thead>
+                                            <tr class="text-brand-textSecondary opacity-70 border-b border-[#202024]">
+                                                <th class="py-4 px-3 font-medium text-xs">Дата</th>
+                                                <th class="py-4 px-3 font-medium text-xs">Опис операції</th>
+                                                <th class="py-4 px-3 font-medium text-xs hidden sm:table-cell">Категорія</th>
+                                                <th class="py-4 px-3 font-medium text-xs hidden sm:table-cell">Статус</th>
+                                                <th class="py-4 px-3 font-medium text-right text-xs">Сума</th>
+                                                <th class="py-4 px-3 font-medium text-right text-xs">Дія</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="ledger-expenses-list" class="text-white divide-y divide-[#202024]/30">
+                                            <!-- Rows injected here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <!-- Mobile responsive list layout -->
+                                <div id="mobile-expenses-list" class="sm:hidden space-y-3">
+                                    <!-- Mobile items injected here -->
+                                </div>
+                            </div>
+
+                            <!-- Bottom Footer Action to show all expenses modal -->
+                            <div class="mt-4 pt-4 border-t border-[#202024] text-center">
+                                <button id="btn-show-all-expenses" type="button" class="w-full py-2.5 bg-[#161619] hover:bg-[#202024] border border-[#202024] text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
+                                    <span class="material-symbols-outlined text-[16px] text-brand-purple">read_more</span>
+                                    <span>Побачити більше</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 5: Statistics Screen -->
+                <div class="dashboard-view" id="view-statistics">
+                    <div class="view-header mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div>
+                            <h2 class="font-outfit font-bold text-2xl text-white">Аналітика ефективності</h2>
+                            <p class="text-xs text-brand-textSecondary mt-0.5">Аналітика грошових потоків, тренди та порівняльні показники</p>
+                        </div>
+
+                        <!-- Month Navigation Widget -->
+                        <div class="month-selector-widget w-full sm:w-auto flex items-center justify-between sm:justify-start bg-[#161619] border border-[#202024] rounded-2xl p-1 shadow-inner gap-1">
+                            <button type="button" class="btn-prev-month w-8 h-8 rounded-xl bg-[#111113] hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-all flex items-center justify-center shrink-0" title="Попередній місяць">
+                                <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                            </button>
+                            <div class="px-3 py-1 flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity open-month-picker-btn flex-1 sm:flex-initial">
+                                <span class="material-symbols-outlined text-[16px] text-[#FF5A36]">calendar_month</span>
+                                <span class="selected-month-label text-xs font-semibold text-white font-outfit whitespace-nowrap">Серпень 2026</span>
+                            </div>
+                            <button type="button" class="btn-next-month w-8 h-8 rounded-xl bg-[#111113] hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-all flex items-center justify-center shrink-0 disabled:opacity-30 disabled:cursor-not-allowed" title="Наступний місяць">
+                                <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                            </button>
+                            <button type="button" class="btn-reset-month hidden px-2.5 py-1 rounded-xl bg-brand-purpleDim text-brand-purple hover:bg-brand-purple hover:text-white text-[11px] font-semibold transition-all shrink-0" title="Повернутися до поточного місяця">
+                                Поточний
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 4 Top KPI Analytics Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">
+                        <!-- Card 1: Saving Rate -->
+                        <div class="bg-[#111113] border border-[#202024] rounded-3xl p-4 sm:p-5 flex flex-col justify-between">
+                            <span class="text-[10px] font-bold text-brand-textSecondary uppercase tracking-wider">Коефіцієнт заощадження</span>
+                            <div class="py-1.5">
+                                <div class="text-2xl sm:text-3xl font-bold font-outfit text-white mb-0.5" id="saving-rate-pct">0%</div>
+                                <p class="text-[11px] text-brand-textSecondary">Частка від доходів, що відкладена у цілі</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Daily Burn Rate -->
+                        <div class="bg-[#111113] border border-[#202024] rounded-3xl p-4 sm:p-5 flex flex-col justify-between">
+                            <span class="text-[10px] font-bold text-brand-textSecondary uppercase tracking-wider">Середні витрати за день</span>
+                            <div class="py-1.5">
+                                <div class="text-2xl sm:text-3xl font-bold font-outfit text-white mb-0.5" id="avg-expense-daily">0.00 ₴</div>
+                                <p class="text-[11px] text-brand-textSecondary">Середня сума списань на день у цьому місяці</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Monthly Forecast -->
+                        <div class="bg-[#111113] border border-[#202024] rounded-3xl p-4 sm:p-5 flex flex-col justify-between">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[10px] font-bold text-brand-textSecondary uppercase tracking-wider">Прогноз витрат до кінця місяця</span>
+                            </div>
+                            <div class="py-1.5">
+                                <div class="text-2xl sm:text-3xl font-bold font-outfit text-[#FF5A36] mb-0.5" id="stats-monthly-forecast">0.00 ₴</div>
+                                <p class="text-[11px] text-brand-textSecondary">Зважений прогноз (історія + поточний темп)</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 4: Emergency Cushion -->
+                        <div class="bg-[#111113] border border-[#202024] rounded-3xl p-4 sm:p-5 flex flex-col justify-between">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[10px] font-bold text-brand-textSecondary uppercase tracking-wider">Подушка безпеки</span>
+                            </div>
+                            <div class="py-1.5">
+                                <div class="text-2xl sm:text-3xl font-bold font-outfit text-brand-purple mb-0.5" id="stats-runway-months">0.0 місяців</div>
+                                <p class="text-[11px] text-brand-textSecondary">Запас автономності (баланс + конверти)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Chart Row & Month-over-Month Comparison Grid (8 / 4 Split) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 mb-4">
+                        <!-- Main large chart (lg:col-span-8) -->
+                        <div class="lg:col-span-8 bg-[#111113] border border-[#202024] rounded-3xl p-5 sm:p-6 h-[340px] flex flex-col justify-between relative overflow-hidden">
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 z-10">
+                                <div>
+                                    <h3 class="font-semibold text-base text-white">Тренди фінансових потоків</h3>
+                                    <p id="stats-chart-subtitle" class="text-xs text-brand-textSecondary mt-0.5">Амплітуда надходження та списання коштів (Поточний місяць)</p>
+                                </div>
+                                <div class="flex items-center gap-4 text-xs">
+                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-accent"></span>Доходи</span>
+                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-purple"></span>Витрати</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex-grow relative w-full h-full my-2">
+                                <svg id="finance-chart" class="absolute inset-0 w-full h-full z-10" viewBox="0 0 1000 300">
+                                    <defs>
+                                        <linearGradient id="incomeGradient" x1="0" x2="0" y1="0" y2="1">
+                                            <stop offset="0%" stop-color="var(--color-chart-income)" stop-opacity="0.15"></stop>
+                                            <stop offset="100%" stop-color="var(--color-chart-income)" stop-opacity="0"></stop>
+                                        </linearGradient>
+                                        <linearGradient id="expenseGradient" x1="0" x2="0" y1="0" y2="1">
+                                            <stop offset="0%" stop-color="var(--color-chart-expense)" stop-opacity="0.1"></stop>
+                                            <stop offset="100%" stop-color="var(--color-chart-expense)" stop-opacity="0"></stop>
+                                        </linearGradient>
+                                    </defs>
+                                    <g id="chart-grid-lines"></g>
+                                    <path id="chart-income-area" fill="url(#incomeGradient)" d=""></path>
+                                    <path id="chart-expense-area" fill="url(#expenseGradient)" d=""></path>
+                                    <path id="chart-income-path" fill="none" stroke="#FF5A36" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path id="chart-expense-path" fill="none" stroke="#8B5CF6" stroke-dasharray="4,4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <g id="chart-points-group"></g>
+                                </svg>
+                            </div>
+                            <div class="flex justify-between text-[10px] text-brand-textSecondary pt-2 border-t border-[#202024]/40 overflow-hidden" id="chart-dates-labels">
+                                <!-- Dates injected here -->
+                            </div>
+                        </div>
+
+                        <!-- Month-over-Month Comparison Panel (lg:col-span-4) -->
+                        <div class="lg:col-span-4 bg-[#111113] border border-[#202024] rounded-3xl p-5 sm:p-6 h-[340px] flex flex-col justify-between space-y-3">
+                            <div>
+                                <div class="flex justify-between items-center mb-0.5">
+                                    <h3 class="font-semibold text-base text-white">Порівняння з минулим місяцем</h3>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2.5 my-auto">
+                                <!-- MoM Income -->
+                                <div class="p-3 bg-[#161619] rounded-2xl border border-[#202024] flex justify-between items-center">
+                                    <div>
+                                        <span class="text-[10px] text-brand-textSecondary uppercase font-bold tracking-wider block mb-0.5">Доходи</span>
+                                        <span class="text-sm font-bold font-outfit text-white" id="stats-mom-income-val">0.00 ₴</span>
+                                    </div>
+                                    <span id="stats-mom-income-badge" class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-accentDim text-brand-accent">0%</span>
+                                </div>
+
+                                <!-- MoM Expenses -->
+                                <div class="p-3 bg-[#161619] rounded-2xl border border-[#202024] flex justify-between items-center">
+                                    <div>
+                                        <span class="text-[10px] text-brand-textSecondary uppercase font-bold tracking-wider block mb-0.5">Витрати</span>
+                                        <span class="text-sm font-bold font-outfit text-white" id="stats-mom-expenses-val">0.00 ₴</span>
+                                    </div>
+                                    <span id="stats-mom-expenses-badge" class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-brand-purpleDim text-brand-purple">0%</span>
+                                </div>
+
+                                <!-- MoM Net Delta -->
+                                <div class="p-3 bg-[#161619] rounded-2xl border border-[#202024] flex justify-between items-center">
+                                    <div>
+                                        <span class="text-[10px] text-brand-textSecondary uppercase font-bold tracking-wider block mb-0.5">Залишок коштів</span>
+                                        <span class="text-sm font-bold font-outfit text-white" id="stats-mom-net-val">0.00 ₴</span>
+                                    </div>
+                                    <span id="stats-mom-net-badge" class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-purpleDim text-brand-purple">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category Breakdown & Top 5 Expenses Grid (7 / 5 Split) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 mb-4">
+                        <!-- Category Breakdown (lg:col-span-7) -->
+                        <div class="lg:col-span-7 bg-[#111113] border border-[#202024] rounded-3xl p-5 sm:p-6">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 mb-3">
+                                <div class="min-w-0 flex-1">
+                                    <h3 class="font-semibold text-sm sm:text-base text-white leading-snug">Розподіл витрат за категоріями</h3>
+                                    <p id="stats-category-subtitle" class="text-xs text-brand-textSecondary mt-0.5">Витрати за категоріями за місяць</p>
+                                </div>
+                                <div class="text-xs text-brand-textSecondary bg-[#161619] border border-[#202024] px-3 py-1.5 rounded-xl self-start sm:self-auto flex-shrink-0">
+                                    Всього: <span class="text-brand-purple font-semibold font-outfit" id="stats-category-total">0.00 ₴</span>
+                                </div>
+                            </div>
+
+                            <div id="stats-category-breakdown-container" class="space-y-3 pt-1">
+                                <!-- Category bars injected via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Top 5 Expenses List (lg:col-span-5) -->
+                        <div class="lg:col-span-5 bg-[#111113] border border-[#202024] rounded-3xl p-5 sm:p-6 flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <h3 class="font-semibold text-base text-white">Топ-5 найбільших витрат</h3>
+                                </div>
+                                <p id="stats-top-subtitle" class="text-xs text-brand-textSecondary mb-3">Найбільші списання за поточний місяць</p>
+                                
+                                <div id="stats-top-expenses-container" class="space-y-2">
+                                    <!-- Top 5 items injected via JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Income Sources & Daily Expenses Calendar Grid (4 / 8 Split) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
+                        <!-- Income Sources Breakdown (lg:col-span-4) -->
+                        <div class="lg:col-span-4 bg-[#111113] border border-[#202024] rounded-3xl p-5 sm:p-6">
+                            <div class="flex justify-between items-center mb-3">
+                                <div>
+                                    <h3 class="font-semibold text-base text-white">Джерела доходів</h3>
+                                    <p id="stats-income-subtitle" class="text-xs text-brand-textSecondary mt-0.5">Структура отриманих прибутків</p>
+                                </div>
+                            </div>
+
+                            <div id="stats-income-sources-container" class="space-y-2.5 pt-1">
+                                <!-- Income sources injected via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Daily Expenses Calendar (lg:col-span-8) -->
+                        <div class="lg:col-span-8 bg-[#111113] border border-[#202024] rounded-3xl p-5 sm:p-6">
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-3">
+                                <div>
+                                    <h3 class="font-semibold text-base text-white">Календар витрат</h3>
+                                    <p id="stats-calendar-subtitle" class="text-xs text-brand-textSecondary mt-0.5">Календарний розподіл списань за поточний місяць</p>
+                                </div>
+                                <div class="text-xs text-brand-textSecondary bg-[#161619] border border-[#202024] px-3.5 py-1.5 rounded-xl">
+                                    Середня за день: <span class="text-brand-accent font-semibold" id="stats-avg-summary">0.00 ₴</span>
+                                </div>
+                            </div>
+                            <div class="w-full overflow-x-auto custom-scrollbar" id="daily-expenses-list-container">
+                                <!-- Daily expense calendar injected here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Target modal form -->
+    <div id="goal-modal" class="modal-overlay">
+        <div class="modal bg-[#111113] border border-[#202024] p-8 rounded-3xl max-w-sm w-full">
+            <h3 class="font-semibold text-lg text-white">Ціль заощаджень</h3>
+            <p class="text-xs text-brand-textSecondary mt-1 mb-6">Встановіть плановий показник збережень</p>
+            <form id="goal-form" class="space-y-4">
+                <div class="flex flex-col gap-2">
+                    <label for="target-amount" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Сума накопичень (₴)</label>
+                    <input type="number" id="target-amount" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" min="1" step="1" required autocomplete="off">
+                </div>
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" id="close-modal-btn" class="px-4 py-2 border border-[#202024] hover:bg-[#161619] text-xs font-semibold rounded-xl text-white transition-colors">Скасувати</button>
+                    <button type="submit" class="px-4 py-2 bg-brand-accent hover:opacity-90 text-xs font-semibold rounded-xl text-white transition-all font-outfit">Зберегти ціль</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Auth Screen (Login/Register) -->
+    <div id="auth-container" class="fixed inset-0 z-50 bg-[#0A0A0C] flex items-center justify-center p-6">
+        <div class="bg-[#111113] border border-[#202024] p-8 rounded-3xl max-w-md w-full shadow-2xl space-y-6">
+            <div class="flex items-center gap-3 justify-center mb-6">
+                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L4 10L12 18L20 10L12 2Z" fill="#FF5A36"/>
+                    <path d="M12 9L9 12L12 15L15 12L12 9Z" fill="#FFFFFF"/>
+                </svg>
+                <span class="font-outfit font-bold text-[24px] tracking-tight text-white">MonoFinance</span>
+            </div>
+            
+            <div class="space-y-1 text-center">
+                <h2 id="auth-title" class="text-xl font-bold text-white">Вхід у систему</h2>
+                <p id="auth-subtitle" class="text-xs text-brand-textSecondary">Введіть свої облікові дані для доступу до дешборду</p>
+            </div>
+            
+            <form id="auth-form" class="space-y-4">
+                <div class="flex flex-col gap-2">
+                    <label for="auth-username" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Ім'я користувача</label>
+                    <input type="text" id="auth-username" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" required autocomplete="username">
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label for="auth-password" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Пароль</label>
+                    <input type="password" id="auth-password" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" required autocomplete="current-password">
+                </div>
+                
+                <button type="submit" id="auth-submit-btn" class="w-full py-3 bg-brand-accent hover:opacity-90 text-xs font-semibold rounded-xl text-white transition-all font-outfit mt-4">Увійти</button>
+            </form>
+            
+            <div class="text-center pt-2">
+                <button id="auth-toggle-mode" class="text-xs text-brand-purple hover:underline">Немає акаунту? Зареєструватися</button>
+            </div>
+            
+            <div class="relative flex py-2 items-center">
+                <div class="flex-grow border-t border-[#202024]"></div>
+                <span class="flex-shrink mx-4 text-[10px] text-brand-textSecondary uppercase tracking-widest font-semibold">Або</span>
+                <div class="flex-grow border-t border-[#202024]"></div>
+            </div>
+            
+            <div class="flex flex-col gap-3">
+                <button id="auth-demo-btn" class="w-full py-2.5 border border-[#202024] hover:bg-[#161619] text-xs font-semibold rounded-xl text-white transition-colors">Переглянути локально (Демо)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal bg-[#111113] border border-[#202024] p-8 rounded-3xl max-w-sm w-full space-y-6">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="font-semibold text-lg text-white">Налаштування</h3>
+                    <p class="text-xs text-brand-textSecondary mt-1">Керування профілем та синхронізацією</p>
+                </div>
+                <button id="close-settings-modal-btn" class="text-brand-textSecondary hover:text-white transition-colors" title="Закрити">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+            
+            <div class="space-y-4 pt-2">
+                <div class="px-4 py-3 bg-black border border-[#202024] rounded-2xl">
+                    <p class="text-[9px] text-brand-textSecondary uppercase tracking-wider font-bold">Поточний акаунт</p>
+                    <p class="text-xs font-semibold text-white truncate" id="settings-username-display">-</p>
+                </div>
+                
+                <div class="flex flex-col gap-2">
+                    <button id="modal-btn-import-local" class="w-full py-3 bg-[#161619] border border-[#202024] hover:border-brand-purple text-brand-purple font-semibold rounded-xl text-xs flex items-center justify-center gap-2 transition-all" title="Імпортувати дані з цього комп'ютера">
+                        <span class="material-symbols-outlined text-[16px]">upload_file</span>
+                        <span>Імпорт локальних даних</span>
+                    </button>
+                    
+                    <button id="modal-btn-logout" class="w-full py-3 bg-[#2E1B18] border border-[#2E1B18] hover:border-brand-accent text-brand-accent font-semibold rounded-xl text-xs flex items-center justify-center gap-2 transition-all" title="Вийти з акаунту">
+                        <span class="material-symbols-outlined text-[16px]">logout</span>
+                        <span>Вийти з акаунту</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Expenses Details Modal -->
+    <div id="daily-details-modal" class="modal-overlay">
+        <div class="modal bg-[#111113] border border-[#202024] p-8 rounded-3xl max-w-md w-full space-y-6 shadow-2xl">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="font-semibold text-lg text-white" id="daily-modal-title">Витрати за день</h3>
+                    <p class="text-xs text-brand-textSecondary mt-1" id="daily-modal-date">-</p>
+                </div>
+                <button id="close-daily-modal-btn" class="text-brand-textSecondary hover:text-white transition-colors" title="Закрити">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+            
+            <div class="space-y-4 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar" id="daily-modal-list">
+                <!-- Daily transaction items injected here -->
+            </div>
+            
+            <div class="flex justify-between items-center pt-4 border-t border-[#202024]">
+                <span class="text-xs text-brand-textSecondary font-semibold">Всього витрачено:</span>
+                <span class="font-outfit font-bold text-base text-brand-accent" id="daily-modal-total">0.00 ₴</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voice Recognition Modal -->
+    <div id="voice-modal" class="modal-overlay">
+        <div class="modal bg-[#111113] border border-[#202024] p-6 rounded-3xl max-w-md w-full space-y-5 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-[#202024] pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-[#FF5A36] text-white flex items-center justify-center shadow-md shadow-[#FF5A36]/30" id="voice-status-icon">
+                        <span class="material-symbols-outlined text-[24px] text-white">mic</span>
+                    </div>
+
+                    <div>
+                        <h3 class="font-semibold text-base text-white">Голосове введення</h3>
+                        <p class="text-xs text-brand-textSecondary" id="voice-status-text">Натисніть мікрофон та говоріть</p>
+                    </div>
+                </div>
+                <button id="close-voice-modal-btn" class="text-brand-textSecondary hover:text-white transition-colors" title="Закрити">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+            
+            <!-- Voice Record Interactive Area -->
+            <div class="flex flex-col items-center justify-center py-6 bg-[#161619] rounded-2xl border border-[#202024] gap-4">
+                <button id="voice-record-pulse-btn" class="w-20 h-20 rounded-full bg-[#FF5A36] text-white flex items-center justify-center shadow-xl transition-all hover:scale-105 active:scale-95" title="Запустити/Зупинити розпізнавання">
+                    <span class="material-symbols-outlined text-[36px]">mic</span>
+                </button>
+                <p class="text-xs text-center px-4 text-brand-textSecondary font-medium" id="voice-transcript-preview">
+                    "Наприклад: Кава 75 гривень і обід 200 грн"
+                </p>
+            </div>
+
+            <!-- Parsed Result Form (Multi-Item List) -->
+            <div id="voice-parsed-container" class="space-y-4 hidden">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-brand-accent uppercase tracking-wider">Розпізнані записи:</span>
+                    <button id="add-voice-item-btn" type="button" class="px-3 py-1.5 bg-[#161619] border border-[#FF5A36]/40 hover:border-[#FF5A36] text-[#FF5A36] hover:bg-[#FF5A36]/10 rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 active:scale-95">
+                        <span class="material-symbols-outlined text-[15px]">add</span>
+                        <span>Додати ще</span>
+                    </button>
+
+                </div>
+                
+                <!-- Dynamic Items List -->
+                <div id="voice-items-list" class="space-y-3 max-h-[50vh] sm:max-h-[55vh] overflow-y-auto pr-1">
+                    <!-- Dynamic items rendered via JS -->
+                </div>
+
+                <div class="flex items-center gap-3 pt-3 border-t border-[#202024]">
+                    <button id="voice-cancel-btn" type="button" class="flex-1 py-3 bg-[#161619] border border-[#202024] text-white hover:bg-[#202024] rounded-xl text-xs font-semibold transition-all">
+                        Скасувати
+                    </button>
+                    <button id="voice-save-btn" type="button" class="flex-1 py-3 bg-[#FF5A36] hover:bg-[#FF5A36]/90 text-white rounded-xl text-xs font-semibold shadow-lg shadow-[#FF5A36]/20 transition-all flex items-center justify-center gap-1">
+                        <span class="material-symbols-outlined text-[16px]">check</span>
+                        <span>Зберегти все</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Envelope Create/Edit Modal -->
+    <div id="envelope-modal" class="modal-overlay">
+        <div class="modal bg-[#111113] border border-[#202024] p-6 sm:p-8 rounded-3xl max-w-md w-full space-y-5 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-[#202024] pb-4">
+                <div>
+                    <h3 class="font-semibold text-lg text-white" id="envelope-modal-title">Створити конверт</h3>
+                    <p class="text-xs text-brand-textSecondary mt-0.5">Нова ціль для заощадження грошей</p>
+                </div>
+                <button id="close-envelope-modal-btn" type="button" class="text-brand-textSecondary hover:text-white transition-colors" title="Закрити">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+            
+            <form id="envelope-form" class="space-y-4">
+                <input type="hidden" id="envelope-id" value="">
+                
+                <div class="flex flex-col gap-1.5">
+                    <label for="envelope-title" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Назва конверта / цілі</label>
+                    <input type="text" id="envelope-title" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" placeholder="Наприклад: Автомобіль, Відпустка..." required autocomplete="off">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col gap-1.5">
+                        <label for="envelope-target-amount" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Цільова сума (₴)</label>
+                        <input type="number" id="envelope-target-amount" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" placeholder="10000" min="1" step="0.01" required autocomplete="off">
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label for="envelope-current-amount" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Початкова сума (₴)</label>
+                        <input type="number" id="envelope-current-amount" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" placeholder="0" min="0" step="0.01" autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Іконка цілі</label>
+                    <div class="flex gap-2 overflow-x-auto pb-1 custom-scrollbar" id="envelope-icon-picker">
+                        <!-- Icon buttons -->
+                    </div>
+                    <input type="hidden" id="envelope-icon-val" value="savings">
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Колір конверта</label>
+                    <div class="flex gap-2.5 items-center" id="envelope-color-picker">
+                        <!-- Color buttons -->
+                    </div>
+                    <input type="hidden" id="envelope-color-val" value="#FF5A36">
+                </div>
+
+                <div class="flex gap-3 pt-3 border-t border-[#202024]">
+                    <button type="button" id="cancel-envelope-btn" class="flex-1 py-3 bg-[#161619] border border-[#202024] text-white hover:bg-[#202024] rounded-xl text-xs font-semibold transition-all">Скасувати</button>
+                    <button type="submit" class="flex-1 py-3 bg-[#FF5A36] hover:bg-[#FF5A36]/90 text-white font-semibold rounded-xl text-xs transition-all shadow-lg shadow-[#FF5A36]/20">Зберегти конверт</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Envelope Transfer (Deposit/Withdraw) Modal -->
+    <div id="envelope-transfer-modal" class="modal-overlay">
+        <div class="modal bg-[#111113] border border-[#202024] p-6 sm:p-8 rounded-3xl max-w-md w-full space-y-5 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-[#202024] pb-4">
+                <div>
+                    <h3 class="font-semibold text-lg text-white" id="transfer-modal-title">Поповнити конверт</h3>
+                    <p class="text-xs text-brand-textSecondary mt-0.5" id="transfer-modal-subtitle">Ціль: -</p>
+                </div>
+                <button id="close-transfer-modal-btn" type="button" class="text-brand-textSecondary hover:text-white transition-colors" title="Закрити">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+
+            <form id="envelope-transfer-form" class="space-y-4">
+                <input type="hidden" id="transfer-envelope-id" value="">
+                
+                <!-- Action mode tabs -->
+                <div class="grid grid-cols-2 bg-black p-1 rounded-xl border border-[#202024]">
+                    <button type="button" id="transfer-tab-deposit" class="py-2 text-xs font-semibold rounded-lg bg-[#FF5A36] text-white transition-all">
+                        Поповнити
+                    </button>
+                    <button type="button" id="transfer-tab-withdraw" class="py-2 text-xs font-semibold rounded-lg text-brand-textSecondary hover:text-white transition-all">
+                        Зняти
+                    </button>
+                </div>
+                <input type="hidden" id="transfer-type-val" value="deposit">
+
+                <div class="flex flex-col gap-1.5">
+                    <label for="transfer-amount" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Сума переказу (₴)</label>
+                    <input type="number" id="transfer-amount" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" placeholder="0.00" min="0.01" step="0.01" required autocomplete="off">
+                </div>
+
+                <div class="flex gap-3 pt-3 border-t border-[#202024]">
+                    <button type="button" id="cancel-transfer-btn" class="flex-1 py-3 bg-[#161619] border border-[#202024] text-white hover:bg-[#202024] rounded-xl text-xs font-semibold transition-all">Скасувати</button>
+                    <button type="submit" id="submit-transfer-btn" class="flex-1 py-3 bg-[#FF5A36] hover:bg-[#FF5A36]/90 text-white font-semibold rounded-xl text-xs transition-all shadow-lg shadow-[#FF5A36]/20">Підтвердити</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Action Confirmation Modal -->
+    <div id="custom-confirm-modal" class="modal-overlay">
+        <div class="modal bg-[#111113] border border-[#202024] p-6 sm:p-8 rounded-3xl max-w-sm w-full space-y-5 shadow-2xl text-center">
+            <div class="w-12 h-12 rounded-full bg-[#FF5A36]/10 border border-[#FF5A36]/20 flex items-center justify-center text-[#FF5A36] mx-auto">
+                <span class="material-symbols-outlined text-[26px]">warning</span>
+            </div>
+            <div class="space-y-1.5">
+                <h3 class="font-semibold text-base text-white" id="confirm-modal-title">Підтвердження дії</h3>
+                <p class="text-xs text-brand-textSecondary leading-relaxed" id="confirm-modal-message">Ви впевнені, що хочете виконати цю дію?</p>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button type="button" id="confirm-btn-cancel" class="flex-1 py-3 bg-[#161619] border border-[#202024] text-white hover:bg-[#202024] rounded-xl text-xs font-semibold transition-all">Скасувати</button>
+                <button type="button" id="confirm-btn-ok" class="flex-1 py-3 bg-[#FF5A36] hover:bg-[#FF5A36]/90 text-white font-semibold rounded-xl text-xs transition-all shadow-lg shadow-[#FF5A36]/20">Підтвердити</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Voice Mic Button (Mobile PWA) -->
+    <button id="mobile-voice-btn" class="flex md:hidden fixed bottom-24 right-4 z-50 w-14 h-14 bg-[#FF5A36] text-white rounded-full items-center justify-center shadow-2xl shadow-[#FF5A36]/40 border border-white/20 active:scale-95 transition-transform" title="Голосове введення">
+        <span class="material-symbols-outlined text-[28px]">mic</span>
+    </button>
+
+
+    <!-- Mobile Navigation (Bottom Bar) -->
+    <nav class="mobile-bottom-nav-container md:hidden bg-[#111113]/95 backdrop-blur-md border border-[#202024] rounded-2xl px-2 py-2 flex justify-around shadow-2xl">
+        <button class="mobile-nav-item active" data-view="dashboard" title="Панель керування">
+            <span class="material-symbols-outlined text-[20px]">dashboard</span>
+            <span class="text-[9px] font-medium">Панель</span>
+        </button>
+        <button class="mobile-nav-item" data-view="savings" title="Збереження">
+            <span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+            <span class="text-[9px] font-medium">Збереження</span>
+        </button>
+        <button class="mobile-nav-item" data-view="income" title="Доходи">
+            <span class="material-symbols-outlined text-[20px]">payments</span>
+            <span class="text-[9px] font-medium">Доходи</span>
+        </button>
+        <button class="mobile-nav-item" data-view="expenses" title="Витрати">
+            <span class="material-symbols-outlined text-[20px]">receipt_long</span>
+            <span class="text-[9px] font-medium">Витрати</span>
+        </button>
+        <button class="mobile-nav-item" data-view="statistics" title="Статистика">
+            <span class="material-symbols-outlined text-[20px]">monitoring</span>
+            <span class="text-[9px] font-medium">Аналіз</span>
+        </button>
+    </nav>
+
+    <!-- ALL EXPENSES HISTORY MODAL -->
+    <div id="all-expenses-modal" class="modal-overlay">
+        <div class="modal bg-[#111113] border border-[#202024] p-5 sm:p-6 rounded-3xl max-w-4xl w-full mx-4 shadow-2xl flex flex-col max-h-[88vh]">
+            <div class="flex justify-between items-center pb-4 border-b border-[#202024] flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-brand-purpleDim border border-brand-purple/20 flex items-center justify-center text-brand-purple">
+                        <span class="material-symbols-outlined text-[22px]">receipt_long</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base sm:text-lg text-white">Повна історія витрат</h3>
+                        <p class="text-xs text-brand-textSecondary mt-0.5">Усі зафіксовані списання коштів за весь період</p>
+                    </div>
+                </div>
+                <button id="close-all-expenses-modal" type="button" class="w-8 h-8 rounded-full bg-[#161619] border border-[#202024] hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-all flex items-center justify-center" title="Закрити">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                </button>
+            </div>
+
+            <div class="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 flex-shrink-0 border-b border-[#202024]/50">
+                <div class="relative flex-1">
+                    <span class="material-symbols-outlined absolute left-3 top-2.5 text-brand-textSecondary text-[18px]">search</span>
+                    <input type="text" id="all-expenses-search" class="w-full bg-black border border-[#202024] rounded-xl pl-9 pr-4 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-brand-accent" placeholder="Пошук витрат за описом...">
+                </div>
+                <div class="flex items-center justify-between sm:justify-end gap-3 flex-shrink-0">
+                    <span class="text-xs text-brand-textSecondary">Всього витрачено:</span>
+                    <span id="all-expenses-modal-total" class="font-outfit font-bold text-sm text-white">0.00 ₴</span>
+                </div>
+            </div>
+
+            <!-- Desktop Expenses Table -->
+            <div class="hidden sm:block overflow-x-auto overflow-y-auto custom-scrollbar flex-grow min-h-0 my-2">
+                <table class="w-full text-left font-body-sm text-sm border-collapse">
+                    <thead class="sticky top-0 bg-[#111113] z-10 border-b border-[#202024]">
+                        <tr class="text-brand-textSecondary opacity-70">
+                            <th class="py-3 px-3 font-medium text-xs">Дата</th>
+                            <th class="py-3 px-3 font-medium text-xs">Опис операції</th>
+                            <th class="py-3 px-3 font-medium text-xs hidden sm:table-cell">Категорія</th>
+                            <th class="py-3 px-3 font-medium text-xs hidden sm:table-cell">Статус</th>
+                            <th class="py-3 px-3 font-medium text-right text-xs">Сума</th>
+                            <th class="py-3 px-3 font-medium text-right text-xs">Дія</th>
+                        </tr>
+                    </thead>
+                    <tbody id="all-expenses-modal-list" class="text-white divide-y divide-[#202024]/30">
+                        <!-- Full list injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Expenses Card List -->
+            <div id="mobile-all-expenses-modal-list" class="sm:hidden space-y-2.5 overflow-y-auto custom-scrollbar flex-grow min-h-0 my-2 pr-0.5">
+                <!-- Mobile card items injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ALL INCOME HISTORY MODAL -->
+    <div id="all-income-modal" class="modal-overlay">
+        <div class="modal bg-[#111113] border border-[#202024] p-5 sm:p-6 rounded-3xl max-w-4xl w-full mx-4 shadow-2xl flex flex-col max-h-[88vh]">
+            <div class="flex justify-between items-center pb-4 border-b border-[#202024] flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-brand-accentDim border border-brand-accent/20 flex items-center justify-center text-brand-accent">
+                        <span class="material-symbols-outlined text-[22px]">payments</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base sm:text-lg text-white">Повна історія доходів</h3>
+                        <p class="text-xs text-brand-textSecondary mt-0.5">Усі зараховані надходження коштів за весь період</p>
+                    </div>
+                </div>
+                <button id="close-all-income-modal" type="button" class="w-8 h-8 rounded-full bg-[#161619] border border-[#202024] hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-all flex items-center justify-center" title="Закрити">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                </button>
+            </div>
+
+            <div class="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 flex-shrink-0 border-b border-[#202024]/50">
+                <div class="relative flex-1">
+                    <span class="material-symbols-outlined absolute left-3 top-2.5 text-brand-textSecondary text-[18px]">search</span>
+                    <input type="text" id="all-income-search" class="w-full bg-black border border-[#202024] rounded-xl pl-9 pr-4 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-brand-accent" placeholder="Пошук доходів за описом...">
+                </div>
+                <div class="flex items-center justify-between sm:justify-end gap-3 flex-shrink-0">
+                    <span class="text-xs text-brand-textSecondary">Всього накопичено:</span>
+                    <span id="all-income-modal-total" class="font-outfit font-bold text-sm text-white">0.00 ₴</span>
+                </div>
+            </div>
+
+            <!-- Desktop Income Table -->
+            <div class="hidden sm:block overflow-x-auto overflow-y-auto custom-scrollbar flex-grow min-h-0 my-2">
+                <table class="w-full text-left font-body-sm text-sm border-collapse">
+                    <thead class="sticky top-0 bg-[#111113] z-10 border-b border-[#202024]">
+                        <tr class="text-brand-textSecondary opacity-70">
+                            <th class="py-3 px-3 font-medium text-xs">Дата</th>
+                            <th class="py-3 px-3 font-medium text-xs">Опис операції</th>
+                            <th class="py-3 px-3 font-medium text-xs hidden sm:table-cell">Категорія</th>
+                            <th class="py-3 px-3 font-medium text-xs hidden sm:table-cell">Статус</th>
+                            <th class="py-3 px-3 font-medium text-right text-xs">Сума</th>
+                            <th class="py-3 px-3 font-medium text-right text-xs">Дія</th>
+                        </tr>
+                    </thead>
+                    <tbody id="all-income-modal-list" class="text-white divide-y divide-[#202024]/30">
+                        <!-- Full list injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Income Card List -->
+            <div id="mobile-all-income-modal-list" class="sm:hidden space-y-3 overflow-y-auto custom-scrollbar flex-grow min-h-0 my-2 pr-1">
+                <!-- Mobile full list injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Details Modal -->
+    <div id="category-details-modal" class="modal-overlay">
+        <div class="modal bg-[#111113] border border-[#202024] p-5 sm:p-6 rounded-3xl max-w-3xl w-full mx-4 shadow-2xl flex flex-col max-h-[88vh]">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center pb-4 border-b border-[#202024] flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div id="category-details-icon-container" class="w-10 h-10 rounded-2xl bg-brand-purpleDim border border-brand-purple/20 flex items-center justify-center text-brand-purple">
+                        <span id="category-details-icon" class="material-symbols-outlined text-[22px]">category</span>
+                    </div>
+                    <div>
+                        <h3 id="category-details-title" class="font-bold text-base sm:text-lg text-white">Категорія</h3>
+                        <p id="category-details-subtitle" class="text-xs text-brand-textSecondary mt-0.5">Витрати за обраний період</p>
+                    </div>
+                </div>
+                <button id="close-category-details-modal" type="button" class="w-8 h-8 rounded-full bg-[#161619] border border-[#202024] hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-all flex items-center justify-center" title="Закрити">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                </button>
+            </div>
+
+            <!-- Search & Total Bar -->
+            <div class="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 flex-shrink-0 border-b border-[#202024]/50">
+                <div class="relative flex-1">
+                    <span class="material-symbols-outlined absolute left-3 top-2.5 text-brand-textSecondary text-[18px]">search</span>
+                    <input type="text" id="category-details-search" class="w-full bg-black border border-[#202024] rounded-xl pl-9 pr-4 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-brand-purple" placeholder="Пошук у цій категорії...">
+                </div>
+                <div class="flex items-center justify-between sm:justify-end gap-3 flex-shrink-0">
+                    <span class="text-xs text-brand-textSecondary">Всього у категорії:</span>
+                    <span id="category-details-total" class="font-outfit font-bold text-sm text-brand-purple">0.00 ₴</span>
+                </div>
+            </div>
+
+            <!-- Desktop Expense Table -->
+            <div class="hidden sm:block overflow-x-auto overflow-y-auto custom-scrollbar flex-grow min-h-0 my-2">
+                <table class="w-full text-left font-body-sm text-sm border-collapse">
+                    <thead class="sticky top-0 bg-[#111113] z-10 border-b border-[#202024]">
+                        <tr class="text-brand-textSecondary opacity-70">
+                            <th class="py-3 px-3 font-medium text-xs">Дата</th>
+                            <th class="py-3 px-3 font-medium text-xs">Опис операції</th>
+                            <th class="py-3 px-3 font-medium text-xs hidden sm:table-cell">Статус</th>
+                            <th class="py-3 px-3 font-medium text-right text-xs">Сума</th>
+                            <th class="py-3 px-3 font-medium text-right text-xs">Дія</th>
+                        </tr>
+                    </thead>
+                    <tbody id="category-details-modal-table-list" class="text-white divide-y divide-[#202024]/30">
+                        <!-- Full list injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Expense Cards Container -->
+            <div id="category-details-items-list" class="sm:hidden space-y-2.5 overflow-y-auto custom-scrollbar flex-grow min-h-0 my-2 pr-0.5">
+                <!-- Mobile card items injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Limit Edit Modal -->
+    <div id="daily-limit-modal" class="modal-overlay">
+        <div class="modal bg-[#111113] border border-[#202024] p-6 sm:p-8 rounded-3xl max-w-md w-full space-y-5 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-[#202024] pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-brand-purpleDim border border-brand-purple/20 flex items-center justify-center text-brand-purple">
+                        <span class="material-symbols-outlined text-[20px]">track_changes</span>
+                    </div>
+                    <div>
+                        <h3 id="limit-modal-header-title" class="font-semibold text-lg text-white">Ліміт витрат</h3>
+                        <p id="limit-modal-header-subtitle" class="text-xs text-brand-textSecondary mt-0.5">Максимальна сума витрат на день або тиждень</p>
+                    </div>
+                </div>
+                <button id="close-daily-limit-modal-btn" type="button" class="text-brand-textSecondary hover:text-white transition-colors" title="Закрити">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+            
+            <form id="daily-limit-form" class="space-y-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-brand-textSecondary">Період ліміту</label>
+                    <div class="grid grid-cols-3 gap-1.5 bg-[#161619] p-1 rounded-xl border border-[#202024]">
+                        <button type="button" id="limit-period-day-btn" class="py-2 text-xs font-semibold rounded-lg transition-all bg-brand-purple text-white">На день</button>
+                        <button type="button" id="limit-period-week-btn" class="py-2 text-xs font-semibold rounded-lg transition-all text-brand-textSecondary hover:text-white">На тиждень</button>
+                        <button type="button" id="limit-period-month-btn" class="py-2 text-xs font-semibold rounded-lg transition-all text-brand-textSecondary hover:text-white">На місяць</button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label for="daily-limit-input" id="daily-limit-input-label" class="text-xs font-semibold text-brand-textSecondary">Сума ліміту (₴)</label>
+                    <input type="number" id="daily-limit-input" step="0.01" min="1" required placeholder="1000.00" class="w-full bg-[#161619] border border-[#202024] focus:border-brand-purple rounded-xl px-4 py-3 text-white text-sm outline-none transition-colors font-outfit">
+                </div>
+                
+                <div class="flex items-center gap-3 pt-2">
+                    <button type="button" id="daily-limit-cancel-btn" class="flex-1 py-3 bg-[#161619] border border-[#202024] text-white hover:bg-[#202024] rounded-xl text-xs font-semibold transition-all">
+                        Скасувати
+                    </button>
+                    <button type="submit" class="flex-1 py-3 bg-brand-purple hover:bg-brand-purple/90 text-white rounded-xl text-xs font-semibold shadow-lg shadow-brand-purple/20 transition-all">
+                        Зберегти
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Month Picker Modal -->
+    <div id="month-picker-modal" class="modal-overlay">
+        <div class="modal bg-[#111113] border border-[#202024] p-6 sm:p-7 rounded-3xl max-w-sm w-full space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-[#202024] pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-brand-purpleDim border border-brand-purple/20 flex items-center justify-center text-[#FF5A36]">
+                        <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-base text-white">Вибір місяця</h3>
+                        <p class="text-[11px] text-brand-textSecondary">Перегляд аналітики за обраний період</p>
+                    </div>
+                </div>
+                <button id="close-month-picker-btn" type="button" class="text-brand-textSecondary hover:text-white transition-colors" title="Закрити">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+            
+            <div class="space-y-3">
+                <div class="flex justify-between items-center bg-[#161619] p-1.5 rounded-xl border border-[#202024]">
+                    <button type="button" id="picker-prev-year-btn" class="w-7 h-7 rounded-lg hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-all flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                    </button>
+                    <span id="picker-year-label" class="text-sm font-bold font-outfit text-white">2026</span>
+                    <button type="button" id="picker-next-year-btn" class="w-7 h-7 rounded-lg hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-all flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed">
+                        <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                    </button>
+                </div>
+                <div id="month-picker-grid" class="grid grid-cols-3 gap-2 pt-1">
+                    <!-- 12 Month Buttons dynamically injected via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="app.js?v=113" defer></script>
+</body>
+</html>
