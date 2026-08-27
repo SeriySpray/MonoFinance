@@ -1,10 +1,10 @@
 // MonoFinance PWA Service Worker
-const CACHE_NAME = 'monofinance-pwa-v56';
+const CACHE_NAME = 'monofinance-pwa-v57';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './styles.css?v=102',
-  './app.js?v=116',
+  './app.js?v=117',
   './manifest.json',
   './favicon.svg'
 ];

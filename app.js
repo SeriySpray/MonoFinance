@@ -4498,7 +4498,7 @@ document.addEventListener('DOMContentLoaded', () => {
             envelopesSection.style.display = hasGoals ? '' : 'none';
         }
         if (historySection) {
-            historySection.style.display = hasGoals ? '' : 'none';
+            historySection.style.display = '';
         }
 
         if (grid) grid.innerHTML = '';
