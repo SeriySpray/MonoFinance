@@ -449,7 +449,7 @@
                     </div>
 
                     <!-- Top Compact Metrics Row -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+                    <div id="savings-summary-cards" class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
                         <div class="bg-[#111113] border border-[#202024] rounded-3xl p-6 flex flex-col justify-between">
                             <span class="text-[10px] font-bold text-brand-textSecondary uppercase tracking-wider">Накопичено за цілями</span>
                             <div class="text-2xl font-bold font-outfit text-white mt-1" id="savings-current">0.00 ₴</div>
@@ -472,7 +472,7 @@
                     </div>
 
                     <!-- Envelopes Grid -->
-                    <div class="mb-6">
+                    <div id="savings-envelopes-section" class="mb-6">
                         <div class="flex justify-between items-center mb-3">
                             <h3 class="font-semibold text-sm text-white">Мої цільові конверти</h3>
                         </div>
@@ -482,7 +482,7 @@
                     </div>
 
                     <!-- Compact Savings History Registry -->
-                    <div class="bg-[#111113] border border-[#202024] rounded-3xl overflow-hidden flex flex-col">
+                    <div id="savings-history-section" class="bg-[#111113] border border-[#202024] rounded-3xl overflow-hidden flex flex-col">
                         <div class="px-4 py-3 border-b border-[#202024] flex justify-between items-center">
                             <h3 class="font-semibold text-sm text-white">Історія конвертів</h3>
                             <span class="text-[11px] text-brand-textSecondary">Останні поповнення та списання</span>
@@ -1498,6 +1498,6 @@
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
-    <script src="app.js?v=114" defer></script>
+    <script src="app.js?v=115" defer></script>
 </body>
 </html>

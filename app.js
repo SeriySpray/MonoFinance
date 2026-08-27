@@ -4485,19 +4485,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderSavingsGoals = () => {
         const grid = document.getElementById('envelopes-grid');
         const dbMiniList = document.getElementById('db-envelopes-mini-list');
+        const summaryCards = document.getElementById('savings-summary-cards');
+        const envelopesSection = document.getElementById('savings-envelopes-section');
+        const historySection = document.getElementById('savings-history-section');
         
+        const hasGoals = Boolean(savingsGoals && savingsGoals.length > 0);
+
+        if (summaryCards) {
+            summaryCards.style.display = hasGoals ? '' : 'none';
+        }
+        if (envelopesSection) {
+            envelopesSection.style.display = hasGoals ? '' : 'none';
+        }
+        if (historySection) {
+            historySection.style.display = hasGoals ? '' : 'none';
+        }
+
         if (grid) grid.innerHTML = '';
         if (dbMiniList) dbMiniList.innerHTML = '';
 
-        if (!savingsGoals || savingsGoals.length === 0) {
-            if (grid) {
-                grid.innerHTML = `
-                    <div class="col-span-full p-8 text-center bg-[#161619] rounded-2xl border border-dashed border-[#202024]">
-                        <span class="material-symbols-outlined text-[36px] text-brand-textSecondary mb-2">savings</span>
-                        <p class="text-xs text-brand-textSecondary">Немає створених конвертів. Натисніть «Створити конверт», щоб почати накопичення за окремими цілями.</p>
-                    </div>
-                `;
-            }
+        if (!hasGoals) {
             if (dbMiniList) {
                 dbMiniList.innerHTML = `
                     <div class="p-3 text-center bg-[#161619] rounded-xl border border-dashed border-[#202024]">
