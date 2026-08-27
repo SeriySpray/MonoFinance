@@ -762,27 +762,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 expenseLimitPeriod = data.expenseLimitPeriod || 'day';
                 recurringExpenses = data.recurringExpenses || [];
                 
-                let serverGoals = data.savingsGoals || [];
-                // Automatic Recovery: If server returns no goals, restore envelope goals from LocalStorage cache
-                if (serverGoals.length === 0) {
-                    const localGoalsStr = localStorage.getItem('mono_savings_goals');
-                    if (localGoalsStr) {
-                        try {
-                            const localGoals = JSON.parse(localGoalsStr);
-                            if (Array.isArray(localGoals) && localGoals.length > 0) {
-                                serverGoals = localGoals;
-                                setTimeout(() => syncData(), 500);
-                            }
-                        } catch (e) {
-                            console.warn('Could not parse local savings goals fallback', e);
-                        }
-                    }
-                }
-                
-                savingsGoals = serverGoals;
-
-                // Auto-recover goals from transaction history if goals array is empty
-                recoverGoalsFromTransactions();
+                savingsGoals = Array.isArray(data.savingsGoals) ? data.savingsGoals : [];
 
                 // Cache server data in LocalStorage for offline fallback
                 saveToLocalStorage();
@@ -855,7 +835,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const savedGoals = localStorage.getItem('mono_savings_goals');
         if (savedGoals) {
-            savingsGoals = JSON.parse(savedGoals);
+            try {
+                savingsGoals = JSON.parse(savedGoals);
+                if (!Array.isArray(savingsGoals)) savingsGoals = [];
+            } catch (e) {
+                savingsGoals = [];
+            }
+        } else {
+            savingsGoals = [];
         }
 
         processRecurringDebits();
@@ -4495,67 +4482,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const recoverGoalsFromTransactions = () => {
-        if (!savingsGoals || savingsGoals.length === 0) {
-            const localGoalsStr = localStorage.getItem('mono_savings_goals');
-            if (localGoalsStr) {
-                try {
-                    const parsed = JSON.parse(localGoalsStr);
-                    if (Array.isArray(parsed) && parsed.length > 0) {
-                        savingsGoals = parsed;
-                        return;
-                    }
-                } catch (e) {}
-            }
-
-            // Reconstruct goals from transaction history if envelope transactions exist
-            const goalMap = {};
-            const defaultIcons = ['shield', 'flight', 'directions_car', 'home', 'savings'];
-            const defaultColors = ['#10B981', '#3B82F6', '#FF5A36', '#8B5CF6', '#F59E0B'];
-            let iconIdx = 0;
-
-            transactions.forEach(t => {
-                if (t.description && (t.description.includes('конверт') || t.category === 'Конверти')) {
-                    let title = t.description
-                        .replace(/^Поповнення конверта:\s*/i, '')
-                        .replace(/^Зняття з конверта:\s*/i, '')
-                        .replace(/^Поповнення конверта\s*/i, '')
-                        .replace(/^Зняття з конверта\s*/i, '')
-                        .trim();
-                    if (!title) title = 'Резервний фонд';
-
-                    if (!goalMap[title]) {
-                        goalMap[title] = {
-                            id: 'goal_' + title.replace(/\s+/g, '_').toLowerCase(),
-                            title: title,
-                            targetAmount: 50000,
-                            currentAmount: 0,
-                            color: defaultColors[iconIdx % defaultColors.length],
-                            icon: defaultIcons[iconIdx % defaultIcons.length]
-                        };
-                        iconIdx++;
-                    }
-
-                    if (t.description.startsWith('Зняття') || t.isWithdrawal || t.amount < 0) {
-                        goalMap[title].currentAmount = Math.max(0, goalMap[title].currentAmount - Math.abs(t.amount));
-                    } else {
-                        goalMap[title].currentAmount += Math.abs(t.amount);
-                    }
-                }
-            });
-
-            const recovered = Object.values(goalMap);
-            if (recovered.length > 0) {
-                savingsGoals = recovered;
-                saveToLocalStorage();
-                syncData();
-            }
-        }
-    };
-
     const renderSavingsGoals = () => {
-        recoverGoalsFromTransactions();
-
         const grid = document.getElementById('envelopes-grid');
         const dbMiniList = document.getElementById('db-envelopes-mini-list');
         
