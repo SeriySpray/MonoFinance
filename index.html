@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=101">
+    <link rel="stylesheet" href="styles.css?v=102">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -616,17 +616,17 @@
                                 <form id="form-add-expense" class="space-y-4">
                                     <div class="flex flex-col gap-2">
                                         <label for="expense-amount" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Сума витрати (₴)</label>
-                                        <input type="number" id="expense-amount" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" placeholder="0.00" min="0.01" step="0.01" required autocomplete="off">
+                                        <input type="number" id="expense-amount" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-purple focus:border-brand-purple transition-all text-xs" placeholder="0.00" min="0.01" step="0.01" required autocomplete="off">
                                     </div>
                                     <div class="flex flex-col gap-2">
                                         <label for="expense-description" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Призначення витрати / Опис</label>
-                                        <input type="text" id="expense-description" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" placeholder="Наприклад, Супермаркет, Оренда, Кава..." required autocomplete="off">
+                                        <input type="text" id="expense-description" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-purple focus:border-brand-purple transition-all text-xs" placeholder="Наприклад, Супермаркет, Оренда, Кава..." required autocomplete="off">
                                     </div>
                                     <div class="flex flex-col gap-2">
                                         <label for="expense-date" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Дата операції</label>
-                                        <input type="date" id="expense-date" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" required>
+                                        <input type="date" id="expense-date" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-purple focus:border-brand-purple transition-all text-xs" required>
                                     </div>
-                                    <button type="submit" class="w-full bg-brand-accent hover:opacity-90 text-white font-semibold py-3.5 rounded-xl transition-all font-outfit text-xs">Зафіксувати списання</button>
+                                    <button type="submit" class="w-full bg-brand-purple hover:opacity-90 text-white font-semibold py-3.5 rounded-xl transition-all font-outfit text-xs shadow-md shadow-brand-purple/20">Зафіксувати списання</button>
                                 </form>
                             </div>
 
@@ -638,11 +638,11 @@
                                 <form id="form-add-recurring" class="space-y-4">
                                     <div class="flex flex-col gap-2">
                                         <label for="recurring-amount" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Сума регулярної витрати (₴)</label>
-                                        <input type="number" id="recurring-amount" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" placeholder="0.00" min="0.01" step="0.01" required autocomplete="off">
+                                        <input type="number" id="recurring-amount" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-purple focus:border-brand-purple transition-all text-xs" placeholder="0.00" min="0.01" step="0.01" required autocomplete="off">
                                     </div>
                                     <div class="flex flex-col gap-2">
                                         <label for="recurring-description" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Опис / Назва автосписання</label>
-                                        <input type="text" id="recurring-description" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" placeholder="Наприклад, Підписка Spotify, Оренда хостингу..." required autocomplete="off">
+                                        <input type="text" id="recurring-description" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-purple focus:border-brand-purple transition-all text-xs" placeholder="Наприклад, Підписка Spotify, Оренда хостингу..." required autocomplete="off">
                                     </div>
                                     <div class="flex flex-col gap-2">
                                         <span class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Оберіть дні місяця на календарі</span>
@@ -651,7 +651,7 @@
                                         </div>
                                         <input type="hidden" id="recurring-days-selected" value="" required>
                                     </div>
-                                    <button type="submit" class="w-full bg-brand-purple hover:opacity-90 text-white font-semibold py-3.5 rounded-xl transition-all font-outfit text-xs">Додати автосписання</button>
+                                    <button type="submit" class="w-full bg-brand-purple hover:opacity-90 text-white font-semibold py-3.5 rounded-xl transition-all font-outfit text-xs shadow-md shadow-brand-purple/20">Додати автосписання</button>
                                 </form>
 
                                 <div class="mt-6 border-t border-[#202024] pt-6">
@@ -1498,6 +1498,6 @@
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
-    <script src="app.js?v=115" defer></script>
+    <script src="app.js?v=116" defer></script>
 </body>
 </html>

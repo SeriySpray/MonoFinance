@@ -889,3 +889,24 @@ html:not(.dark) #stats-income-sources-container > div {
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+
+/* Pure Purple input focus for Expenses Screen */
+#view-expenses input:focus,
+#view-expenses select:focus,
+#view-expenses textarea:focus {
+    border-color: #8B5CF6 !important;
+    --tw-ring-color: #8B5CF6 !important;
+    --tw-ring-offset-color: transparent !important;
+    box-shadow: 0 0 0 1px #8B5CF6 !important;
+    outline: none !important;
+}
+
+html:not(.dark) #view-expenses input:focus,
+html:not(.dark) #view-expenses select:focus,
+html:not(.dark) #view-expenses textarea:focus {
+    border-color: #8B5CF6 !important;
+    --tw-ring-color: #8B5CF6 !important;
+    --tw-ring-offset-color: transparent !important;
+    box-shadow: 0 0 0 1px #8B5CF6 !important;
+    outline: none !important;
+}
