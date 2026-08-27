@@ -1388,7 +1388,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let income = 0;
         let expenses = 0;
-        let savingsTransferred = 0;
 
         transactions.forEach(t => {
             ensureTxType(t);
@@ -1396,12 +1395,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 income += t.amount;
             } else if (t.type === 'expense') {
                 expenses += t.amount;
-            } else if (t.type === 'savings') {
-                if (t.isWithdrawal || (t.description && t.description.startsWith('Зняття')) || t.amount < 0) {
-                    savingsTransferred -= Math.abs(t.amount);
-                } else {
-                    savingsTransferred += Math.abs(t.amount);
-                }
             }
         });
 
@@ -1451,8 +1444,8 @@ document.addEventListener('DOMContentLoaded', () => {
             displaySavingsTarget = savingsGoals.reduce((sum, g) => sum + (parseFloat(g.targetAmount) || 0), 0);
         }
 
-        // Liquid free balance on card (Total Income - Total Consumer Expenses - Net Money Transferred to Envelopes)
-        const balance = income - expenses - savingsTransferred;
+        // Total balance: All Income - All Expenses (operations with envelopes do not affect the total balance)
+        const balance = income - expenses;
 
         totalBalanceEl.textContent = formatCurrency(balance);
         totalIncomeEl.textContent = formatCurrency(currMonthIncome);
@@ -2006,7 +1999,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const dbInsightStatus = document.getElementById('db-insight-status');
         const dbInsightAdvice = document.getElementById('db-insight-advice');
 
-        const rate = income > 0 ? (savingsTransferred / income) * 100 : 0;
+        const rate = income > 0 ? (displaySavingsCurrent / income) * 100 : 0;
         if (dbInsightSavingRate) {
             dbInsightSavingRate.textContent = `${rate.toFixed(0)}%`;
         }
