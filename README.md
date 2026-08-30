@@ -2,7 +2,21 @@
 
 > **Live Application**: [https://monofinance.duckdns.org](https://monofinance.duckdns.org)
 >
-> MonoFinance is deployed and accessible online via HTTPS. You can use it directly in any modern browser on PC or install it as a Progressive Web App (PWA) on iPhone and Android.
+> Privacy-first personal finance tracking platform with AI-powered expense categorization, voice dictation, target savings envelopes, PWA and native Android client.
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-monofinance.duckdns.org-FF5A36?style=flat-square&logo=googlechrome&logoColor=white)](https://monofinance.duckdns.org)
+[![PWA](https://img.shields.io/badge/PWA-iOS_%2F_Android-161B22?style=flat-square&logo=pwa&logoColor=white)](https://monofinance.duckdns.org)
+[![Python](https://img.shields.io/badge/Python-3.10+-161B22?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![Groq AI](https://img.shields.io/badge/Groq_AI-LLaMA_3.3_%2F_Whisper-161B22?style=flat-square&logo=openai&logoColor=white)](https://groq.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-161B22?style=flat-square)](LICENSE)
+
+---
+
+## Application Preview
+
+![MonoFinance Dashboard Preview](dashboard_preview.png)
+
+*MonoFinance Dark Theme Dashboard featuring live financial health metrics, calendar-scale cashflow trend charts, multi-period spending limits carousel, and target savings envelopes.*
 
 ---
 
@@ -18,6 +32,7 @@ MonoFinance is a modern, privacy-first personal finance tracking platform engine
 
 ## Table of Contents
 
+- [Application Preview](#application-preview)
 - [Live Access](#live-access)
 - [Overview](#overview)
 - [Design Philosophy](#design-philosophy)
