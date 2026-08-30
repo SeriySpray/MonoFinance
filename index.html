@@ -50,51 +50,53 @@
     <div id="app-container" class="flex flex-col md:flex-row gap-6 max-w-[1600px] mx-auto min-h-[calc(100vh-3rem)] pb-24 md:pb-0">
         
         <!-- Sidebar Navigation (Left Panel) -->
-        <aside class="hidden md:flex w-64 bg-[#111113] rounded-3xl p-6 flex flex-col flex-shrink-0 border border-[#202024] self-start sticky top-6">
-            <!-- Brand logo area -->
-            <div class="flex items-center gap-3 mb-8 px-2">
-                <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L4 10L12 18L20 10L12 2Z" fill="#FF5A36"/>
-                    <path d="M12 9L9 12L12 15L15 12L12 9Z" fill="#FFFFFF"/>
-                </svg>
-                <span class="font-outfit font-bold text-[20px] tracking-tight text-white">MonoFinance</span>
+        <aside class="hidden md:flex w-64 bg-[#111113] rounded-3xl p-6 flex flex-col justify-between flex-shrink-0 border border-[#202024]">
+            <div>
+                <!-- Brand logo area -->
+                <div class="flex items-center gap-3 mb-10 px-2">
+                    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L4 10L12 18L20 10L12 2Z" fill="#FF5A36"/>
+                        <path d="M12 9L9 12L12 15L15 12L12 9Z" fill="#FFFFFF"/>
+                    </svg>
+                    <span class="font-outfit font-bold text-[20px] tracking-tight text-white">MonoFinance</span>
+                </div>
+                
+                <!-- Nav items -->
+                <nav class="space-y-2">
+                    <button class="nav-item active" data-view="dashboard">
+                        <span class="material-symbols-outlined text-[22px]">dashboard</span>
+                        <span class="font-medium">Панель керування</span>
+                    </button>
+                    <button class="nav-item" data-view="savings">
+                        <span class="material-symbols-outlined text-[22px]">account_balance_wallet</span>
+                        <span class="font-medium">Збереження</span>
+                    </button>
+                    <button class="nav-item" data-view="income">
+                        <span class="material-symbols-outlined text-[22px]">payments</span>
+                        <span class="font-medium">Доходи</span>
+                    </button>
+                    <button class="nav-item" data-view="expenses">
+                        <span class="material-symbols-outlined text-[22px]">receipt_long</span>
+                        <span class="font-medium">Витрати</span>
+                    </button>
+                    <button class="nav-item" data-view="statistics">
+                        <span class="material-symbols-outlined text-[22px]">monitoring</span>
+                        <span class="font-medium">Статистика</span>
+                    </button>
+                    <button class="hidden w-full py-3 bg-[#FF5A36] hover:bg-[#FF5A36]/90 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#FF5A36]/20 mt-4" id="sidebar-voice-btn" title="Голосовий ввід">
+                        <span class="material-symbols-outlined text-[18px]">mic</span>
+                        <span>Голосовий ввід</span>
+                    </button>
+                </nav>
             </div>
-            
-            <!-- Nav items -->
-            <nav class="space-y-2">
-                <button class="nav-item active" data-view="dashboard">
-                    <span class="material-symbols-outlined text-[22px]">dashboard</span>
-                    <span class="font-medium">Панель керування</span>
-                </button>
-                <button class="nav-item" data-view="savings">
-                    <span class="material-symbols-outlined text-[22px]">account_balance_wallet</span>
-                    <span class="font-medium">Збереження</span>
-                </button>
-                <button class="nav-item" data-view="income">
-                    <span class="material-symbols-outlined text-[22px]">payments</span>
-                    <span class="font-medium">Доходи</span>
-                </button>
-                <button class="nav-item" data-view="expenses">
-                    <span class="material-symbols-outlined text-[22px]">receipt_long</span>
-                    <span class="font-medium">Витрати</span>
-                </button>
-                <button class="nav-item" data-view="statistics">
-                    <span class="material-symbols-outlined text-[22px]">monitoring</span>
-                    <span class="font-medium">Статистика</span>
-                </button>
-                <button class="hidden w-full py-3 bg-[#FF5A36] hover:bg-[#FF5A36]/90 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#FF5A36]/20 mt-4" id="sidebar-voice-btn" title="Голосовий ввід">
-                    <span class="material-symbols-outlined text-[18px]">mic</span>
-                    <span>Голосовий ввід</span>
-                </button>
-            </nav>
 
-            <div class="space-y-2 mt-6 pt-5 border-t border-[#202024]">
+            <div class="space-y-2 pt-6 border-t border-[#202024]">
                 <button class="nav-item text-brand-textSecondary" id="theme-toggle" title="Змінити тему">
                     <span class="material-symbols-outlined text-[22px] sun-icon">light_mode</span>
                     <span class="material-symbols-outlined text-[22px] moon-icon">dark_mode</span>
                     <span class="font-medium">Змінити тему</span>
                 </button>
-                <button class="nav-item text-brand-textSecondary" id="btn-settings" title="Налаштування">
+                <button class="nav-item text-brand-textSecondary" id="btn-settings">
                     <span class="material-symbols-outlined text-[22px]">settings</span>
                     <span class="font-medium">Налаштування</span>
                 </button>
