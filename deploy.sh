@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # MonoFinance deployment script to Oracle Cloud VPS
 # Run this script inside WSL
 
