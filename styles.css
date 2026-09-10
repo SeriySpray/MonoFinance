@@ -973,4 +973,76 @@ html:not(.dark) .income-cat-card.active-cat {
     box-shadow: 0 0 0 1px rgba(255, 90, 54, 0.4) !important;
 }
 
+/* Smart Amount-Based Suggestion Chips */
+.amount-suggest-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.25;
+    border-radius: 8px;
+    background-color: #161619;
+    border: 1px solid #28282E;
+    color: #D1D1D6;
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+}
+.amount-suggest-chip:hover {
+    background-color: #202026;
+    color: #FFFFFF;
+    transform: translateY(-1px);
+}
+.amount-suggest-chip:active {
+    transform: scale(0.97);
+}
+.amount-suggest-chip.expense-chip:hover,
+.amount-suggest-chip.expense-chip.active-chip {
+    border-color: rgba(139, 92, 246, 0.6);
+    background-color: rgba(139, 92, 246, 0.14);
+    color: #C4B5FD;
+}
+.amount-suggest-chip.income-chip:hover,
+.amount-suggest-chip.income-chip.active-chip {
+    border-color: rgba(255, 90, 54, 0.6);
+    background-color: rgba(255, 90, 54, 0.14);
+    color: #FF8A65;
+}
+.amount-suggest-badge {
+    font-size: 10px;
+    font-weight: 600;
+    opacity: 0.8;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+html:not(.dark) .amount-suggest-chip {
+    background-color: #F1F1F4 !important;
+    border-color: #E2E2E6 !important;
+    color: #374151 !important;
+}
+html:not(.dark) .amount-suggest-chip:hover {
+    background-color: #E5E5EA !important;
+    color: #111827 !important;
+}
+html:not(.dark) .amount-suggest-chip.expense-chip:hover,
+html:not(.dark) .amount-suggest-chip.expense-chip.active-chip {
+    background-color: #F5EEFF !important;
+    border-color: #8B5CF6 !important;
+    color: #7C3AED !important;
+}
+html:not(.dark) .amount-suggest-chip.income-chip:hover,
+html:not(.dark) .amount-suggest-chip.income-chip.active-chip {
+    background-color: #FFF0EB !important;
+    border-color: #FF5A36 !important;
+    color: #EA4335 !important;
+}
+html:not(.dark) .amount-suggest-badge {
+    background-color: rgba(0, 0, 0, 0.07) !important;
+    color: inherit !important;
+}
+
+
 

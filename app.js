@@ -224,28 +224,46 @@ document.addEventListener('DOMContentLoaded', () => {
             if (formAddExpense) formAddExpense.addEventListener('submit', handleExpenseSubmit);
             if (formAddRecurring) formAddRecurring.addEventListener('submit', handleRecurringSubmit);
             
-            // Live category preview listeners
+            // Live category preview & smart amount suggestion listeners
             const expenseDescInput = document.getElementById('expense-description');
+            const expenseAmountInput = document.getElementById('expense-amount');
             const expenseCatSelect = document.getElementById('expense-category-select');
             if (expenseDescInput) {
-                expenseDescInput.addEventListener('input', updateExpenseCategoryPreview);
+                expenseDescInput.addEventListener('input', () => {
+                    updateExpenseCategoryPreview();
+                    updateExpenseAmountSuggestions();
+                });
+            }
+            if (expenseAmountInput) {
+                expenseAmountInput.addEventListener('input', updateExpenseAmountSuggestions);
+                expenseAmountInput.addEventListener('change', updateExpenseAmountSuggestions);
             }
             if (expenseCatSelect) {
                 expenseCatSelect.addEventListener('change', updateExpenseCategoryPreview);
             }
             initExpenseCategoryModal();
             updateExpenseCategoryPreview();
+            updateExpenseAmountSuggestions();
 
             const incomeDescInput = document.getElementById('income-description');
+            const incomeAmountInput = document.getElementById('income-amount');
             const incomeCatSelect = document.getElementById('income-category-select');
             if (incomeDescInput) {
-                incomeDescInput.addEventListener('input', updateIncomeCategoryPreview);
+                incomeDescInput.addEventListener('input', () => {
+                    updateIncomeCategoryPreview();
+                    updateIncomeAmountSuggestions();
+                });
+            }
+            if (incomeAmountInput) {
+                incomeAmountInput.addEventListener('input', updateIncomeAmountSuggestions);
+                incomeAmountInput.addEventListener('change', updateIncomeAmountSuggestions);
             }
             if (incomeCatSelect) {
                 incomeCatSelect.addEventListener('change', updateIncomeCategoryPreview);
             }
             initIncomeCategoryModal();
             updateIncomeCategoryPreview();
+            updateIncomeAmountSuggestions();
             
             // Category Details Modal Event Listeners
             const categoryDetailsModalEl = document.getElementById('category-details-modal');
@@ -1163,6 +1181,8 @@ document.addEventListener('DOMContentLoaded', () => {
             renderChart();
             renderRecurringExpenses();
             renderSavingsGoals();
+            if (typeof updateExpenseAmountSuggestions === 'function') updateExpenseAmountSuggestions();
+            if (typeof updateIncomeAmountSuggestions === 'function') updateIncomeAmountSuggestions();
         } catch (err) {
             console.error('Error during renderAll:', err);
         }
@@ -3145,6 +3165,189 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Historical Amount-Based Auto-Suggestions
+    const DEFAULT_EXPENSE_PLACEHOLDER = 'Наприклад, Супермаркет, Оренда, Кава...';
+    const DEFAULT_INCOME_PLACEHOLDER = 'Наприклад, Заробітна плата, Фріланс...';
+
+    const getTimesWord = (count) => {
+        const n = Math.abs(count) % 100;
+        const n1 = n % 10;
+        if (n > 10 && n < 20) return 'разів';
+        if (n1 > 1 && n1 < 5) return 'рази';
+        if (n1 === 1) return 'раз';
+        return 'разів';
+    };
+
+    const getAmountSuggestions = (amount, type) => {
+        if (!amount && amount !== 0) return [];
+        const num = typeof amount === 'string' ? parseFloat(amount.replace(',', '.')) : parseFloat(amount);
+        if (isNaN(num) || num <= 0 || !Array.isArray(transactions)) return [];
+
+        const targetKopecks = Math.round(num * 100);
+        const map = new Map();
+
+        transactions.forEach(t => {
+            if (!t || t.type !== type) return;
+            const tAmount = parseFloat(t.amount);
+            if (isNaN(tAmount)) return;
+            if (Math.round(tAmount * 100) !== targetKopecks) return;
+
+            const rawDesc = (t.description || '').trim();
+            if (!rawDesc) return;
+
+            const key = rawDesc.toLowerCase();
+            const txDate = t.date || '';
+
+            if (map.has(key)) {
+                const item = map.get(key);
+                item.count += 1;
+                if (txDate && (!item.latestDate || txDate > item.latestDate)) {
+                    item.latestDate = txDate;
+                    item.displayDesc = rawDesc;
+                }
+            } else {
+                map.set(key, {
+                    key,
+                    displayDesc: rawDesc,
+                    count: 1,
+                    latestDate: txDate
+                });
+            }
+        });
+
+        // Strict threshold: only propose if count >= 2
+        return Array.from(map.values())
+            .filter(item => item.count >= 2)
+            .sort((a, b) => {
+                if (b.count !== a.count) return b.count - a.count;
+                return (b.latestDate || '').localeCompare(a.latestDate || '');
+            });
+    };
+
+    const updateExpenseAmountSuggestions = () => {
+        const amountInput = document.getElementById('expense-amount');
+        const descInput = document.getElementById('expense-description');
+        const container = document.getElementById('expense-amount-suggestions');
+        if (!container) return;
+
+        const amountVal = amountInput ? amountInput.value.trim() : '';
+        const suggestions = amountVal ? getAmountSuggestions(amountVal, 'expense') : [];
+
+        if (suggestions.length === 0) {
+            container.innerHTML = '';
+            container.classList.add('hidden');
+            if (descInput && descInput.dataset.hasAmountPlaceholder === 'true') {
+                descInput.placeholder = DEFAULT_EXPENSE_PLACEHOLDER;
+                delete descInput.dataset.hasAmountPlaceholder;
+            }
+            return;
+        }
+
+        if (descInput) {
+            if (!descInput.value.trim()) {
+                descInput.placeholder = `Підказка: ${suggestions[0].displayDesc}`;
+                descInput.dataset.hasAmountPlaceholder = 'true';
+            } else if (descInput.dataset.hasAmountPlaceholder === 'true') {
+                descInput.placeholder = DEFAULT_EXPENSE_PLACEHOLDER;
+                delete descInput.dataset.hasAmountPlaceholder;
+            }
+        }
+
+        const currentDesc = descInput ? descInput.value.trim().toLowerCase() : '';
+
+        container.innerHTML = '';
+        const label = document.createElement('span');
+        label.className = 'text-[10px] text-brand-textSecondary select-none font-medium mr-1 flex items-center gap-1';
+        label.innerHTML = '<span class="material-symbols-outlined text-[13px] text-brand-purple">history</span> Раніше з цією сумою:';
+        container.appendChild(label);
+
+        suggestions.slice(0, 4).forEach(s => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            const isActive = currentDesc === s.key;
+            btn.className = `amount-suggest-chip expense-chip ${isActive ? 'active-chip' : ''}`;
+            btn.title = `Підставити «${s.displayDesc}» (використано ${s.count} ${getTimesWord(s.count)})`;
+            btn.innerHTML = `
+                <span class="truncate max-w-[140px]">${escapeHtml(s.displayDesc)}</span>
+                <span class="amount-suggest-badge">${s.count} ${getTimesWord(s.count)}</span>
+            `;
+            btn.addEventListener('click', () => {
+                if (descInput) {
+                    descInput.value = s.displayDesc;
+                    delete descInput.dataset.hasAmountPlaceholder;
+                    updateExpenseCategoryPreview();
+                    updateExpenseAmountSuggestions();
+                    descInput.focus();
+                }
+            });
+            container.appendChild(btn);
+        });
+
+        container.classList.remove('hidden');
+    };
+
+    const updateIncomeAmountSuggestions = () => {
+        const amountInput = document.getElementById('income-amount');
+        const descInput = document.getElementById('income-description');
+        const container = document.getElementById('income-amount-suggestions');
+        if (!container) return;
+
+        const amountVal = amountInput ? amountInput.value.trim() : '';
+        const suggestions = amountVal ? getAmountSuggestions(amountVal, 'income') : [];
+
+        if (suggestions.length === 0) {
+            container.innerHTML = '';
+            container.classList.add('hidden');
+            if (descInput && descInput.dataset.hasAmountPlaceholder === 'true') {
+                descInput.placeholder = DEFAULT_INCOME_PLACEHOLDER;
+                delete descInput.dataset.hasAmountPlaceholder;
+            }
+            return;
+        }
+
+        if (descInput) {
+            if (!descInput.value.trim()) {
+                descInput.placeholder = `Підказка: ${suggestions[0].displayDesc}`;
+                descInput.dataset.hasAmountPlaceholder = 'true';
+            } else if (descInput.dataset.hasAmountPlaceholder === 'true') {
+                descInput.placeholder = DEFAULT_INCOME_PLACEHOLDER;
+                delete descInput.dataset.hasAmountPlaceholder;
+            }
+        }
+
+        const currentDesc = descInput ? descInput.value.trim().toLowerCase() : '';
+
+        container.innerHTML = '';
+        const label = document.createElement('span');
+        label.className = 'text-[10px] text-brand-textSecondary select-none font-medium mr-1 flex items-center gap-1';
+        label.innerHTML = '<span class="material-symbols-outlined text-[13px] text-brand-accent">history</span> Раніше з цією сумою:';
+        container.appendChild(label);
+
+        suggestions.slice(0, 4).forEach(s => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            const isActive = currentDesc === s.key;
+            btn.className = `amount-suggest-chip income-chip ${isActive ? 'active-chip' : ''}`;
+            btn.title = `Підставити «${s.displayDesc}» (використано ${s.count} ${getTimesWord(s.count)})`;
+            btn.innerHTML = `
+                <span class="truncate max-w-[140px]">${escapeHtml(s.displayDesc)}</span>
+                <span class="amount-suggest-badge">${s.count} ${getTimesWord(s.count)}</span>
+            `;
+            btn.addEventListener('click', () => {
+                if (descInput) {
+                    descInput.value = s.displayDesc;
+                    delete descInput.dataset.hasAmountPlaceholder;
+                    updateIncomeCategoryPreview();
+                    updateIncomeAmountSuggestions();
+                    descInput.focus();
+                }
+            });
+            container.appendChild(btn);
+        });
+
+        container.classList.remove('hidden');
+    };
+
     // 3. Form and Event Handlers
     const addTransaction = async (amount, type, description, date, explicitCategory = null) => {
         if (!amount || isNaN(amount) || amount <= 0) return false;
@@ -3199,6 +3402,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const incCat = document.getElementById('income-category-select');
             if (incCat) incCat.value = 'auto';
             updateIncomeCategoryPreview();
+            updateIncomeAmountSuggestions();
         }
     };
 
@@ -3217,6 +3421,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const expCat = document.getElementById('expense-category-select');
             if (expCat) expCat.value = 'auto';
             updateExpenseCategoryPreview();
+            updateExpenseAmountSuggestions();
         }
     };
 
