@@ -3256,19 +3256,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentDesc = descInput ? descInput.value.trim().toLowerCase() : '';
 
         container.innerHTML = '';
-        const label = document.createElement('span');
-        label.className = 'text-[10px] text-brand-textSecondary select-none font-medium mr-1 flex items-center gap-1';
-        label.innerHTML = '<span class="material-symbols-outlined text-[13px] text-brand-purple">history</span> Раніше з цією сумою:';
-        container.appendChild(label);
 
-        suggestions.slice(0, 4).forEach(s => {
+        // Header row
+        const header = document.createElement('div');
+        header.className = 'flex items-center justify-between px-0.5 text-[11px] text-brand-textSecondary font-medium select-none';
+        header.innerHTML = `
+            <span class="flex items-center gap-1.5 text-brand-purple">
+                <span class="material-symbols-outlined text-[14px]">history</span>
+                <span>Підказки за цією сумою:</span>
+            </span>
+            <span class="text-[10px] text-brand-textSecondary/60 hidden sm:inline">гортайте для вибору</span>
+        `;
+        container.appendChild(header);
+
+        // Horizontal scroll track
+        const scrollTrack = document.createElement('div');
+        scrollTrack.className = 'amount-suggest-scroll w-full';
+
+        suggestions.slice(0, 8).forEach(s => {
             const btn = document.createElement('button');
             btn.type = 'button';
             const isActive = currentDesc === s.key;
             btn.className = `amount-suggest-chip expense-chip ${isActive ? 'active-chip' : ''}`;
             btn.title = `Підставити «${s.displayDesc}» (використано ${s.count} ${getTimesWord(s.count)})`;
             btn.innerHTML = `
-                <span class="truncate max-w-[140px]">${escapeHtml(s.displayDesc)}</span>
+                <span class="material-symbols-outlined text-[15px] opacity-70">arrow_forward</span>
+                <span class="max-w-[180px] truncate">${escapeHtml(s.displayDesc)}</span>
                 <span class="amount-suggest-badge">${s.count} ${getTimesWord(s.count)}</span>
             `;
             btn.addEventListener('click', () => {
@@ -3280,9 +3293,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     descInput.focus();
                 }
             });
-            container.appendChild(btn);
+            scrollTrack.appendChild(btn);
         });
 
+        container.appendChild(scrollTrack);
         container.classList.remove('hidden');
     };
 
@@ -3318,19 +3332,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentDesc = descInput ? descInput.value.trim().toLowerCase() : '';
 
         container.innerHTML = '';
-        const label = document.createElement('span');
-        label.className = 'text-[10px] text-brand-textSecondary select-none font-medium mr-1 flex items-center gap-1';
-        label.innerHTML = '<span class="material-symbols-outlined text-[13px] text-brand-accent">history</span> Раніше з цією сумою:';
-        container.appendChild(label);
 
-        suggestions.slice(0, 4).forEach(s => {
+        // Header row
+        const header = document.createElement('div');
+        header.className = 'flex items-center justify-between px-0.5 text-[11px] text-brand-textSecondary font-medium select-none';
+        header.innerHTML = `
+            <span class="flex items-center gap-1.5 text-brand-accent">
+                <span class="material-symbols-outlined text-[14px]">history</span>
+                <span>Підказки за цією сумою:</span>
+            </span>
+            <span class="text-[10px] text-brand-textSecondary/60 hidden sm:inline">гортайте для вибору</span>
+        `;
+        container.appendChild(header);
+
+        // Horizontal scroll track
+        const scrollTrack = document.createElement('div');
+        scrollTrack.className = 'amount-suggest-scroll w-full';
+
+        suggestions.slice(0, 8).forEach(s => {
             const btn = document.createElement('button');
             btn.type = 'button';
             const isActive = currentDesc === s.key;
             btn.className = `amount-suggest-chip income-chip ${isActive ? 'active-chip' : ''}`;
             btn.title = `Підставити «${s.displayDesc}» (використано ${s.count} ${getTimesWord(s.count)})`;
             btn.innerHTML = `
-                <span class="truncate max-w-[140px]">${escapeHtml(s.displayDesc)}</span>
+                <span class="material-symbols-outlined text-[15px] opacity-70">arrow_forward</span>
+                <span class="max-w-[180px] truncate">${escapeHtml(s.displayDesc)}</span>
                 <span class="amount-suggest-badge">${s.count} ${getTimesWord(s.count)}</span>
             `;
             btn.addEventListener('click', () => {
@@ -3342,9 +3369,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     descInput.focus();
                 }
             });
-            container.appendChild(btn);
+            scrollTrack.appendChild(btn);
         });
 
+        container.appendChild(scrollTrack);
         container.classList.remove('hidden');
     };
 

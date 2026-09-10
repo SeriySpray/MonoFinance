@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=105">
+    <link rel="stylesheet" href="styles.css?v=106">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -541,7 +541,7 @@
                                     <div class="flex flex-col gap-2">
                                         <label for="income-description" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Джерело приходу / Опис</label>
                                         <input type="text" id="income-description" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" placeholder="Наприклад, Заробітна плата, Фріланс..." required autocomplete="off">
-                                        <div id="income-amount-suggestions" class="hidden flex flex-wrap items-center gap-1.5 pt-0.5 transition-all"></div>
+                                        <div id="income-amount-suggestions" class="hidden flex flex-col gap-1.5 pt-1 transition-all"></div>
                                     </div>
                                     <div class="flex flex-col gap-2">
                                         <div class="flex items-center justify-between">
@@ -648,7 +648,7 @@
                                     <div class="flex flex-col gap-2">
                                         <label for="expense-description" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Призначення витрати / Опис</label>
                                         <input type="text" id="expense-description" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-purple focus:border-brand-purple transition-all text-xs" placeholder="Наприклад, Супермаркет, Оренда, Кава..." required autocomplete="off">
-                                        <div id="expense-amount-suggestions" class="hidden flex flex-wrap items-center gap-1.5 pt-0.5 transition-all"></div>
+                                        <div id="expense-amount-suggestions" class="hidden flex flex-col gap-1.5 pt-1 transition-all"></div>
                                     </div>
                                     <div class="flex flex-col gap-2">
                                         <div class="flex items-center justify-between">
@@ -1604,6 +1604,6 @@
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
-    <script src="app.js?v=123" defer></script>
+    <script src="app.js?v=124" defer></script>
 </body>
 </html>
