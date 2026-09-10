@@ -3235,6 +3235,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (suggestions.length === 0) {
             container.innerHTML = '';
+            delete container.dataset.renderedAmount;
             container.classList.add('hidden');
             if (descInput && descInput.dataset.hasAmountPlaceholder === 'true') {
                 descInput.placeholder = DEFAULT_EXPENSE_PLACEHOLDER;
@@ -3255,6 +3256,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const currentDesc = descInput ? descInput.value.trim().toLowerCase() : '';
 
+        // If suggestions for this amount are already in DOM, only update active chip styling to prevent dropped clicks
+        if (container.dataset.renderedAmount === amountVal && !container.classList.contains('hidden')) {
+            const chips = container.querySelectorAll('.amount-suggest-chip');
+            chips.forEach(c => {
+                if (c.dataset.key === currentDesc) {
+                    c.classList.add('active-chip');
+                } else {
+                    c.classList.remove('active-chip');
+                }
+            });
+            return;
+        }
+
+        container.dataset.renderedAmount = amountVal;
         container.innerHTML = '';
 
         // Header row
@@ -3276,15 +3291,23 @@ document.addEventListener('DOMContentLoaded', () => {
         suggestions.slice(0, 8).forEach(s => {
             const btn = document.createElement('button');
             btn.type = 'button';
+            btn.dataset.key = s.key;
             const isActive = currentDesc === s.key;
             btn.className = `amount-suggest-chip expense-chip ${isActive ? 'active-chip' : ''}`;
             btn.title = `Підставити «${s.displayDesc}» (використано ${s.count} ${getTimesWord(s.count)})`;
             btn.innerHTML = `
-                <span class="material-symbols-outlined text-[15px] opacity-70">arrow_forward</span>
-                <span class="max-w-[180px] truncate">${escapeHtml(s.displayDesc)}</span>
-                <span class="amount-suggest-badge">${s.count} ${getTimesWord(s.count)}</span>
+                <span class="material-symbols-outlined text-[15px] opacity-70 pointer-events-none">arrow_forward</span>
+                <span class="max-w-[180px] truncate pointer-events-none">${escapeHtml(s.displayDesc)}</span>
+                <span class="amount-suggest-badge pointer-events-none">${s.count} ${getTimesWord(s.count)}</span>
             `;
-            btn.addEventListener('click', () => {
+
+            // Prevent input blur before click is dispatched
+            btn.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+            });
+
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
                 if (descInput) {
                     descInput.value = s.displayDesc;
                     delete descInput.dataset.hasAmountPlaceholder;
@@ -3311,6 +3334,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (suggestions.length === 0) {
             container.innerHTML = '';
+            delete container.dataset.renderedAmount;
             container.classList.add('hidden');
             if (descInput && descInput.dataset.hasAmountPlaceholder === 'true') {
                 descInput.placeholder = DEFAULT_INCOME_PLACEHOLDER;
@@ -3331,6 +3355,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const currentDesc = descInput ? descInput.value.trim().toLowerCase() : '';
 
+        // If suggestions for this amount are already in DOM, only update active chip styling to prevent dropped clicks
+        if (container.dataset.renderedAmount === amountVal && !container.classList.contains('hidden')) {
+            const chips = container.querySelectorAll('.amount-suggest-chip');
+            chips.forEach(c => {
+                if (c.dataset.key === currentDesc) {
+                    c.classList.add('active-chip');
+                } else {
+                    c.classList.remove('active-chip');
+                }
+            });
+            return;
+        }
+
+        container.dataset.renderedAmount = amountVal;
         container.innerHTML = '';
 
         // Header row
@@ -3352,15 +3390,23 @@ document.addEventListener('DOMContentLoaded', () => {
         suggestions.slice(0, 8).forEach(s => {
             const btn = document.createElement('button');
             btn.type = 'button';
+            btn.dataset.key = s.key;
             const isActive = currentDesc === s.key;
             btn.className = `amount-suggest-chip income-chip ${isActive ? 'active-chip' : ''}`;
             btn.title = `Підставити «${s.displayDesc}» (використано ${s.count} ${getTimesWord(s.count)})`;
             btn.innerHTML = `
-                <span class="material-symbols-outlined text-[15px] opacity-70">arrow_forward</span>
-                <span class="max-w-[180px] truncate">${escapeHtml(s.displayDesc)}</span>
-                <span class="amount-suggest-badge">${s.count} ${getTimesWord(s.count)}</span>
+                <span class="material-symbols-outlined text-[15px] opacity-70 pointer-events-none">arrow_forward</span>
+                <span class="max-w-[180px] truncate pointer-events-none">${escapeHtml(s.displayDesc)}</span>
+                <span class="amount-suggest-badge pointer-events-none">${s.count} ${getTimesWord(s.count)}</span>
             `;
-            btn.addEventListener('click', () => {
+
+            // Prevent input blur before click is dispatched
+            btn.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+            });
+
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
                 if (descInput) {
                     descInput.value = s.displayDesc;
                     delete descInput.dataset.hasAmountPlaceholder;
