@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=102">
+    <link rel="stylesheet" href="styles.css?v=103">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -641,23 +641,29 @@
                                     </div>
                                     <div class="flex flex-col gap-2">
                                         <div class="flex items-center justify-between">
-                                            <label for="expense-category-select" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Категорія витрати</label>
-                                            <div id="expense-category-badge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-brand-purpleDim text-brand-purple border border-[#202024] text-[10px] font-semibold transition-all">
+                                            <label class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Категорія витрати</label>
+                                            <button type="button" id="expense-category-badge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-brand-purpleDim text-brand-purple border border-[#202024] text-[10px] font-semibold transition-all hover:border-brand-purple/40 cursor-pointer" title="Натисніть для вибору категорії">
                                                 <span class="material-symbols-outlined text-[13px]" id="expense-category-badge-icon">auto_awesome</span>
                                                 <span id="expense-category-badge-text">Авто-визначення</span>
-                                            </div>
+                                            </button>
                                         </div>
-                                        <select id="expense-category-select" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-purple focus:border-brand-purple transition-all text-xs cursor-pointer">
-                                            <option value="auto">Автоматично (AI та подібні категорії)</option>
-                                            <option value="Продукти харчування">Продукти харчування</option>
-                                            <option value="Кафе та ресторани">Кафе та ресторани</option>
-                                            <option value="Транспорт та Авто">Транспорт та Авто</option>
-                                            <option value="Комунальні та Житло">Комунальні та Житло</option>
-                                            <option value="Здоров'я та Спорт">Здоров'я та Спорт</option>
-                                            <option value="Покупки та Одяг">Покупки та Одяг</option>
-                                            <option value="Розваги та Дозвілля">Розваги та Дозвілля</option>
-                                            <option value="Інші витрати">Інші витрати</option>
-                                        </select>
+                                        <!-- Custom Category Trigger Button -->
+                                        <button type="button" id="expense-category-trigger-btn" class="w-full flex items-center justify-between p-3 bg-black border border-[#202024] hover:border-brand-purple/50 rounded-xl text-left transition-all group focus:outline-none focus:ring-1 focus:ring-brand-purple cursor-pointer">
+                                            <div class="flex items-center gap-2.5 min-w-0">
+                                                <div id="expense-category-trigger-icon-wrap" class="w-8 h-8 rounded-lg bg-brand-purpleDim text-brand-purple border border-brand-purple/20 flex items-center justify-center flex-shrink-0 transition-colors">
+                                                    <span id="expense-category-trigger-icon" class="material-symbols-outlined text-[18px]">auto_awesome</span>
+                                                </div>
+                                                <div class="min-w-0">
+                                                    <div id="expense-category-trigger-title" class="text-xs font-semibold text-white truncate">Автоматично (AI)</div>
+                                                    <div id="expense-category-trigger-sub" class="text-[10px] text-brand-textSecondary truncate">Авто-визначення за описом (клікніть для зміни)</div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-1 text-brand-textSecondary group-hover:text-white transition-colors flex-shrink-0">
+                                                <span class="text-[11px] font-medium hidden sm:inline">Змінити</span>
+                                                <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                                            </div>
+                                        </button>
+                                        <input type="hidden" id="expense-category-select" value="auto">
                                     </div>
                                     <div class="flex flex-col gap-2">
                                         <label for="expense-date" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Дата операції</label>
@@ -1532,9 +1538,55 @@
         </div>
     </div>
 
+    <!-- Custom Expense Category Picker Modal -->
+    <div id="expense-category-modal" class="modal-overlay">
+        <div class="modal bg-[#111113] border border-[#202024] p-5 sm:p-6 rounded-3xl max-w-md w-full mx-4 shadow-2xl flex flex-col max-h-[85vh] space-y-4">
+            <!-- Header -->
+            <div class="flex justify-between items-center pb-3 border-b border-[#202024] flex-shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-brand-purpleDim border border-brand-purple/20 flex items-center justify-center text-brand-purple">
+                        <span class="material-symbols-outlined text-[20px]">category</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base sm:text-lg text-white">Вибір категорії витрати</h3>
+                        <p class="text-xs text-brand-textSecondary mt-0.5">Оберіть категорію або увімкніть авто-визначення</p>
+                    </div>
+                </div>
+                <button id="close-expense-category-modal-btn" type="button" class="w-8 h-8 rounded-full bg-[#161619] border border-[#202024] hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-all flex items-center justify-center cursor-pointer" title="Закрити">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                </button>
+            </div>
+
+            <!-- Quick Search inside modal -->
+            <div class="relative flex-shrink-0">
+                <span class="material-symbols-outlined absolute left-3.5 top-2.5 text-brand-textSecondary text-[18px]">search</span>
+                <input type="text" id="expense-category-modal-search" class="w-full bg-black border border-[#202024] rounded-xl pl-10 pr-8 py-2.5 text-xs text-white placeholder:text-brand-textSecondary focus:outline-none focus:ring-1 focus:ring-brand-purple transition-all" placeholder="Пошук категорії (напр., їжа, авто, дім)...">
+                <button type="button" id="expense-category-modal-search-clear" class="absolute right-3 top-2.5 text-brand-textSecondary hover:text-white hidden cursor-pointer" title="Очистити">
+                    <span class="material-symbols-outlined text-[16px]">close</span>
+                </button>
+            </div>
+
+            <!-- Categories Options List -->
+            <div id="expense-category-modal-list" class="space-y-2 overflow-y-auto custom-scrollbar flex-grow min-h-0 pr-1 py-1">
+                <!-- Dynamically rendered category cards -->
+            </div>
+
+            <!-- Footer -->
+            <div class="pt-3 border-t border-[#202024] flex items-center justify-between gap-3 flex-shrink-0">
+                <div class="text-[11px] text-brand-textSecondary truncate">
+                    Обрано: <span id="expense-category-modal-selected-label" class="text-white font-medium">Автоматично (AI)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" id="reset-expense-category-modal-btn" class="px-3 py-2 bg-[#161619] hover:bg-[#202024] text-brand-textSecondary hover:text-white rounded-xl text-xs font-semibold transition-all cursor-pointer">Скинути на Авто</button>
+                    <button type="button" id="confirm-expense-category-modal-btn" class="px-4 py-2 bg-brand-purple hover:opacity-90 text-white rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-md shadow-brand-purple/20">Готово</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
-    <script src="app.js?v=119" defer></script>
+    <script src="app.js?v=120" defer></script>
 </body>
 </html>

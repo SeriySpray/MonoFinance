@@ -41,6 +41,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${yyyy}-${mm}-${dd}`;
     };
 
+    const escapeHtml = (str) => {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    };
+
     // Auth and Sync state variables
     let isDemoMode = false;
     let isRegisterMode = false;
@@ -223,6 +233,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (expenseCatSelect) {
                 expenseCatSelect.addEventListener('change', updateExpenseCategoryPreview);
             }
+            initExpenseCategoryModal();
+            updateExpenseCategoryPreview();
 
             const incomeDescInput = document.getElementById('income-description');
             const incomeCatSelect = document.getElementById('income-category-select');
@@ -2693,32 +2705,316 @@ document.addEventListener('DOMContentLoaded', () => {
         return getCategoryName(description, type);
     };
 
+    const EXPENSE_CATEGORY_ITEMS = [
+        {
+            id: 'auto',
+            name: 'Автоматично (AI та історія)',
+            shortName: 'Автоматично',
+            icon: 'auto_awesome',
+            color: '#A855F7',
+            bg: 'bg-purple-500/15',
+            border: 'border-purple-500/30',
+            text: 'text-purple-400',
+            desc: 'Автоматичне визначення за описом транзакції та вашою історією',
+            keywords: 'авто авто-визначення ai штучний інтелект історія подібні'
+        },
+        {
+            id: 'Продукти харчування',
+            name: 'Продукти харчування',
+            shortName: 'Продукти',
+            icon: 'shopping_cart',
+            color: '#10B981',
+            bg: 'bg-emerald-500/15',
+            border: 'border-emerald-500/30',
+            text: 'text-emerald-400',
+            desc: 'Супермаркети, хліб, булочки, випічка, молоко, м\'ясо, овочі, фрукти',
+            keywords: 'продукти харчування їжа супермаркет сільпо атб хліб булочка булочки круасан бакалія м\'ясо сир'
+        },
+        {
+            id: 'Кафе та ресторани',
+            name: 'Кафе та ресторани',
+            shortName: 'Кафе',
+            icon: 'restaurant',
+            color: '#F59E0B',
+            bg: 'bg-amber-500/15',
+            border: 'border-amber-500/30',
+            text: 'text-amber-400',
+            desc: 'Кав\'ярні, заклади, бари, піцерії, доставка їжі, фастфуд, обіди',
+            keywords: 'кафе ресторан кава чай макдональдс піца суші доставка обід ланч burger kfc'
+        },
+        {
+            id: 'Транспорт та Авто',
+            name: 'Транспорт та Авто',
+            shortName: 'Транспорт',
+            icon: 'directions_car',
+            color: '#3B82F6',
+            bg: 'bg-blue-500/15',
+            border: 'border-blue-500/30',
+            text: 'text-blue-400',
+            desc: 'Пальне, АЗС, таксі, метро, квитки, паркування, мийка, СТО',
+            keywords: 'транспорт авто автомобіль пальне бензин газ азс wog okko таксі uber уклон метро поїзд квиток'
+        },
+        {
+            id: 'Комунальні та Житло',
+            name: 'Комунальні та Житло',
+            shortName: 'Житло',
+            icon: 'home',
+            color: '#8B5CF6',
+            bg: 'bg-indigo-500/15',
+            border: 'border-indigo-500/30',
+            text: 'text-indigo-400',
+            desc: 'Оренда житла, квартплата, світло, газ, інтернет, зв\'язок, ремонт',
+            keywords: 'комунальні житло оренда квартира світло газ вода інтернет телефон зв\'язок kyivstar lifecell'
+        },
+        {
+            id: 'Здоров\'я та Спорт',
+            name: 'Здоров\'я та Спорт',
+            shortName: 'Здоров\'я',
+            icon: 'fitness_center',
+            color: '#EC4899',
+            bg: 'bg-pink-500/15',
+            border: 'border-pink-500/30',
+            text: 'text-pink-400',
+            desc: 'Аптеки, ліки, вітаміни, лікарі, аналізи, стоматологія, спортзал',
+            keywords: 'здоров\'я спорт аптека ліки вітаміни лікар клініка стоматолог зал фітнес тренування'
+        },
+        {
+            id: 'Покупки та Одяг',
+            name: 'Покупки та Одяг',
+            shortName: 'Покупки',
+            icon: 'shopping_bag',
+            color: '#06B6D4',
+            bg: 'bg-cyan-500/15',
+            border: 'border-cyan-500/30',
+            text: 'text-cyan-400',
+            desc: 'Одяг, взуття, техніка, електроніка, товари для дому, маркетплейси',
+            keywords: 'покупки одяг взуття техніка телефон ноут розетка rozetka prom zara кросівки шопінг'
+        },
+        {
+            id: 'Розваги та Дозвілля',
+            name: 'Розваги та Дозвілля',
+            shortName: 'Розваги',
+            icon: 'movie',
+            color: '#F97316',
+            bg: 'bg-orange-500/15',
+            border: 'border-orange-500/30',
+            text: 'text-orange-400',
+            desc: 'Кіно, підписки (Netflix, Spotify, YouTube), ігри, хобі, відпочинок',
+            keywords: 'розваги дозвілля кіно фільм підписка netflix spotify youtube steam гра квитки театр відпочинок'
+        },
+        {
+            id: 'Інші витрати',
+            name: 'Інші витрати',
+            shortName: 'Інші',
+            icon: 'receipt_long',
+            color: '#64748B',
+            bg: 'bg-slate-500/15',
+            border: 'border-slate-500/30',
+            text: 'text-slate-400',
+            desc: 'Різні інші щоденні списання, банківські комісії, донати',
+            keywords: 'інші різні комісія податки переказ благодійність донат готівка'
+        }
+    ];
+
     const updateExpenseCategoryPreview = () => {
         const descInput = document.getElementById('expense-description');
         const select = document.getElementById('expense-category-select');
         const badgeText = document.getElementById('expense-category-badge-text');
         const badgeIcon = document.getElementById('expense-category-badge-icon');
-        if (!badgeText || !badgeIcon) return;
+        const triggerTitle = document.getElementById('expense-category-trigger-title');
+        const triggerSub = document.getElementById('expense-category-trigger-sub');
+        const triggerIcon = document.getElementById('expense-category-trigger-icon');
 
         const desc = descInput ? descInput.value.trim() : '';
-        const selectedVal = select ? select.value : 'auto';
+        const selectedVal = select ? (select.value || 'auto') : 'auto';
 
         if (selectedVal !== 'auto') {
-            badgeText.textContent = selectedVal;
-            badgeIcon.textContent = getCategoryIcon(selectedVal, 'expense');
+            const catIcon = getCategoryIcon(selectedVal, 'expense');
+            if (badgeText) badgeText.textContent = selectedVal;
+            if (badgeIcon) badgeIcon.textContent = catIcon;
+            if (triggerTitle) triggerTitle.textContent = selectedVal;
+            if (triggerSub) triggerSub.textContent = 'Обрано вручну (клікніть для зміни)';
+            if (triggerIcon) triggerIcon.textContent = catIcon;
             return;
         }
 
         if (!desc) {
-            badgeText.textContent = 'Авто-визначення';
-            badgeIcon.textContent = 'auto_awesome';
+            if (badgeText) badgeText.textContent = 'Авто-визначення';
+            if (badgeIcon) badgeIcon.textContent = 'auto_awesome';
+            if (triggerTitle) triggerTitle.textContent = 'Автоматично (AI)';
+            if (triggerSub) triggerSub.textContent = 'Авто-визначення за описом (клікніть для зміни)';
+            if (triggerIcon) triggerIcon.textContent = 'auto_awesome';
             return;
         }
 
         const predictedCat = getCategoryName(desc, 'expense');
-        badgeText.textContent = predictedCat;
-        badgeIcon.textContent = getCategoryIcon(predictedCat, 'expense');
+        const predictedIcon = getCategoryIcon(predictedCat, 'expense');
+        if (badgeText) badgeText.textContent = predictedCat;
+        if (badgeIcon) badgeIcon.textContent = predictedIcon;
+        if (triggerTitle) triggerTitle.textContent = `Авто: ${predictedCat}`;
+        if (triggerSub) triggerSub.textContent = 'Визначено автоматично (клікніть для зміни)';
+        if (triggerIcon) triggerIcon.textContent = predictedIcon;
     };
+
+    function renderExpenseCategoryModalOptions(query = '') {
+        const listEl = document.getElementById('expense-category-modal-list');
+        const selectEl = document.getElementById('expense-category-select');
+        const selectedLabel = document.getElementById('expense-category-modal-selected-label');
+        if (!listEl) return;
+
+        const currentVal = selectEl ? (selectEl.value || 'auto') : 'auto';
+        const q = String(query || '').toLowerCase().trim();
+
+        const filtered = EXPENSE_CATEGORY_ITEMS.filter(item => {
+            if (!q) return true;
+            return item.name.toLowerCase().includes(q) ||
+                   item.shortName.toLowerCase().includes(q) ||
+                   item.desc.toLowerCase().includes(q) ||
+                   item.keywords.toLowerCase().includes(q);
+        });
+
+        if (selectedLabel) {
+            const currentItem = EXPENSE_CATEGORY_ITEMS.find(i => i.id === currentVal);
+            selectedLabel.textContent = currentItem ? currentItem.name : currentVal;
+        }
+
+        if (filtered.length === 0) {
+            listEl.innerHTML = `
+                <div class="py-8 text-center text-brand-textSecondary text-xs">
+                    <span class="material-symbols-outlined text-3xl mb-1 opacity-50 block">search_off</span>
+                    Категорій не знайдено за запитом «${escapeHtml(query)}»
+                </div>
+            `;
+            return;
+        }
+
+        listEl.innerHTML = '';
+        filtered.forEach(item => {
+            const isSelected = (item.id === currentVal);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `expense-cat-card w-full flex items-center justify-between p-3 rounded-2xl border transition-all text-left group cursor-pointer ${
+                isSelected ? 'active-cat' : 'border-[#202024] bg-[#161619]/40 hover:border-[#2b2b30]'
+            }`;
+
+            btn.innerHTML = `
+                <div class="flex items-center gap-3 min-w-0 pr-2">
+                    <div class="w-9 h-9 rounded-xl ${item.bg} ${item.border} border flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105">
+                        <span class="material-symbols-outlined text-[20px]" style="color: ${item.color};">${item.icon}</span>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="text-xs font-semibold text-white group-hover:text-brand-purple transition-colors truncate flex items-center gap-1.5">
+                            <span>${item.name}</span>
+                            ${item.id === 'auto' ? '<span class="px-1.5 py-0.2 bg-brand-purpleDim text-brand-purple text-[9px] font-bold rounded-full">ШІ</span>' : ''}
+                        </div>
+                        <div class="text-[10px] text-brand-textSecondary truncate mt-0.5">${item.desc}</div>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 flex items-center justify-center w-6 h-6">
+                    <span class="material-symbols-outlined text-[20px] transition-all ${
+                        isSelected ? 'text-brand-purple' : 'text-brand-textSecondary/40 group-hover:text-brand-textSecondary'
+                    }">${isSelected ? 'check_circle' : 'radio_button_unchecked'}</span>
+                </div>
+            `;
+
+            btn.addEventListener('click', () => {
+                selectExpenseCategory(item.id);
+            });
+
+            listEl.appendChild(btn);
+        });
+    }
+
+    function openExpenseCategoryModal() {
+        const modal = document.getElementById('expense-category-modal');
+        const searchInput = document.getElementById('expense-category-modal-search');
+        const searchClear = document.getElementById('expense-category-modal-search-clear');
+        if (!modal) return;
+
+        if (searchInput) {
+            searchInput.value = '';
+            if (searchClear) searchClear.classList.add('hidden');
+        }
+
+        renderExpenseCategoryModalOptions('');
+        modal.classList.add('active');
+
+        if (searchInput) {
+            setTimeout(() => searchInput.focus(), 80);
+        }
+    }
+
+    function closeExpenseCategoryModal() {
+        const modal = document.getElementById('expense-category-modal');
+        if (modal) modal.classList.remove('active');
+    }
+
+    function selectExpenseCategory(catId) {
+        const select = document.getElementById('expense-category-select');
+        if (select) {
+            select.value = catId;
+        }
+        updateExpenseCategoryPreview();
+        closeExpenseCategoryModal();
+    }
+
+    function initExpenseCategoryModal() {
+        const triggerBtn = document.getElementById('expense-category-trigger-btn');
+        const badgeBtn = document.getElementById('expense-category-badge');
+        const closeBtn = document.getElementById('close-expense-category-modal-btn');
+        const modal = document.getElementById('expense-category-modal');
+        const searchInput = document.getElementById('expense-category-modal-search');
+        const searchClear = document.getElementById('expense-category-modal-search-clear');
+        const resetBtn = document.getElementById('reset-expense-category-modal-btn');
+        const confirmBtn = document.getElementById('confirm-expense-category-modal-btn');
+
+        if (triggerBtn) triggerBtn.addEventListener('click', openExpenseCategoryModal);
+        if (badgeBtn) badgeBtn.addEventListener('click', openExpenseCategoryModal);
+        if (closeBtn) closeBtn.addEventListener('click', closeExpenseCategoryModal);
+        if (confirmBtn) confirmBtn.addEventListener('click', closeExpenseCategoryModal);
+
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                selectExpenseCategory('auto');
+            });
+        }
+
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeExpenseCategoryModal();
+                }
+            });
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const val = e.target.value;
+                if (searchClear) {
+                    if (val.length > 0) searchClear.classList.remove('hidden');
+                    else searchClear.classList.add('hidden');
+                }
+                renderExpenseCategoryModalOptions(val);
+            });
+        }
+
+        if (searchClear) {
+            searchClear.addEventListener('click', () => {
+                if (searchInput) {
+                    searchInput.value = '';
+                    searchInput.focus();
+                }
+                searchClear.classList.add('hidden');
+                renderExpenseCategoryModalOptions('');
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
+                closeExpenseCategoryModal();
+            }
+        });
+    }
 
     const updateIncomeCategoryPreview = () => {
         const descInput = document.getElementById('income-description');
@@ -4392,16 +4688,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------
     // Savings Envelopes / Goals Functions & Event Handlers
     // -------------------------------------------------------------
-
-    const escapeHtml = (str) => {
-        if (!str) return '';
-        return String(str)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
-    };
 
     const renderIconPicker = (selectedIcon = 'savings') => {
         if (!envelopeIconPicker) return;

@@ -910,3 +910,35 @@ html:not(.dark) #view-expenses textarea:focus {
     box-shadow: 0 0 0 1px #8B5CF6 !important;
     outline: none !important;
 }
+
+/* Custom Expense Category Picker Modal & Option Cards */
+.expense-cat-card {
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.expense-cat-card:hover {
+    transform: translateY(-1px);
+    background-color: #1A1A1E !important;
+}
+.expense-cat-card:active {
+    transform: scale(0.985);
+}
+.expense-cat-card.active-cat {
+    border-color: #8B5CF6 !important;
+    background-color: rgba(139, 92, 246, 0.14) !important;
+    box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.4);
+}
+
+html:not(.dark) .expense-cat-card {
+    background-color: #F6F6F8 !important;
+    border-color: #E2E2E6 !important;
+}
+html:not(.dark) .expense-cat-card:hover {
+    background-color: #ECECF0 !important;
+    border-color: #D4D4D8 !important;
+}
+html:not(.dark) .expense-cat-card.active-cat {
+    background-color: #F5EEFF !important;
+    border-color: #8B5CF6 !important;
+    box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.4) !important;
+}
+
