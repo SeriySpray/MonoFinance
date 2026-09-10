@@ -244,6 +244,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (incomeCatSelect) {
                 incomeCatSelect.addEventListener('change', updateIncomeCategoryPreview);
             }
+            initIncomeCategoryModal();
+            updateIncomeCategoryPreview();
             
             // Category Details Modal Event Listeners
             const categoryDetailsModalEl = document.getElementById('category-details-modal');
@@ -2945,32 +2947,203 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const INCOME_CATEGORY_ITEMS = [
+        {
+            id: 'auto',
+            name: 'Автоматично (AI та історія)',
+            shortName: 'Автоматично',
+            icon: 'auto_awesome',
+            color: '#FF5A36',
+            bg: 'bg-[#FF5A36]/15',
+            border: 'border-[#FF5A36]/30',
+            text: 'text-[#FF5A36]',
+            desc: 'Автоматичне визначення за описом транзакції та вашою історією'
+        },
+        {
+            id: 'Зарплата',
+            name: 'Зарплата',
+            shortName: 'Зарплата',
+            icon: 'work',
+            color: '#10B981',
+            bg: 'bg-emerald-500/15',
+            border: 'border-emerald-500/30',
+            text: 'text-emerald-400',
+            desc: 'Основний оклад, аванс, заробітна плата, щомісячні нарахування'
+        },
+        {
+            id: 'Фріланс та Проєкти',
+            name: 'Фріланс та Проєкти',
+            shortName: 'Фріланс',
+            icon: 'computer',
+            color: '#3B82F6',
+            bg: 'bg-blue-500/15',
+            border: 'border-blue-500/30',
+            text: 'text-blue-400',
+            desc: 'Контракти, проєктна робота, аутсорс, гонорари, підробітки'
+        },
+        {
+            id: 'Премії та Чайові',
+            name: 'Премії та Чайові',
+            shortName: 'Премії',
+            icon: 'redeem',
+            color: '#F59E0B',
+            bg: 'bg-amber-500/15',
+            border: 'border-amber-500/30',
+            text: 'text-amber-400',
+            desc: 'Бонуси, грошові подарунки, винагороди, чай, преміальні виплати'
+        },
+        {
+            id: 'Інвестиції та Кешбек',
+            name: 'Інвестиції та Кешбек',
+            shortName: 'Інвестиції',
+            icon: 'trending_up',
+            color: '#8B5CF6',
+            bg: 'bg-purple-500/15',
+            border: 'border-purple-500/30',
+            text: 'text-purple-400',
+            desc: 'Дивіденди, відсотки за депозитами, банківський кешбек, пасивний дохід'
+        },
+        {
+            id: 'Інші доходи',
+            name: 'Інші доходи',
+            shortName: 'Інші',
+            icon: 'payments',
+            color: '#64748B',
+            bg: 'bg-slate-500/15',
+            border: 'border-slate-500/30',
+            text: 'text-slate-400',
+            desc: 'Повернення боргів, компенсації, продаж речей та інші надходження'
+        }
+    ];
+
     const updateIncomeCategoryPreview = () => {
         const descInput = document.getElementById('income-description');
         const select = document.getElementById('income-category-select');
         const badgeText = document.getElementById('income-category-badge-text');
         const badgeIcon = document.getElementById('income-category-badge-icon');
-        if (!badgeText || !badgeIcon) return;
+        const triggerTitle = document.getElementById('income-category-trigger-title');
+        const triggerSub = document.getElementById('income-category-trigger-sub');
+        const triggerIcon = document.getElementById('income-category-trigger-icon');
 
         const desc = descInput ? descInput.value.trim() : '';
-        const selectedVal = select ? select.value : 'auto';
+        const selectedVal = select ? (select.value || 'auto') : 'auto';
 
         if (selectedVal !== 'auto') {
-            badgeText.textContent = selectedVal;
-            badgeIcon.textContent = getCategoryIcon(selectedVal, 'income');
+            const catIcon = getCategoryIcon(selectedVal, 'income');
+            if (badgeText) badgeText.textContent = selectedVal;
+            if (badgeIcon) badgeIcon.textContent = catIcon;
+            if (triggerTitle) triggerTitle.textContent = selectedVal;
+            if (triggerSub) triggerSub.textContent = 'Обрано вручну (клікніть для зміни)';
+            if (triggerIcon) triggerIcon.textContent = catIcon;
             return;
         }
 
         if (!desc) {
-            badgeText.textContent = 'Авто-визначення';
-            badgeIcon.textContent = 'auto_awesome';
+            if (badgeText) badgeText.textContent = 'Авто-визначення';
+            if (badgeIcon) badgeIcon.textContent = 'auto_awesome';
+            if (triggerTitle) triggerTitle.textContent = 'Автоматично (AI)';
+            if (triggerSub) triggerSub.textContent = 'Авто-визначення за описом (клікніть для зміни)';
+            if (triggerIcon) triggerIcon.textContent = 'auto_awesome';
             return;
         }
 
         const predictedCat = getCategoryName(desc, 'income');
-        badgeText.textContent = predictedCat;
-        badgeIcon.textContent = getCategoryIcon(predictedCat, 'income');
+        const predictedIcon = getCategoryIcon(predictedCat, 'income');
+        if (badgeText) badgeText.textContent = predictedCat;
+        if (badgeIcon) badgeIcon.textContent = predictedIcon;
+        if (triggerTitle) triggerTitle.textContent = `Авто: ${predictedCat}`;
+        if (triggerSub) triggerSub.textContent = 'Визначено автоматично (клікніть для зміни)';
+        if (triggerIcon) triggerIcon.textContent = predictedIcon;
     };
+
+    function renderIncomeCategoryModalOptions() {
+        const listEl = document.getElementById('income-category-modal-list');
+        const selectEl = document.getElementById('income-category-select');
+        if (!listEl) return;
+
+        const currentVal = selectEl ? (selectEl.value || 'auto') : 'auto';
+
+        listEl.innerHTML = '';
+        INCOME_CATEGORY_ITEMS.forEach(item => {
+            const isSelected = (item.id === currentVal);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `income-cat-card w-full flex items-center justify-between p-3 rounded-2xl border transition-all text-left group cursor-pointer ${
+                isSelected ? 'active-cat' : 'border-[#202024] bg-[#161619]/40 hover:border-[#2b2b30]'
+            }`;
+
+            btn.innerHTML = `
+                <div class="flex items-center gap-3 min-w-0 pr-2">
+                    <div class="w-9 h-9 rounded-xl ${item.bg} ${item.border} border flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105">
+                        <span class="material-symbols-outlined text-[20px]" style="color: ${item.color};">${item.icon}</span>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="text-xs font-semibold text-white group-hover:text-brand-accent transition-colors truncate">
+                            <span>${item.name}</span>
+                        </div>
+                        <div class="text-[10px] text-brand-textSecondary truncate mt-0.5">${item.desc}</div>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 flex items-center justify-center w-6 h-6">
+                    <span class="material-symbols-outlined text-[20px] transition-all ${
+                        isSelected ? 'text-brand-accent' : 'text-brand-textSecondary/40 group-hover:text-brand-textSecondary'
+                    }">${isSelected ? 'check_circle' : 'radio_button_unchecked'}</span>
+                </div>
+            `;
+
+            btn.addEventListener('click', () => {
+                selectIncomeCategory(item.id);
+            });
+
+            listEl.appendChild(btn);
+        });
+    }
+
+    function openIncomeCategoryModal() {
+        const modal = document.getElementById('income-category-modal');
+        if (!modal) return;
+        renderIncomeCategoryModalOptions();
+        modal.classList.add('active');
+    }
+
+    function closeIncomeCategoryModal() {
+        const modal = document.getElementById('income-category-modal');
+        if (modal) modal.classList.remove('active');
+    }
+
+    function selectIncomeCategory(catId) {
+        const select = document.getElementById('income-category-select');
+        if (select) {
+            select.value = catId;
+        }
+        updateIncomeCategoryPreview();
+        closeIncomeCategoryModal();
+    }
+
+    function initIncomeCategoryModal() {
+        const triggerBtn = document.getElementById('income-category-trigger-btn');
+        const badgeBtn = document.getElementById('income-category-badge');
+        const closeBtn = document.getElementById('close-income-category-modal-btn');
+        const modal = document.getElementById('income-category-modal');
+
+        if (triggerBtn) triggerBtn.addEventListener('click', openIncomeCategoryModal);
+        if (badgeBtn) badgeBtn.addEventListener('click', openIncomeCategoryModal);
+        if (closeBtn) closeBtn.addEventListener('click', closeIncomeCategoryModal);
+
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeIncomeCategoryModal();
+                }
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
+                closeIncomeCategoryModal();
+            }
+        });
+    }
 
     // 3. Form and Event Handlers
     const addTransaction = async (amount, type, description, date, explicitCategory = null) => {
@@ -3023,6 +3196,8 @@ document.addEventListener('DOMContentLoaded', () => {
             formAddIncome.reset();
             const todayStr = getLocalDateString(new Date());
             document.getElementById('income-date').value = todayStr;
+            const incCat = document.getElementById('income-category-select');
+            if (incCat) incCat.value = 'auto';
             updateIncomeCategoryPreview();
         }
     };
@@ -3039,6 +3214,8 @@ document.addEventListener('DOMContentLoaded', () => {
             formAddExpense.reset();
             const todayStr = getLocalDateString(new Date());
             document.getElementById('expense-date').value = todayStr;
+            const expCat = document.getElementById('expense-category-select');
+            if (expCat) expCat.value = 'auto';
             updateExpenseCategoryPreview();
         }
     };
