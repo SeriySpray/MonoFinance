@@ -2856,40 +2856,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (triggerIcon) triggerIcon.textContent = predictedIcon;
     };
 
-    function renderExpenseCategoryModalOptions(query = '') {
+    function renderExpenseCategoryModalOptions() {
         const listEl = document.getElementById('expense-category-modal-list');
         const selectEl = document.getElementById('expense-category-select');
-        const selectedLabel = document.getElementById('expense-category-modal-selected-label');
         if (!listEl) return;
 
         const currentVal = selectEl ? (selectEl.value || 'auto') : 'auto';
-        const q = String(query || '').toLowerCase().trim();
-
-        const filtered = EXPENSE_CATEGORY_ITEMS.filter(item => {
-            if (!q) return true;
-            return item.name.toLowerCase().includes(q) ||
-                   item.shortName.toLowerCase().includes(q) ||
-                   item.desc.toLowerCase().includes(q) ||
-                   item.keywords.toLowerCase().includes(q);
-        });
-
-        if (selectedLabel) {
-            const currentItem = EXPENSE_CATEGORY_ITEMS.find(i => i.id === currentVal);
-            selectedLabel.textContent = currentItem ? currentItem.name : currentVal;
-        }
-
-        if (filtered.length === 0) {
-            listEl.innerHTML = `
-                <div class="py-8 text-center text-brand-textSecondary text-xs">
-                    <span class="material-symbols-outlined text-3xl mb-1 opacity-50 block">search_off</span>
-                    Категорій не знайдено за запитом «${escapeHtml(query)}»
-                </div>
-            `;
-            return;
-        }
 
         listEl.innerHTML = '';
-        filtered.forEach(item => {
+        EXPENSE_CATEGORY_ITEMS.forEach(item => {
             const isSelected = (item.id === currentVal);
             const btn = document.createElement('button');
             btn.type = 'button';
@@ -2903,9 +2878,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="material-symbols-outlined text-[20px]" style="color: ${item.color};">${item.icon}</span>
                     </div>
                     <div class="min-w-0">
-                        <div class="text-xs font-semibold text-white group-hover:text-brand-purple transition-colors truncate flex items-center gap-1.5">
+                        <div class="text-xs font-semibold text-white group-hover:text-brand-purple transition-colors truncate">
                             <span>${item.name}</span>
-                            ${item.id === 'auto' ? '<span class="px-1.5 py-0.2 bg-brand-purpleDim text-brand-purple text-[9px] font-bold rounded-full">ШІ</span>' : ''}
                         </div>
                         <div class="text-[10px] text-brand-textSecondary truncate mt-0.5">${item.desc}</div>
                     </div>
@@ -2927,21 +2901,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function openExpenseCategoryModal() {
         const modal = document.getElementById('expense-category-modal');
-        const searchInput = document.getElementById('expense-category-modal-search');
-        const searchClear = document.getElementById('expense-category-modal-search-clear');
         if (!modal) return;
-
-        if (searchInput) {
-            searchInput.value = '';
-            if (searchClear) searchClear.classList.add('hidden');
-        }
-
-        renderExpenseCategoryModalOptions('');
+        renderExpenseCategoryModalOptions();
         modal.classList.add('active');
-
-        if (searchInput) {
-            setTimeout(() => searchInput.focus(), 80);
-        }
     }
 
     function closeExpenseCategoryModal() {
@@ -2963,49 +2925,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const badgeBtn = document.getElementById('expense-category-badge');
         const closeBtn = document.getElementById('close-expense-category-modal-btn');
         const modal = document.getElementById('expense-category-modal');
-        const searchInput = document.getElementById('expense-category-modal-search');
-        const searchClear = document.getElementById('expense-category-modal-search-clear');
-        const resetBtn = document.getElementById('reset-expense-category-modal-btn');
-        const confirmBtn = document.getElementById('confirm-expense-category-modal-btn');
 
         if (triggerBtn) triggerBtn.addEventListener('click', openExpenseCategoryModal);
         if (badgeBtn) badgeBtn.addEventListener('click', openExpenseCategoryModal);
         if (closeBtn) closeBtn.addEventListener('click', closeExpenseCategoryModal);
-        if (confirmBtn) confirmBtn.addEventListener('click', closeExpenseCategoryModal);
-
-        if (resetBtn) {
-            resetBtn.addEventListener('click', () => {
-                selectExpenseCategory('auto');
-            });
-        }
 
         if (modal) {
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
                     closeExpenseCategoryModal();
                 }
-            });
-        }
-
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                const val = e.target.value;
-                if (searchClear) {
-                    if (val.length > 0) searchClear.classList.remove('hidden');
-                    else searchClear.classList.add('hidden');
-                }
-                renderExpenseCategoryModalOptions(val);
-            });
-        }
-
-        if (searchClear) {
-            searchClear.addEventListener('click', () => {
-                if (searchInput) {
-                    searchInput.value = '';
-                    searchInput.focus();
-                }
-                searchClear.classList.add('hidden');
-                renderExpenseCategoryModalOptions('');
             });
         }
 

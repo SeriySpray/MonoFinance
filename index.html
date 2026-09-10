@@ -1549,7 +1549,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-base sm:text-lg text-white">Вибір категорії витрати</h3>
-                        <p class="text-xs text-brand-textSecondary mt-0.5">Оберіть категорію або увімкніть авто-визначення</p>
+                        <p class="text-xs text-brand-textSecondary mt-0.5">Оберіть категорію або поверніться до авто-визначення</p>
                     </div>
                 </div>
                 <button id="close-expense-category-modal-btn" type="button" class="w-8 h-8 rounded-full bg-[#161619] border border-[#202024] hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-all flex items-center justify-center cursor-pointer" title="Закрити">
@@ -1557,29 +1557,9 @@
                 </button>
             </div>
 
-            <!-- Quick Search inside modal -->
-            <div class="relative flex-shrink-0">
-                <span class="material-symbols-outlined absolute left-3.5 top-2.5 text-brand-textSecondary text-[18px]">search</span>
-                <input type="text" id="expense-category-modal-search" class="w-full bg-black border border-[#202024] rounded-xl pl-10 pr-8 py-2.5 text-xs text-white placeholder:text-brand-textSecondary focus:outline-none focus:ring-1 focus:ring-brand-purple transition-all" placeholder="Пошук категорії (напр., їжа, авто, дім)...">
-                <button type="button" id="expense-category-modal-search-clear" class="absolute right-3 top-2.5 text-brand-textSecondary hover:text-white hidden cursor-pointer" title="Очистити">
-                    <span class="material-symbols-outlined text-[16px]">close</span>
-                </button>
-            </div>
-
             <!-- Categories Options List -->
             <div id="expense-category-modal-list" class="space-y-2 overflow-y-auto custom-scrollbar flex-grow min-h-0 pr-1 py-1">
                 <!-- Dynamically rendered category cards -->
-            </div>
-
-            <!-- Footer -->
-            <div class="pt-3 border-t border-[#202024] flex items-center justify-between gap-3 flex-shrink-0">
-                <div class="text-[11px] text-brand-textSecondary truncate">
-                    Обрано: <span id="expense-category-modal-selected-label" class="text-white font-medium">Автоматично (AI)</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" id="reset-expense-category-modal-btn" class="px-3 py-2 bg-[#161619] hover:bg-[#202024] text-brand-textSecondary hover:text-white rounded-xl text-xs font-semibold transition-all cursor-pointer">Скинути на Авто</button>
-                    <button type="button" id="confirm-expense-category-modal-btn" class="px-4 py-2 bg-brand-purple hover:opacity-90 text-white rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-md shadow-brand-purple/20">Готово</button>
-                </div>
             </div>
         </div>
     </div>
@@ -1587,6 +1567,6 @@
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
-    <script src="app.js?v=120" defer></script>
+    <script src="app.js?v=121" defer></script>
 </body>
 </html>
