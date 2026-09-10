@@ -214,6 +214,25 @@ document.addEventListener('DOMContentLoaded', () => {
             if (formAddExpense) formAddExpense.addEventListener('submit', handleExpenseSubmit);
             if (formAddRecurring) formAddRecurring.addEventListener('submit', handleRecurringSubmit);
             
+            // Live category preview listeners
+            const expenseDescInput = document.getElementById('expense-description');
+            const expenseCatSelect = document.getElementById('expense-category-select');
+            if (expenseDescInput) {
+                expenseDescInput.addEventListener('input', updateExpenseCategoryPreview);
+            }
+            if (expenseCatSelect) {
+                expenseCatSelect.addEventListener('change', updateExpenseCategoryPreview);
+            }
+
+            const incomeDescInput = document.getElementById('income-description');
+            const incomeCatSelect = document.getElementById('income-category-select');
+            if (incomeDescInput) {
+                incomeDescInput.addEventListener('input', updateIncomeCategoryPreview);
+            }
+            if (incomeCatSelect) {
+                incomeCatSelect.addEventListener('change', updateIncomeCategoryPreview);
+            }
+            
             // Category Details Modal Event Listeners
             const categoryDetailsModalEl = document.getElementById('category-details-modal');
             const closeCategoryDetailsModalBtn = document.getElementById('close-category-details-modal');
@@ -754,6 +773,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                 transactions = serverTxs;
+                if (autoClassifyUncategorized()) {
+                    setTimeout(() => syncData(), 300);
+                }
 
                 savingsTarget = data.savingsTarget !== undefined ? data.savingsTarget : 10000.0;
                 dailyExpenseLimit = data.dailyExpenseLimit !== undefined ? data.dailyExpenseLimit : 1000.0;
@@ -782,6 +804,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function autoClassifyUncategorized() {
+        let changed = false;
+        if (Array.isArray(transactions)) {
+            transactions.forEach(t => {
+                if (!t || !t.description) return;
+                ensureTxType(t);
+                const currentCat = t.category;
+                const isUnset = !currentCat || 
+                                currentCat === 'Витрата' || 
+                                currentCat === 'Різне' || 
+                                currentCat === 'Інші витрати' || 
+                                currentCat === 'Інші доходи' || 
+                                currentCat === 'Голосове введення';
+                if (isUnset) {
+                    const smartCat = getCategoryName(t.description, t.type);
+                    if (smartCat && smartCat !== 'Інші витрати' && smartCat !== 'Інші доходи') {
+                        t.category = smartCat;
+                        changed = true;
+                    }
+                }
+            });
+        }
+        return changed;
+    }
+
     function saveToLocalStorage() {
         localStorage.setItem('mono_transactions', JSON.stringify(transactions));
         localStorage.setItem('mono_savings_target', savingsTarget);
@@ -801,6 +848,10 @@ document.addEventListener('DOMContentLoaded', () => {
             seedSampleData();
         } else {
             transactions = [];
+        }
+
+        if (autoClassifyUncategorized()) {
+            saveToLocalStorage();
         }
 
         const savedTarget = localStorage.getItem('mono_savings_target');
@@ -2033,97 +2084,215 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     };
-    function getCategoryIcon(catOrDesc, type) {
-        const d = catOrDesc ? String(catOrDesc).toLowerCase().trim() : '';
-        if (!d) return type === 'income' ? 'payments' : 'receipt_long';
-        
-        if (d.includes('булочк') || d.includes('булк') || d.includes('хліб') || d.includes('батон') || d.includes('пиріж') || d.includes('пирог') || d.includes('круасан') || d.includes('кекс') || d.includes('кексик') || d.includes('філе') || d.includes('фарш') || d.includes('стейк') || d.includes('печив') || d.includes('вафл') || d.includes('торт') || d.includes('тістечк') || d.includes('пряник') || d.includes('сир') || d.includes('молок') || d.includes('масл') || d.includes('сметан') || d.includes('йогурт') || d.includes('кефір') || d.includes('м\'яс') || d.includes('мяс') || d.includes('ковбас') || d.includes('сосиск') || d.includes('курк') || d.includes('курчат') || d.includes('риб') || d.includes('овоч') || d.includes('фрукт') || d.includes('яблук') || d.includes('банан') || d.includes('картопл') || d.includes('помідор') || d.includes('огірок') || d.includes('ківі') || d.includes('кавун') || d.includes('авокадо') || d.includes('полуниц') || d.includes('ягод') || d.includes('морозив') || d.includes('креветк') || d.includes('продукт') || d.includes('супермаркет') || d.includes('їж') || d.includes('food') || d.includes('сільпо') || d.includes('атб') || d.includes('ашан') || d.includes('metro') || d.includes('маркет') || d.includes('магазин') || d.includes('пачка') || d.includes('шоколад') || d.includes('цукерк') || d.includes('солодощ') || d.includes('снек') || d.includes('чипс') || d.includes('горіх') || d.includes('вода') || d.includes('сік') || d.includes('напій') || d.includes('чай') || d.includes('какао')) {
-            return 'shopping_cart';
-        }
-        if (d.includes('кафе') || d.includes('ресторан') || d.includes('кава') || d.includes('coffee') || d.includes('cafe') || d.includes('ланч') || d.includes('обід') || d.includes('сніданок') || d.includes('вечер') || d.includes('перекус') || d.includes('макдональдз') || d.includes('mcdonald') || d.includes('кфс') || d.includes('kfc') || d.includes('піца') || d.includes('pizza') || d.includes('суші') || d.includes('sushi') || d.includes('burger') || d.includes('бургер') || d.includes('шаурм') || d.includes('шаверм') || d.includes('хот-дог') || d.includes('хотдог') || d.includes('сендвіч') || d.includes('паста') || d.includes('суп') || d.includes('салат') || d.includes('борщ') || d.includes('вареник') || d.includes('пельмен') || d.includes('бар') || d.includes('пиво') || d.includes('заклад') || d.includes('глово') || d.includes('glovo')) {
-            return 'restaurant';
-        }
-        if (d.includes('таксі') || d.includes('taxi') || d.includes('uber') || d.includes('uklon') || d.includes('уклон') || d.includes('bolt') || d.includes('проїзд') || d.includes('метро') || d.includes('автобус') || d.includes('квиток') || d.includes('тролейбус')) {
-            return 'local_taxi';
-        }
-        if (d.includes('транспорт') || d.includes('авто') || d.includes('бензин') || d.includes('газ') || d.includes('окко') || d.includes('wog') || d.includes('пальне') || d.includes('заправк') || d.includes('автомийк') || d.includes('сто') || d.includes('машин')) {
-            return 'directions_car';
-        }
-        if (d.includes('комунал') || d.includes('житло') || d.includes('квартплат') || d.includes('оренд') || d.includes('rent') || d.includes('світл') || d.includes('газ') || d.includes('вод') || d.includes('домофон') || d.includes('дім') || d.includes('ремонт') || d.includes('кварт')) {
-            return 'home';
-        }
-        if (d.includes('інтернет') || d.includes('провайдер') || d.includes('wi-fi') || d.includes('зв\'язок') || d.includes('kyivstar') || d.includes('vodafone') || d.includes('lifecell') || d.includes('мобільн')) {
-            return 'wifi';
-        }
-        if (d.includes('аптек') || d.includes('ліки') || d.includes('лікар') || d.includes('аналіз') || d.includes('стоматолог') || d.includes('медиц') || d.includes('здоров')) {
-            return 'medical_services';
-        }
-        if (d.includes('спорт') || d.includes('gym') || d.includes('fitness') || d.includes('зал') || d.includes('тренуван') || d.includes('басейн')) {
-            return 'fitness_center';
-        }
-        if (d.includes('одяг') || d.includes('взутт') || d.includes('куртк') || d.includes('джинс') || d.includes('футболк') || d.includes('шопінг') || d.includes('zara') || d.includes('h&m')) {
-            return 'checkroom';
-        }
-        if (d.includes('покупки') || d.includes('технік') || d.includes('телефон') || d.includes('ноутбук') || d.includes('комп\'ютер') || d.includes('гаджет') || d.includes('придбав') || d.includes('купив')) {
-            return 'shopping_bag';
-        }
-        if (d.includes('кіно') || d.includes('театр') || d.includes('концерт') || d.includes('фільм') || d.includes('розваг') || d.includes('дозвілля')) {
-            return 'movie';
-        }
-        if (d.includes('ігр') || d.includes('гра') || d.includes('steam') || d.includes('playstation') || d.includes('xbox')) {
-            return 'sports_esports';
-        }
-        if (d.includes('підписк') || d.includes('подпіск') || d.includes('netflix') || d.includes('spotify') || d.includes('youtube') || d.includes('megogo')) {
-            return 'subscriptions';
-        }
-        if (d.includes('зарплат') || d.includes('salary') || d.includes('робот') || d.includes('аванс') || d.includes('стипенд')) {
-            return 'work';
-        }
-        if (d.includes('фріланс') || d.includes('freelance') || d.includes('проєкт') || d.includes('проект')) {
-            return 'computer';
-        }
-        if (d.includes('чайов') || d.includes('tip') || d.includes('бонус') || d.includes('премі') || d.includes('подарунок')) {
-            return 'redeem';
-        }
-        if (d.includes('дивіденд') || d.includes('dividend') || d.includes('акці') || d.includes('інвест') || d.includes('кешбек') || d.includes('cashback') || d.includes('повернен')) {
-            return 'trending_up';
-        }
-        if (d.includes('конверт')) {
-            return 'account_balance_wallet';
-        }
+    const EXPENSE_STEM_MAP = {
+        "Кафе та ресторани": [
+            "макдональдз", "mcdonald", "кфс", "kfc", "піца", "піцері", "pizza", "суші", "sushi", "рол",
+            "бургер", "burger", "шаурм", "шаверм", "донер", "кебаб", "фалафель", "сендвіч", "хот-дог",
+            "хотдог", "вок", "рамен", "том ям", "боул", "кав'ярн", "кава", "кавус", "coffee", "cafe",
+            "латте", "лате", "капучино", "американо", "еспресо", "флет вайт", "раф", "глясе", "матча",
+            "ресторан", "кафе", "ланч", "обід", "сніданок", "вечер", "перекус", "бізнес ланч", "столов",
+            "їдальн", "паб", "бар", "коктейль", "пиво", "сидр", "кальян", "заклад", "глово", "glovo",
+            "bolt food", "доставка їж", "кур'єр їж"
+        ],
+        "Продукти харчування": [
+            "бул", "булочк", "булк", "хліб", "батон", "круас", "пиріж", "пирог", "кекс", "мафін",
+            "пончик", "донат", "лаваш", "багет", "паск", "бублик", "рогалик", "сухар", "грінк", "випіч",
+            "пекарн", "чіабат", "паніні", "печив", "вафл", "торт", "тістеч", "пряник", "шоколад",
+            "цукер", "солод", "зефір", "мармелад", "халв", "пастил", "льодяник", "карамел", "батончик",
+            "морозив", "згущен", "м'яс", "мяс", "філе", "фарш", "стейк", "биточ", "котлет", "гуляш",
+            "шашлик", "відбивн", "ковбас", "сосис", "сардел", "шинк", "бужен", "балик", "бекон", "сало",
+            "курк", "куряч", "птиц", "індич", "качк", "гомілк", "крильц", "стегн", "ялович", "свинин",
+            "телятин", "баранин", "риб", "форел", "лосос", "сьомг", "тунец", "тунц", "скумбр", "оселед",
+            "хек", "минтай", "краб", "кревет", "міді", "кальмар", "морепрод", "ікр", "сир", "молок",
+            "молоч", "масл", "смет", "йогурт", "кефір", "ряжанк", "вершк", "творог", "бринз", "сулугун",
+            "пармезан", "моцарел", "яйц", "яєч", "овоч", "помідор", "томат", "огірок", "огірк", "капуст",
+            "моркв", "буряк", "цибул", "часник", "перец", "перч", "картоп", "барабол", "пюре", "кабач",
+            "баклаж", "гриб", "печериц", "зелен", "петруш", "кріп", "шпинат", "рукол", "фрукт", "яблук",
+            "яблуч", "груш", "банан", "апельсин", "мандарин", "цитрус", "лимон", "лайм", "грейп", "персик",
+            "нектарин", "абрикос", "слив", "виног", "хурм", "ківі", "ананас", "манго", "авокадо", "ягод",
+            "полуниц", "клубнік", "малин", "лохин", "чорниц", "смородин", "порічк", "черешн", "вишн",
+            "кавун", "дин", "макарон", "спагет", "вермішел", "круп", "гречк", "рис", "вівсян", "пшон",
+            "булгур", "кускус", "кіноа", "горох", "квасол", "сочевиц", "кукурудз", "борос", "мук", "цукор",
+            "цукр", "сіл", "олі", "оцет", "соус", "кетчуп", "майонез", "гірчиц", "спеці", "приправ",
+            "снек", "чипс", "чіпс", "горіх", "горішк", "арахіс", "фундук", "мигдал", "кеш'ю", "кешью",
+            "насін", "сім'я", "попкорн", "вод", "водичк", "мінералк", "сік", "сочок", "морс", "компот",
+            "узвар", "квас", "лимонад", "кол", "пепс", "спрайт", "фант", "напі", "енергетик", "чай",
+            "чайок", "какао", "цикорій", "супермарк", "маркет", "продукт", "гастрон", "магазин", "пакет",
+            "купув", "їж", "харч", "пожив", "сільпо", "атб", "ашан", "варус", "фора", "metro", "novus",
+            "траш", "кишеня", "таврія", "екомаркет", "ринок", "базар", "ларьок", "кіоск"
+        ],
+        "Транспорт та Авто": [
+            "проїзд", "проїзн", "квиток", "талон", "метро", "автобус", "маршрутк", "тролейбус", "трамвай",
+            "електричк", "поїзд", "потяг", "укрзалізниц", "інтерсіті", "вокзал", "таксі", "taxi", "uber",
+            "убер", "uklon", "уклон", "bolt", "драйвер", "поїздк", "бензин", "дизель", "дт", "газ на авто",
+            "пальн", "заправк", "азс", "окко", "wog", "socar", "upg", "брсм", "авіас", "shell", "автомийк",
+            "автомийн", "мийка авто", "шиномонтаж", "сто", "ремонт авто", "запчастин", "детал", "масло моторн",
+            "страховк", "осаго", "каско", "парковк", "паркінг", "штраф", "пдр", "прокат", "каршерінг",
+            "самокат", "скутер", "байк", "велосипед", "авто", "машин"
+        ],
+        "Комунальні та Житло": [
+            "комунал", "квартплат", "оренд", "rent", "житл", "квартир", "світл", "електроенерг", "дтек",
+            "dtek", "ясно", "yasno", "газ", "нафтогаз", "водоканал", "гаряча вода", "холодна вода", "опален",
+            "теплоенерг", "осбб", "жек", "смітт", "домофон", "інтернет", "провайдер", "роутер", "київстар дім",
+            "воля", "ланет", "сантехнік", "електрик", "ремонт дім", "ремонт кварт", "будматеріал", "епіцентр",
+            "леруа", "мебл", "ikea", "ікеа", "юск", "jysk", "господарсь", "побутова хім", "порошок", "миючий"
+        ],
+        "Здоров'я та Спорт": [
+            "аптек", "ліки", "таблетк", "вітамін", "мазь", "крапл", "сироп", "антибіотик", "знеболюв",
+            "бад", "пластир", "бинт", "термометр", "лікар", "клінік", "поліклінік", "лікарн", "госпітал",
+            "прийом лікар", "консультаці", "аналіз", "сінево", "synevo", "діла", "dila", "узд", "мрт",
+            "кт", "рентген", "стоматолог", "зуб", "пломб", "чистка зуб", "брекет", "окуліст", "зір",
+            "окуляр", "лінз", "масаж", "терапі", "вакцин", "спорт", "gym", "fitness", "фітнес", "зал",
+            "тренуван", "абонемент", "тренер", "басейн", "йог", "пілатес", "спорткомплекс", "спортінвентар",
+            "протеїн", "гейнер", "гантел"
+        ],
+        "Покупки та Одяг": [
+            "одяг", "взутт", "кросівк", "черевик", "туфл", "босоніжк", "куртк", "пальто", "пуховик",
+            "вітровк", "джинс", "штани", "брюк", "футболк", "сорочк", "худі", "світшот", "светр",
+            "кофт", "шорт", "платт", "сукн", "спідниц", "білизн", "шкарпетк", "шапк", "шарф", "рукавичк",
+            "кепк", "сумк", "рюкзак", "гаманець", "ремін", "zara", "h&m", "bershka", "pull&bear",
+            "mango", "stradivarius", "інтертоп", "intertop", "шопінг", "технік", "електронік", "ноутбук",
+            "комп'ютер", "компютер", "монітор", "клавіатур", "мишк", "навушник", "airpods", "смартфон",
+            "телефон", "iphone", "айфон", "чохол", "скло", "зарядк", "павербанк", "кабел", "планшет",
+            "ipad", "годинник", "apple watch", "гаджет", "косметик", "парфум", "духи", "крем", "шампун",
+            "гель для душ", "мило", "зубна паст", "щітк", "бритв", "дезодорант", "перукарн", "барбер",
+            "барбершоп", "стрижк", "манікюр", "педикюр", "бров", "вії", "косметолог", "солярій",
+            "подарунок", "квіт", "букет", "книг", "книжк", "канцеляр", "зоотовар", "корм для", "кіт",
+            "котик", "собак", "ветклінік", "покупк", "придбав", "купив"
+        ],
+        "Розваги та Дозвілля": [
+            "кіно", "кінотеатр", "фільм", "мультиплекс", "планета кіно", "театр", "вистав", "концерт",
+            "фестиваль", "музей", "виставк", "боулінг", "більярд", "квест", "пейнтбол", "атракціон",
+            "зоопарк", "аквапарк", "парк розваг", "ігр", "гра", "steam", "стим", "playstation", "ps store",
+            "psn", "xbox", "nintendo", "epic games", "геймінг", "підписк", "подпіск", "subscription",
+            "netflix", "spotify", "youtube premium", "apple music", "megogo", "sweet tv", "patreon",
+            "telegram premium", "хобі", "настілк", "подорож", "туризм", "відпочинок", "готель",
+            "hotel", "booking", "airbnb"
+        ]
+    };
 
-        if (type === 'income') return 'payments';
-        if (type === 'savings') return 'shield';
-        return 'receipt_long';
+    const INCOME_STEM_MAP = {
+        "Зарплата": ["зарплат", "salary", "робот", "аванс", "стипенд", "ставка", "получка"],
+        "Премії та Чайові": ["чайов", "tip", "бонус", "премі", "подарунок"],
+        "Інвестиції та Кешбек": ["дивіденд", "dividend", "акці", "інвест", "кешбек", "cashback", "повернен", "відсотк", "депозит", "крипт"],
+        "Фріланс та Проєкти": ["фріланс", "freelance", "проєкт", "проект", "замовленн", "контракт", "розробк", "дизайн", "копірайт", "клієнт"]
+    };
+
+    const CATEGORY_ICON_MAP = {
+        "Продукти харчування": "shopping_cart",
+        "Кафе та ресторани": "restaurant",
+        "Транспорт та Авто": "directions_car",
+        "Комунальні та Житло": "home",
+        "Здоров'я та Спорт": "fitness_center",
+        "Покупки та Одяг": "shopping_bag",
+        "Розваги та Дозвілля": "movie",
+        "Інші витрати": "receipt_long",
+        "Зарплата": "work",
+        "Фріланс та Проєкти": "computer",
+        "Премії та Чайові": "redeem",
+        "Інвестиції та Кешбек": "trending_up",
+        "Інші доходи": "payments",
+        "Конверти": "account_balance_wallet"
+    };
+
+    function findSimilarHistoricalCategory(desc, type) {
+        if (!desc || !Array.isArray(transactions) || transactions.length === 0) return null;
+        const cleanDesc = String(desc).toLowerCase().trim();
+        if (!cleanDesc) return null;
+
+        const inputTokens = cleanDesc.split(/[\s,.;:!?+*\/\\-_()]+/).filter(w => w.length >= 2);
+        let bestMatch = null;
+        let highestScore = 0;
+
+        for (const t of transactions) {
+            if (!t || t.type !== type || !t.description) continue;
+            const validCat = (t.category && t.category !== 'Витрата' && t.category !== 'Різне' && t.category !== 'Інші витрати' && t.category !== 'Інші доходи' && t.category !== 'Голосове введення') ? t.category : null;
+            if (!validCat) continue;
+
+            const histDesc = String(t.description).toLowerCase().trim();
+            if (histDesc === cleanDesc) return validCat;
+
+            if (histDesc.includes(cleanDesc) || cleanDesc.includes(histDesc)) {
+                if (0.85 > highestScore) {
+                    highestScore = 0.85;
+                    bestMatch = validCat;
+                }
+            }
+
+            const histTokens = histDesc.split(/[\s,.;:!?+*\/\\-_()]+/).filter(w => w.length >= 2);
+            if (histTokens.length > 0 && inputTokens.length > 0) {
+                let shared = 0;
+                for (const it of inputTokens) {
+                    for (const ht of histTokens) {
+                        if (it === ht || (it.length >= 4 && ht.startsWith(it.substring(0, 4))) || (ht.length >= 4 && it.startsWith(ht.substring(0, 4)))) {
+                            shared++;
+                            break;
+                        }
+                    }
+                }
+                const tokenScore = shared / Math.max(inputTokens.length, histTokens.length);
+                if (tokenScore > highestScore && tokenScore >= 0.4) {
+                    highestScore = tokenScore;
+                    bestMatch = validCat;
+                }
+            }
+        }
+        return bestMatch;
     }
 
     function getCategoryName(desc, type) {
-        const d = desc ? desc.toLowerCase().trim() : '';
+        const d = desc ? String(desc).toLowerCase().trim() : '';
         if (!d) return type === 'income' ? 'Інші доходи' : 'Інші витрати';
         if (d.includes('конверт')) return 'Конверти';
 
+        // 1. Check historical similarity first
+        const histCat = findSimilarHistoricalCategory(desc, type);
+        if (histCat) return histCat;
+
+        // 2. Semantic matching with lowered threshold
         if (type === 'income') {
-            if (d.includes('зарплат') || d.includes('salary') || d.includes('робот') || d.includes('аванс') || d.includes('стипенд')) return 'Зарплата';
-            if (d.includes('фріланс') || d.includes('freelance') || d.includes('проєкт') || d.includes('проект')) return 'Фріланс та Проєкти';
-            if (d.includes('чайов') || d.includes('tip') || d.includes('бонус') || d.includes('премі')) return 'Премії та Чайові';
-            if (d.includes('дивіденд') || d.includes('dividend') || d.includes('акці') || d.includes('інвест') || d.includes('кешбек') || d.includes('cashback') || d.includes('повернен')) return 'Інвестиції та Кешбек';
-            
+            for (const [cat, stems] of Object.entries(INCOME_STEM_MAP)) {
+                if (stems.some(s => d.includes(s))) return cat;
+            }
             return 'Інші доходи';
         } else if (type === 'expense') {
-            if (d.includes('кава') || d.includes('coffee') || d.includes('cafe') || d.includes('кафе') || d.includes('ланч') || d.includes('обід') || d.includes('сніданок') || d.includes('вечер') || d.includes('перекус') || d.includes('ресторан') || d.includes('макдональдз') || d.includes('mcdonald') || d.includes('кфс') || d.includes('kfc') || d.includes('піца') || d.includes('pizza') || d.includes('суші') || d.includes('sushi') || d.includes('burger') || d.includes('бургер') || d.includes('шаурм') || d.includes('шаверм') || d.includes('сендвіч') || d.includes('хот-дог') || d.includes('хотдог') || d.includes('паста') || d.includes('суп') || d.includes('салат') || d.includes('борщ') || d.includes('вареник') || d.includes('пельмен') || d.includes('бар') || d.includes('пиво') || d.includes('заклад') || d.includes('глово') || d.includes('glovo') || d.includes('bolt food')) return 'Кафе та ресторани';
+            const scores = {};
+            for (const [cat, stems] of Object.entries(EXPENSE_STEM_MAP)) {
+                let score = 0;
+                for (const s of stems) {
+                    if (d.includes(s)) score++;
+                }
+                if (score > 0) scores[cat] = score;
+            }
 
-            if (d.includes('булочк') || d.includes('булк') || d.includes('хліб') || d.includes('батон') || d.includes('пиріж') || d.includes('пирог') || d.includes('круасан') || d.includes('кекс') || d.includes('кексик') || d.includes('філе') || d.includes('фарш') || d.includes('стейк') || d.includes('печив') || d.includes('вафл') || d.includes('торт') || d.includes('тістечк') || d.includes('пряник') || d.includes('сир') || d.includes('молок') || d.includes('масл') || d.includes('сметан') || d.includes('йогурт') || d.includes('кефір') || d.includes('м\'яс') || d.includes('мяс') || d.includes('ковбас') || d.includes('сосиск') || d.includes('курк') || d.includes('курчат') || d.includes('риб') || d.includes('овоч') || d.includes('фрукт') || d.includes('яблук') || d.includes('банан') || d.includes('картопл') || d.includes('помідор') || d.includes('огірок') || d.includes('ківі') || d.includes('кавун') || d.includes('авокадо') || d.includes('полуниц') || d.includes('ягод') || d.includes('морозив') || d.includes('креветк') || d.includes('супермаркет') || d.includes('продукт') || d.includes('їж') || d.includes('food') || d.includes('купув') || d.includes('сільпо') || d.includes('атб') || d.includes('ашан') || d.includes('metro') || d.includes('маркет') || d.includes('магазин') || d.includes('пачка') || d.includes('шоколад') || d.includes('цукерк') || d.includes('солодощ') || d.includes('снек') || d.includes('чипс') || d.includes('горіх') || d.includes('пакет') || d.includes('вода') || d.includes('сік') || d.includes('напій') || d.includes('чай') || d.includes('какао')) return 'Продукти харчування';
-
-            if (d.includes('проїзд') || d.includes('таксі') || d.includes('taxi') || d.includes('метро') || d.includes('автобус') || d.includes('тролейбус') || d.includes('квиток') || d.includes('транспорт') || d.includes('убер') || d.includes('uber') || d.includes('uklon') || d.includes('уклон') || d.includes('bolt') || d.includes('бензин') || d.includes('газ') || d.includes('окко') || d.includes('wog') || d.includes('пальне') || d.includes('заправк') || d.includes('автомийк') || d.includes('сто') || d.includes('авто')) return 'Транспорт та Авто';
-            if (d.includes('комунал') || d.includes('оренд') || d.includes('rent') || d.includes('світл') || d.includes('газ') || d.includes('вод') || d.includes('квартплат') || d.includes('інтернет') || d.includes('домофон') || d.includes('дім') || d.includes('кварт')) return 'Комунальні та Житло';
-            if (d.includes('спорт') || d.includes('gym') || d.includes('fitness') || d.includes('зал') || d.includes('тренуван') || d.includes('аптек') || d.includes('ліки') || d.includes('лікар') || d.includes('медиц') || d.includes('здоров')) return 'Здоров\'я та Спорт';
-            if (d.includes('одяг') || d.includes('взутт') || d.includes('шопінг') || d.includes('покупк') || d.includes('технік') || d.includes('телефон') || d.includes('придбав') || d.includes('купив')) return 'Покупки та Одяг';
-            if (d.includes('кіно') || d.includes('театр') || d.includes('ігр') || d.includes('гра') || d.includes('подпіск') || d.includes('підписк') || d.includes('netflix') || d.includes('spotify') || d.includes('розваг')) return 'Розваги та Дозвілля';
-
+            if (Object.keys(scores).length > 0) {
+                let bestCat = 'Інші витрати';
+                let maxScore = 0;
+                for (const [cat, score] of Object.entries(scores)) {
+                    if (score > maxScore) {
+                        maxScore = score;
+                        bestCat = cat;
+                    }
+                }
+                return bestCat;
+            }
             return 'Інші витрати';
         } else {
             return 'Збереження';
         }
+    }
+
+    function getCategoryIcon(catOrDesc, type) {
+        if (!catOrDesc) return type === 'income' ? 'payments' : (type === 'savings' ? 'shield' : 'receipt_long');
+        const str = String(catOrDesc).trim();
+        if (CATEGORY_ICON_MAP[str]) return CATEGORY_ICON_MAP[str];
+
+        const calculated = getCategoryName(str, type);
+        if (CATEGORY_ICON_MAP[calculated]) return CATEGORY_ICON_MAP[calculated];
+
+        if (type === 'income') return 'payments';
+        if (type === 'savings') return 'shield';
+        return 'receipt_long';
     }
 
     const renderLedger = (listElId, typeFilter, isRecentOnly) => {
@@ -2496,7 +2665,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!description) return getCategoryName(description, type);
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 600);
+            const timeoutId = setTimeout(() => controller.abort(), 2000);
 
             const resp = await fetch(getApiUrl('api/categorize'), {
                 method: 'POST',
@@ -2509,6 +2678,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (resp.ok) {
                 const data = await resp.json();
                 if (data && data.success && data.category) {
+                    const localCat = getCategoryName(description, type);
+                    // Prevent AI from downgrading a recognized category to 'Інші витрати'/'Інші доходи'
+                    if ((data.category === 'Інші витрати' || data.category === 'Інші доходи') && 
+                        (localCat !== 'Інші витрати' && localCat !== 'Інші доходи')) {
+                        return localCat;
+                    }
                     return data.category;
                 }
             }
@@ -2518,13 +2693,69 @@ document.addEventListener('DOMContentLoaded', () => {
         return getCategoryName(description, type);
     };
 
+    const updateExpenseCategoryPreview = () => {
+        const descInput = document.getElementById('expense-description');
+        const select = document.getElementById('expense-category-select');
+        const badgeText = document.getElementById('expense-category-badge-text');
+        const badgeIcon = document.getElementById('expense-category-badge-icon');
+        if (!badgeText || !badgeIcon) return;
+
+        const desc = descInput ? descInput.value.trim() : '';
+        const selectedVal = select ? select.value : 'auto';
+
+        if (selectedVal !== 'auto') {
+            badgeText.textContent = selectedVal;
+            badgeIcon.textContent = getCategoryIcon(selectedVal, 'expense');
+            return;
+        }
+
+        if (!desc) {
+            badgeText.textContent = 'Авто-визначення';
+            badgeIcon.textContent = 'auto_awesome';
+            return;
+        }
+
+        const predictedCat = getCategoryName(desc, 'expense');
+        badgeText.textContent = predictedCat;
+        badgeIcon.textContent = getCategoryIcon(predictedCat, 'expense');
+    };
+
+    const updateIncomeCategoryPreview = () => {
+        const descInput = document.getElementById('income-description');
+        const select = document.getElementById('income-category-select');
+        const badgeText = document.getElementById('income-category-badge-text');
+        const badgeIcon = document.getElementById('income-category-badge-icon');
+        if (!badgeText || !badgeIcon) return;
+
+        const desc = descInput ? descInput.value.trim() : '';
+        const selectedVal = select ? select.value : 'auto';
+
+        if (selectedVal !== 'auto') {
+            badgeText.textContent = selectedVal;
+            badgeIcon.textContent = getCategoryIcon(selectedVal, 'income');
+            return;
+        }
+
+        if (!desc) {
+            badgeText.textContent = 'Авто-визначення';
+            badgeIcon.textContent = 'auto_awesome';
+            return;
+        }
+
+        const predictedCat = getCategoryName(desc, 'income');
+        badgeText.textContent = predictedCat;
+        badgeIcon.textContent = getCategoryIcon(predictedCat, 'income');
+    };
+
     // 3. Form and Event Handlers
-    const addTransaction = async (amount, type, description, date) => {
+    const addTransaction = async (amount, type, description, date, explicitCategory = null) => {
         if (!amount || isNaN(amount) || amount <= 0) return false;
         if (!description) return false;
         if (!date) return false;
 
-        const category = await categorizeWithAI(description, type);
+        let category = explicitCategory && explicitCategory !== 'auto'
+            ? explicitCategory
+            : await categorizeWithAI(description, type);
 
         const newTx = {
             id: Date.now().toString(),
@@ -2560,11 +2791,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const amount = parseFloat(document.getElementById('income-amount').value);
         const description = document.getElementById('income-description').value.trim();
         const date = document.getElementById('income-date').value;
+        const categorySelect = document.getElementById('income-category-select');
+        const explicitCategory = categorySelect && categorySelect.value !== 'auto' ? categorySelect.value : null;
         
-        if (await addTransaction(amount, 'income', description, date)) {
+        if (await addTransaction(amount, 'income', description, date, explicitCategory)) {
             formAddIncome.reset();
             const todayStr = getLocalDateString(new Date());
             document.getElementById('income-date').value = todayStr;
+            updateIncomeCategoryPreview();
         }
     };
 
@@ -2573,11 +2807,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const amount = parseFloat(document.getElementById('expense-amount').value);
         const description = document.getElementById('expense-description').value.trim();
         const date = document.getElementById('expense-date').value;
+        const categorySelect = document.getElementById('expense-category-select');
+        const explicitCategory = categorySelect && categorySelect.value !== 'auto' ? categorySelect.value : null;
         
-        if (await addTransaction(amount, 'expense', description, date)) {
+        if (await addTransaction(amount, 'expense', description, date, explicitCategory)) {
             formAddExpense.reset();
             const todayStr = getLocalDateString(new Date());
             document.getElementById('expense-date').value = todayStr;
+            updateExpenseCategoryPreview();
         }
     };
 

@@ -543,6 +543,23 @@
                                         <input type="text" id="income-description" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" placeholder="Наприклад, Заробітна плата, Фріланс..." required autocomplete="off">
                                     </div>
                                     <div class="flex flex-col gap-2">
+                                        <div class="flex items-center justify-between">
+                                            <label for="income-category-select" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Категорія надходження</label>
+                                            <div id="income-category-badge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-brand-accentDim text-brand-accent border border-[#202024] text-[10px] font-semibold transition-all">
+                                                <span class="material-symbols-outlined text-[13px]" id="income-category-badge-icon">auto_awesome</span>
+                                                <span id="income-category-badge-text">Авто-визначення</span>
+                                            </div>
+                                        </div>
+                                        <select id="income-category-select" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent focus:border-brand-accent transition-all text-xs cursor-pointer">
+                                            <option value="auto">Автоматично (AI та подібні категорії)</option>
+                                            <option value="Зарплата">Зарплата</option>
+                                            <option value="Фріланс та Проєкти">Фріланс та Проєкти</option>
+                                            <option value="Премії та Чайові">Премії та Чайові</option>
+                                            <option value="Інвестиції та Кешбек">Інвестиції та Кешбек</option>
+                                            <option value="Інші доходи">Інші доходи</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex flex-col gap-2">
                                         <label for="income-date" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Дата зарахування</label>
                                         <input type="date" id="income-date" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" required>
                                     </div>
@@ -621,6 +638,26 @@
                                     <div class="flex flex-col gap-2">
                                         <label for="expense-description" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Призначення витрати / Опис</label>
                                         <input type="text" id="expense-description" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-purple focus:border-brand-purple transition-all text-xs" placeholder="Наприклад, Супермаркет, Оренда, Кава..." required autocomplete="off">
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <div class="flex items-center justify-between">
+                                            <label for="expense-category-select" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Категорія витрати</label>
+                                            <div id="expense-category-badge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-brand-purpleDim text-brand-purple border border-[#202024] text-[10px] font-semibold transition-all">
+                                                <span class="material-symbols-outlined text-[13px]" id="expense-category-badge-icon">auto_awesome</span>
+                                                <span id="expense-category-badge-text">Авто-визначення</span>
+                                            </div>
+                                        </div>
+                                        <select id="expense-category-select" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-purple focus:border-brand-purple transition-all text-xs cursor-pointer">
+                                            <option value="auto">Автоматично (AI та подібні категорії)</option>
+                                            <option value="Продукти харчування">Продукти харчування</option>
+                                            <option value="Кафе та ресторани">Кафе та ресторани</option>
+                                            <option value="Транспорт та Авто">Транспорт та Авто</option>
+                                            <option value="Комунальні та Житло">Комунальні та Житло</option>
+                                            <option value="Здоров'я та Спорт">Здоров'я та Спорт</option>
+                                            <option value="Покупки та Одяг">Покупки та Одяг</option>
+                                            <option value="Розваги та Дозвілля">Розваги та Дозвілля</option>
+                                            <option value="Інші витрати">Інші витрати</option>
+                                        </select>
                                     </div>
                                     <div class="flex flex-col gap-2">
                                         <label for="expense-date" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Дата операції</label>
@@ -1498,6 +1535,6 @@
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
-    <script src="app.js?v=118" defer></script>
+    <script src="app.js?v=119" defer></script>
 </body>
 </html>
