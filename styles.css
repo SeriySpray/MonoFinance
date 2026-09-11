@@ -1075,3 +1075,156 @@ html:not(.dark) .amount-suggest-badge {
     vertical-align: middle;
     white-space: nowrap;
 }
+
+/* Chart Popup Tooltip (Mobile & PC) */
+.chart-popup-tooltip {
+    position: absolute;
+    z-index: 50;
+    pointer-events: none;
+    background: rgba(22, 22, 25, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 90, 54, 0.15);
+    border-radius: 16px;
+    padding: 10px 14px;
+    min-width: 155px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(var(--popup-tx, -50%), var(--popup-ty, -100%)) scale(0.92);
+    transition: opacity 0.18s cubic-bezier(0.16, 1, 0.3, 1), transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.18s;
+}
+
+.chart-popup-tooltip.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(var(--popup-tx, -50%), var(--popup-ty, -100%)) scale(1);
+}
+
+.chart-popup-date {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94A3B8;
+    margin-bottom: 6px;
+    display: block;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 4px;
+}
+
+.chart-popup-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 11px;
+    line-height: 1.4;
+    margin-top: 3px;
+}
+
+.chart-popup-dot {
+    width: 6.5px;
+    height: 6.5px;
+    border-radius: 9999px;
+    flex-shrink: 0;
+}
+
+.chart-popup-dot.income {
+    background-color: #FF5A36;
+    box-shadow: 0 0 6px rgba(255, 90, 54, 0.7);
+}
+
+.chart-popup-dot.expense {
+    background-color: #8B5CF6;
+    box-shadow: 0 0 6px rgba(139, 92, 246, 0.7);
+}
+
+.chart-popup-label {
+    color: #94A3B8;
+    font-weight: 500;
+    font-size: 10.5px;
+    flex: 1;
+}
+
+.chart-popup-val {
+    font-weight: 700;
+    font-size: 11.5px;
+    white-space: nowrap;
+}
+
+.chart-popup-val.income {
+    color: #FF7252;
+}
+
+.chart-popup-val.expense {
+    color: #A78BFA;
+}
+
+.chart-popup-val.net-positive {
+    color: #34D399;
+}
+
+.chart-popup-val.net-negative {
+    color: #F87171;
+}
+
+.chart-popup-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 5px 0 3px 0;
+}
+
+/* Light theme support */
+html:not(.dark) .chart-popup-tooltip {
+    background: rgba(255, 255, 255, 0.96);
+    border-color: rgba(0, 0, 0, 0.12);
+    box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+html:not(.dark) .chart-popup-date {
+    color: #64748B;
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+html:not(.dark) .chart-popup-label {
+    color: #64748B;
+}
+
+html:not(.dark) .chart-popup-divider {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+/* Chart Point highlight and guide line */
+.chart-point {
+    transition: r 0.2s cubic-bezier(0.16, 1, 0.3, 1), stroke-width 0.2s, filter 0.2s;
+}
+
+.chart-point.active-point {
+    r: 6.5px !important;
+    stroke: #ffffff !important;
+    stroke-width: 2.5px !important;
+    filter: drop-shadow(0 0 6px rgba(255, 90, 54, 0.9));
+}
+
+.chart-point.expense-point.active-point {
+    filter: drop-shadow(0 0 6px rgba(139, 92, 246, 0.9));
+}
+
+.chart-guide-line {
+    stroke: rgba(255, 255, 255, 0.25);
+    stroke-width: 1.5;
+    stroke-dasharray: 3, 3;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+}
+
+.chart-guide-line.visible {
+    opacity: 1;
+}
+
+html:not(.dark) .chart-guide-line {
+    stroke: rgba(0, 0, 0, 0.25);
+}
+

@@ -439,6 +439,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Redraw charts on window resize to ensure correct coordinate mapping
             window.addEventListener('resize', renderChart);
 
+            // Dismiss chart popups on click outside
+            document.addEventListener('pointerdown', (e) => {
+                if (!e.target.closest('.chart-wrapper, svg, .chart-popup-tooltip')) {
+                    hideAllChartPopups();
+                }
+            });
+
             // Setup Auth Event Listeners
             if (authForm) authForm.addEventListener('submit', handleAuthSubmit);
             if (authToggleModeBtn) authToggleModeBtn.addEventListener('click', toggleAuthMode);
@@ -1613,23 +1620,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Statistics view metrics calculations
-        const savingRatePctEl = document.getElementById('saving-rate-pct');
-        const expenseRatePctEl = document.getElementById('expense-rate-pct');
-
-        if (savingRatePctEl) {
-            const baseInc = currMonthIncome > 0 ? currMonthIncome : income;
-            const rate = baseInc > 0 ? (displaySavingsCurrent / baseInc) * 100 : 0;
-            savingRatePctEl.textContent = `${rate.toFixed(0)}%`;
-        }
-
-        if (expenseRatePctEl) {
-            const baseInc = currMonthIncome > 0 ? currMonthIncome : income;
-            const baseExp = currMonthExpenses > 0 ? currMonthExpenses : expenses;
-            const rate = baseInc > 0 ? (baseExp / baseInc) * 100 : 0;
-            expenseRatePctEl.textContent = `${rate.toFixed(0)}%`;
-        }
-
         // Statistics view extra metrics & list update
         const avgExpenseDailyEl = document.getElementById('avg-expense-daily');
         const statsAvgSummaryEl = document.getElementById('stats-avg-summary');
@@ -1702,10 +1692,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Financial Safety Cushion (Подушка безпеки):
-        // 1. Total liquid reserves = Liquid account balance (non-negative) + Envelope savings goals:
+        // 1. Total liquid reserves = Liquid account balance (non-negative):
         const liquidBalance = Math.max(0, balance);
-        const envelopeSavings = savingsGoals.reduce((sum, g) => sum + (parseFloat(g.currentAmount) || parseFloat(g.current) || 0), 0);
-        const totalReserves = liquidBalance + envelopeSavings;
+        const totalReserves = liquidBalance;
 
         // 2. Base monthly burn rate strictly on REAL CURRENT MONTH'S predicted forecast expense:
         const realPrefix = `${realYear}-${String(realMonth + 1).padStart(2, '0')}`;
@@ -2109,12 +2098,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (dbInsightAdvice) {
-            if (rate < 10) {
-                dbInsightAdvice.textContent = 'Рівень заощаджень низький. Спробуйте відкладати принаймні 10-20% доходів.';
-            } else if (balance < 0) {
+            if (balance < 0) {
                 dbInsightAdvice.textContent = 'Ваші витрати перевищують доходи. Рекомендується переглянути необов\'язкові списання.';
+            } else if (balance === 0) {
+                dbInsightAdvice.textContent = 'Баланс доходів та витрат рівний. Слідкуйте за плановими списаннями.';
             } else {
-                dbInsightAdvice.textContent = 'Чудова динаміка! Ваш бюджет у безпечній зоні, продовжуйте накопичення.';
+                dbInsightAdvice.textContent = 'Чудова динаміка! Ваш бюджет у позитивній зоні, доходи перевищують витрати.';
             }
         }
     };
@@ -2546,6 +2535,127 @@ document.addEventListener('DOMContentLoaded', () => {
         return d;
     };
 
+    const hideAllChartPopups = () => {
+        document.querySelectorAll('.chart-popup-tooltip').forEach(el => {
+            el.classList.remove('visible');
+        });
+        document.querySelectorAll('.chart-guide-line.visible').forEach(el => {
+            el.classList.remove('visible');
+        });
+        document.querySelectorAll('.chart-point.active-point').forEach(el => {
+            el.classList.remove('active-point');
+        });
+    };
+
+    const showChartPopup = (chartWrapper, svg, x, yTarget, dateStr, income, expense, points, guideLine) => {
+        if (!chartWrapper || !svg) return;
+
+        hideAllChartPopups();
+
+        if (guideLine) guideLine.classList.add('visible');
+        if (points && points.length > 0) {
+            points.forEach(p => {
+                if (p) p.classList.add('active-point');
+            });
+        }
+
+        let popup = chartWrapper.querySelector('.chart-popup-tooltip');
+        if (!popup) {
+            popup = document.createElement('div');
+            popup.className = 'chart-popup-tooltip';
+            chartWrapper.appendChild(popup);
+        }
+
+        const dateObj = new Date(dateStr + 'T00:00:00');
+        const dayNum = dateObj.getDate();
+        const monthName = dateObj.toLocaleDateString('uk-UA', { month: 'long' });
+        const weekday = dateObj.toLocaleDateString('uk-UA', { weekday: 'short' });
+        const formattedDate = `${dayNum} ${monthName}, ${weekday}`;
+
+        const net = income - expense;
+        const netFormatted = (net >= 0 ? '+' : '') + formatCurrency(net);
+        const netClass = net >= 0 ? 'net-positive' : 'net-negative';
+
+        popup.innerHTML = `
+            <div class="chart-popup-date">${formattedDate}</div>
+            <div class="chart-popup-row">
+                <div class="flex items-center gap-1.5 min-w-0">
+                    <span class="chart-popup-dot income"></span>
+                    <span class="chart-popup-label">Доходи</span>
+                </div>
+                <span class="chart-popup-val income">+${formatCurrency(income)}</span>
+            </div>
+            <div class="chart-popup-row">
+                <div class="flex items-center gap-1.5 min-w-0">
+                    <span class="chart-popup-dot expense"></span>
+                    <span class="chart-popup-label">Витрати</span>
+                </div>
+                <span class="chart-popup-val expense">-${formatCurrency(expense)}</span>
+            </div>
+            <div class="chart-popup-divider"></div>
+            <div class="chart-popup-row">
+                <span class="chart-popup-label">Сальдо</span>
+                <span class="chart-popup-val ${netClass}">${netFormatted}</span>
+            </div>
+        `;
+
+        const wrapperRect = chartWrapper.getBoundingClientRect();
+        const svgRect = svg.getBoundingClientRect();
+        const viewBox = svg.viewBox.baseVal;
+        const vbWidth = (viewBox && viewBox.width > 0) ? viewBox.width : svgRect.width;
+        const vbHeight = (viewBox && viewBox.height > 0) ? viewBox.height : svgRect.height;
+
+        const scaleX = vbWidth > 0 ? (svgRect.width / vbWidth) : 1;
+        const scaleY = vbHeight > 0 ? (svgRect.height / vbHeight) : 1;
+        const pixelX = (x * scaleX) + (svgRect.left - wrapperRect.left);
+        const pixelY = (yTarget * scaleY) + (svgRect.top - wrapperRect.top);
+
+        const halfTooltipWidth = 85;
+        let tx = '-50%';
+        let leftPos = pixelX;
+
+        if (pixelX < halfTooltipWidth + 10) {
+            tx = '0%';
+            leftPos = Math.max(8, pixelX - 10);
+        } else if (pixelX > wrapperRect.width - (halfTooltipWidth + 10)) {
+            tx = '-100%';
+            leftPos = Math.min(wrapperRect.width - 8, pixelX + 10);
+        }
+
+        let ty = '-100%';
+        let topPos = pixelY - 14;
+
+        if (pixelY < 120) {
+            ty = '0%';
+            topPos = pixelY + 16;
+        }
+
+        popup.style.setProperty('--popup-tx', tx);
+        popup.style.setProperty('--popup-ty', ty);
+        popup.style.left = `${Math.round(leftPos)}px`;
+        popup.style.top = `${Math.round(topPos)}px`;
+
+        popup.classList.add('visible');
+    };
+
+    const createChartPoint = (group, x, y, className, valueStr) => {
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', x.toString());
+        circle.setAttribute('cy', y.toString());
+        
+        const isMobile = window.innerWidth < 640;
+        circle.setAttribute('r', isMobile ? '2.5' : '4.5');
+        circle.className.baseVal = `chart-point ${className}`;
+        
+        // Simple title tooltip for fallback
+        const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+        title.textContent = valueStr;
+        circle.appendChild(title);
+        
+        group.appendChild(circle);
+        return circle;
+    };
+
     const renderSingleChart = (svgId, gridLinesId, incomePathId, expensePathId, incomeAreaId, expenseAreaId, pointsGroupId, datesLabelsId, showInteractive) => {
         const svg = document.getElementById(svgId);
         const gridLinesGroup = document.getElementById(gridLinesId);
@@ -2558,9 +2668,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!svg || !gridLinesGroup) return;
 
+        const chartWrapper = svg.closest('.chart-wrapper') || svg.parentElement;
+        if (chartWrapper) {
+            chartWrapper.classList.add('chart-wrapper');
+        }
+
         gridLinesGroup.innerHTML = '';
-        if (pointsGroup) pointsGroup.innerHTML = '';
+        if (pointsGroup) {
+            pointsGroup.innerHTML = '';
+            pointsGroup.style.pointerEvents = 'none';
+        }
         if (datesLabels) datesLabels.innerHTML = '';
+
+        // Setup guides group
+        let guidesGroup = svg.querySelector('.chart-guides-group');
+        if (!guidesGroup) {
+            guidesGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            guidesGroup.setAttribute('class', 'chart-guides-group');
+            if (pointsGroup) {
+                svg.insertBefore(guidesGroup, pointsGroup);
+            } else {
+                svg.appendChild(guidesGroup);
+            }
+        }
+        guidesGroup.innerHTML = '';
+
+        // Setup hit group
+        let hitGroup = svg.querySelector('.chart-hit-group');
+        if (!hitGroup) {
+            hitGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            hitGroup.setAttribute('class', 'chart-hit-group');
+            svg.appendChild(hitGroup);
+        } else {
+            // Keep hit group as the topmost layer
+            svg.appendChild(hitGroup);
+        }
+        hitGroup.innerHTML = '';
+
+        // Hide popups when mouse cursor leaves the svg
+        svg.onpointerleave = (e) => {
+            if (e.pointerType === 'mouse') {
+                hideAllChartPopups();
+            }
+        };
 
         // Use actual bounding client dimensions to prevent coordinate distortion
         const rect = svg.getBoundingClientRect();
@@ -2626,17 +2776,64 @@ document.addEventListener('DOMContentLoaded', () => {
         let incomePoints = [];
         let expensePoints = [];
 
+        const colWidth = dates.length > 1 ? (chartWidth / (dates.length - 1)) : chartWidth;
+        const halfCol = colWidth / 2;
+
         dates.forEach((d, idx) => {
-            const x = paddingX + (chartWidth / (dates.length - 1)) * idx;
+            const x = paddingX + colWidth * idx;
             const yIncome = (height - paddingY) - (aggregates[d].income / maxVal) * chartHeight;
             const yExpense = (height - paddingY) - (aggregates[d].expense / maxVal) * chartHeight;
 
             incomePoints.push({ x, y: yIncome });
             expensePoints.push({ x, y: yExpense });
 
+            let dayPoints = [];
             if (showInteractive && pointsGroup) {
-                createChartPoint(pointsGroup, x, yIncome, 'income-point', `${aggregates[d].income.toFixed(2)} ₴`);
-                createChartPoint(pointsGroup, x, yExpense, 'expense-point', `${aggregates[d].expense.toFixed(2)} ₴`);
+                const pInc = createChartPoint(pointsGroup, x, yIncome, 'income-point', `${aggregates[d].income.toFixed(2)} ₴`);
+                const pExp = createChartPoint(pointsGroup, x, yExpense, 'expense-point', `${aggregates[d].expense.toFixed(2)} ₴`);
+                dayPoints.push(pInc, pExp);
+            }
+
+            // Guide line for this day
+            const guideLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            guideLine.setAttribute('x1', x.toString());
+            guideLine.setAttribute('y1', paddingY.toString());
+            guideLine.setAttribute('x2', x.toString());
+            guideLine.setAttribute('y2', (height - paddingY).toString());
+            guideLine.setAttribute('class', 'chart-guide-line');
+            guidesGroup.appendChild(guideLine);
+
+            // Hit zone rect for responsive touch and hover
+            if (showInteractive && hitGroup) {
+                const rectX = idx === 0 ? 0 : x - halfCol;
+                const rectW = (idx === 0 || idx === dates.length - 1) ? (halfCol + paddingX) : colWidth;
+
+                const hitRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                hitRect.setAttribute('x', rectX.toString());
+                hitRect.setAttribute('y', '0');
+                hitRect.setAttribute('width', rectW.toString());
+                hitRect.setAttribute('height', height.toString());
+                hitRect.setAttribute('fill', 'transparent');
+                hitRect.style.cursor = 'pointer';
+                hitRect.style.touchAction = 'manipulation';
+
+                const triggerDayPopup = () => {
+                    const targetY = Math.min(yIncome, yExpense);
+                    showChartPopup(chartWrapper, svg, x, targetY, d, aggregates[d].income, aggregates[d].expense, dayPoints, guideLine);
+                };
+
+                hitRect.addEventListener('pointerdown', (e) => {
+                    e.stopPropagation();
+                    triggerDayPopup();
+                });
+
+                hitRect.addEventListener('pointerenter', (e) => {
+                    if (e.pointerType === 'mouse') {
+                        triggerDayPopup();
+                    }
+                });
+
+                hitGroup.appendChild(hitRect);
             }
 
             if (datesLabels) {
@@ -2671,28 +2868,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderChart = () => {
+        hideAllChartPopups();
+
         // 1. Render Main Large Chart (in Statistics View)
         renderSingleChart('finance-chart', 'chart-grid-lines', 'chart-income-path', 'chart-expense-path', 'chart-income-area', 'chart-expense-area', 'chart-points-group', 'chart-dates-labels', true);
         
         // 2. Render Mini Dashboard Chart (in Dashboard View)
         renderSingleChart('dashboard-mini-chart', 'db-chart-grid-lines', 'db-chart-income-path', 'db-chart-expense-path', 'db-chart-income-area', 'db-chart-expense-area', 'db-chart-points-group', 'db-chart-dates-labels', true);
-    };
-
-    const createChartPoint = (group, x, y, className, valueStr) => {
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('cx', x);
-        circle.setAttribute('cy', y);
-        
-        const isMobile = window.innerWidth < 640;
-        circle.setAttribute('r', isMobile ? '2.5' : '4.5');
-        circle.className.baseVal = `chart-point ${className}`;
-        
-        // Simple title tooltip
-        const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-        title.textContent = valueStr;
-        circle.appendChild(title);
-        
-        group.appendChild(circle);
     };
 
     const categorizeWithAI = async (description, type) => {

@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=108">
+    <link rel="stylesheet" href="styles.css?v=110">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -284,7 +284,7 @@
                             </div>
                         </div>
                         
-                        <div class="flex-grow relative w-full h-full min-h-[220px] my-4">
+                        <div class="flex-grow relative w-full h-full min-h-[220px] my-4 chart-wrapper">
                             <svg id="dashboard-mini-chart" class="absolute inset-0 w-full h-full" viewBox="0 0 500 200">
                                 <defs>
                                     <linearGradient id="db-income-grad" x1="0" y1="0" x2="0" y2="1">
@@ -710,18 +710,9 @@
                         </div>
                     </div>
 
-                    <!-- 4 Top KPI Analytics Cards -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">
-                        <!-- Card 1: Saving Rate -->
-                        <div class="bg-[#111113] border border-[#202024] rounded-3xl p-4 sm:p-5 flex flex-col justify-between">
-                            <span class="text-[10px] font-bold text-brand-textSecondary uppercase tracking-wider">Коефіцієнт заощадження</span>
-                            <div class="py-1.5">
-                                <div class="text-2xl sm:text-3xl font-bold font-outfit text-white mb-0.5" id="saving-rate-pct">0%</div>
-                                <p class="text-[11px] text-brand-textSecondary">Частка від доходів, що відкладена у цілі</p>
-                            </div>
-                        </div>
-
-                        <!-- Card 2: Daily Burn Rate -->
+                    <!-- 3 Top KPI Analytics Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4">
+                        <!-- Card 1: Daily Burn Rate -->
                         <div class="bg-[#111113] border border-[#202024] rounded-3xl p-4 sm:p-5 flex flex-col justify-between">
                             <span class="text-[10px] font-bold text-brand-textSecondary uppercase tracking-wider">Середні витрати за день</span>
                             <div class="py-1.5">
@@ -730,7 +721,7 @@
                             </div>
                         </div>
 
-                        <!-- Card 3: Monthly Forecast -->
+                        <!-- Card 2: Monthly Forecast -->
                         <div class="bg-[#111113] border border-[#202024] rounded-3xl p-4 sm:p-5 flex flex-col justify-between">
                             <div class="flex justify-between items-center">
                                 <span class="text-[10px] font-bold text-brand-textSecondary uppercase tracking-wider">Прогноз витрат до кінця місяця</span>
@@ -741,14 +732,14 @@
                             </div>
                         </div>
 
-                        <!-- Card 4: Emergency Cushion -->
+                        <!-- Card 3: Emergency Cushion -->
                         <div class="bg-[#111113] border border-[#202024] rounded-3xl p-4 sm:p-5 flex flex-col justify-between">
                             <div class="flex justify-between items-center">
                                 <span class="text-[10px] font-bold text-brand-textSecondary uppercase tracking-wider">Подушка безпеки</span>
                             </div>
                             <div class="py-1.5">
                                 <div class="text-2xl sm:text-3xl font-bold font-outfit text-brand-purple mb-0.5" id="stats-runway-months">0.0 місяців</div>
-                                <p class="text-[11px] text-brand-textSecondary">Запас автономності (баланс + конверти)</p>
+                                <p class="text-[11px] text-brand-textSecondary">Запас автономності (поточний баланс)</p>
                             </div>
                         </div>
                     </div>
@@ -768,7 +759,7 @@
                                 </div>
                             </div>
                             
-                            <div class="flex-1 min-h-[160px] relative w-full my-2">
+                            <div class="flex-1 min-h-[160px] relative w-full my-2 chart-wrapper">
                                 <svg id="finance-chart" class="absolute inset-0 w-full h-full z-10" viewBox="0 0 1000 300">
                                     <defs>
                                         <linearGradient id="incomeGradient" x1="0" x2="0" y1="0" y2="1">
@@ -1524,6 +1515,6 @@
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
-    <script src="app.js?v=127" defer></script>
+    <script src="app.js?v=129" defer></script>
 </body>
 </html>
