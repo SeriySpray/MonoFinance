@@ -1,4 +1,4 @@
-// MonoFinance - Metric Flow Application Logic
+// SwiftFinance - Metric Flow Application Logic
 
 document.addEventListener('DOMContentLoaded', () => {
     // State Variables
@@ -21,16 +21,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let pickerYear = selectedYear;
 
     const UK_MONTH_NAMES = [
-        'Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень',
-        'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'
+        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
     ];
     const UK_MONTH_NAMES_GENITIVE = [
-        'січня', 'лютого', 'березня', 'квітня', 'травня', 'червня',
-        'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'
+        'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+        'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
     ];
     const UK_MONTH_SHORT = [
-        'Січ', 'Лют', 'Бер', 'Квi', 'Тра', 'Чер',
-        'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру'
+        'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+        'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
     ];
 
     // Timezone-safe YYYY-MM-DD formatter
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const authTitle = document.getElementById('auth-title');
     const authSubtitle = document.getElementById('auth-subtitle');
     const authDemoBtn = document.getElementById('auth-demo-btn');
-    
+
     const userInfoSection = document.getElementById('user-info-section');
     const currentUsernameDisplay = document.getElementById('current-username-display');
     const btnLogout = document.getElementById('modal-btn-logout');
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalExpensesEl = document.getElementById('total-expenses');
     const totalSavingsEl = document.getElementById('total-savings');
     const savingsBadgePctEl = document.getElementById('savings-badge-pct');
-    
+
     // DOM Elements - Savings Target (Savings Screen)
     const savingsCurrentEl = document.getElementById('savings-current');
     const savingsTargetEl = document.getElementById('savings-target');
@@ -90,35 +90,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const dbSavingsCurrentEl = document.getElementById('db-savings-current');
     const dbSavingsTargetEl = document.getElementById('db-savings-target');
     const dbGoalProgressFillEl = document.getElementById('db-goal-progress-fill');
-    
+
     // View/Screen Total values
     const tabIncomeTotalEl = document.getElementById('tab-income-total');
     const tabExpensesTotalEl = document.getElementById('tab-expenses-total');
-    
+
     // Forms
     const formAddSavings = document.getElementById('form-add-savings');
     const formAddIncome = document.getElementById('form-add-income');
     const formAddExpense = document.getElementById('form-add-expense');
-    
+
     // Dates
     const savingsDateInput = document.getElementById('savings-date');
     const incomeDateInput = document.getElementById('income-date');
     const expenseDateInput = document.getElementById('expense-date');
-    
+
     // History & Filters
     const historyList = document.getElementById('history-list');
     const filterTabs = document.querySelectorAll('.filter-tab');
     const currentDateEl = document.getElementById('current-date');
     const themeToggleBtn = document.getElementById('theme-toggle');
     const searchInput = document.getElementById('dashboard-search');
-    
+
     // Modal Elements
     const goalModal = document.getElementById('goal-modal');
     const editGoalBtn = document.getElementById('edit-goal-btn');
     const closeModalBtn = document.getElementById('close-modal-btn');
     const goalForm = document.getElementById('goal-form');
     const targetAmountInput = document.getElementById('target-amount');
-    
+
     // Sidebar Elements
     const sidebarNavItems = document.querySelectorAll('.nav-item');
 
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitTransferBtn = document.getElementById('submit-transfer-btn');
 
     const GOAL_ICONS = ['savings', 'directions_car', 'flight', 'home', 'phone_iphone', 'laptop', 'shield', 'fitness_center', 'school', 'shopping_bag', 'redeem', 'star'];
-    const GOAL_COLORS = ['#FF5A36', '#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EC4899', '#14B8A6'];
+    const GOAL_COLORS = ['#2c3e50', '#10B981', '#3B82F6', '#20a034', '#F59E0B', '#EC4899', '#14B8A6'];
 
     // 1. Initialize App
     const init = async () => {
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const today = new Date();
             if (currentDateEl) currentDateEl.textContent = formatDateToLocal(today);
-            
+
             // Set default date input values to today
             const todayStr = getLocalDateString(today);
             if (savingsDateInput) savingsDateInput.value = todayStr;
@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         btn.classList.toggle('text-white');
                         btn.classList.toggle('border-brand-purple');
                         btn.classList.toggle('text-brand-textSecondary');
-                        
+
                         // Update hidden input value
                         const activeBtns = daysGrid.querySelectorAll('button.bg-brand-purple');
                         const selected = [];
@@ -217,13 +217,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Attach Event Listeners
             if (themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
-            
+
             // Forms Submit Listeners
             if (formAddSavings) formAddSavings.addEventListener('submit', handleSavingsSubmit);
             if (formAddIncome) formAddIncome.addEventListener('submit', handleIncomeSubmit);
             if (formAddExpense) formAddExpense.addEventListener('submit', handleExpenseSubmit);
             if (formAddRecurring) formAddRecurring.addEventListener('submit', handleRecurringSubmit);
-            
+
             // Live category preview & smart amount suggestion listeners
             const expenseDescInput = document.getElementById('expense-description');
             const expenseAmountInput = document.getElementById('expense-amount');
@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
             initIncomeCategoryModal();
             updateIncomeCategoryPreview();
             updateIncomeAmountSuggestions();
-            
+
             // Category Details Modal Event Listeners
             const categoryDetailsModalEl = document.getElementById('category-details-modal');
             const closeCategoryDetailsModalBtn = document.getElementById('close-category-details-modal');
@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (e.target === categoryDetailsModalEl) window.closeCategoryModal();
                 });
             }
-            
+
             if (editGoalBtn) editGoalBtn.addEventListener('click', openGoalModal);
             if (closeModalBtn) closeModalBtn.addEventListener('click', closeGoalModal);
             if (goalForm) goalForm.addEventListener('submit', handleSaveGoal);
@@ -315,13 +315,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             }
-            
+
             // Filter tabs listeners with smooth liquid sliding pill
             filterTabs.forEach(tab => {
                 tab.addEventListener('click', (e) => {
                     const targetBtn = e.target.closest('.filter-tab') || e.currentTarget;
                     if (!targetBtn) return;
-                    
+
                     const oldIdx = ['all', 'income', 'expense'].indexOf(currentFilter);
                     const newFilter = targetBtn.dataset.filter || 'all';
                     const newIdx = ['all', 'income', 'expense'].indexOf(newFilter);
@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     filterTabs.forEach(t => t.classList.remove('active'));
                     targetBtn.classList.add('active');
                     currentFilter = newFilter;
-                    
+
                     updateFilterPillPosition(currentFilter);
                     renderHistory(direction);
                 });
@@ -464,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const openSettingsModal = () => {
                 if (settingsUsernameDisplay) {
-                    settingsUsernameDisplay.textContent = isDemoMode ? 'Демо (Локально)' : currentUser;
+                    settingsUsernameDisplay.textContent = isDemoMode ? 'Demo (Local)' : currentUser;
                 }
                 if (settingsModal) settingsModal.classList.add('active');
             };
@@ -611,7 +611,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
                 currentUser = data.username;
                 isDemoMode = false;
-                
+
                 // Smooth UI transition
                 showAppScreenSmoothly();
 
@@ -621,11 +621,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (btnLogout) {
                     btnLogout.classList.remove('hidden');
                     const textSpan = btnLogout.querySelector('span:not(.material-symbols-outlined)');
-                    if (textSpan) textSpan.textContent = 'Вийти з акаунту';
+                    if (textSpan) textSpan.textContent = 'Pechar sesión';
                 }
                 const mobileVoiceBtn = document.getElementById('mobile-voice-btn');
                 if (mobileVoiceBtn) mobileVoiceBtn.classList.remove('hidden');
-                
+
                 // Fetch user data from server
                 await fetchUserData();
             } else {
@@ -650,15 +650,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function toggleAuthMode() {
         isRegisterMode = !isRegisterMode;
         if (isRegisterMode) {
-            if (authTitle) authTitle.textContent = 'Реєстрація';
-            if (authSubtitle) authSubtitle.textContent = 'Створіть новий акаунт для синхронізації даних';
-            if (authSubmitBtn) authSubmitBtn.textContent = 'Зареєструватися';
-            if (authToggleModeBtn) authToggleModeBtn.textContent = 'Вже є акаунт? Увійти';
+            if (authTitle) authTitle.textContent = 'Rexistrarse';
+            if (authSubtitle) authSubtitle.textContent = 'Cree unha conta nova para sincronizar os seus datos';
+            if (authSubmitBtn) authSubmitBtn.textContent = 'Rexistrarse';
+            if (authToggleModeBtn) authToggleModeBtn.textContent = 'Xa ten contas? Entrar';
         } else {
-            if (authTitle) authTitle.textContent = 'Вхід у систему';
-            if (authSubtitle) authSubtitle.textContent = 'Введіть свої облікові дані для доступу до дешборду';
-            if (authSubmitBtn) authSubmitBtn.textContent = 'Увійти';
-            if (authToggleModeBtn) authToggleModeBtn.textContent = 'Немає акаунту? Зареєструватися';
+            if (authTitle) authTitle.textContent = 'Entrar';
+            if (authSubtitle) authSubtitle.textContent = 'Introduza os seus datos de acceso para abrir o panel';
+            if (authSubmitBtn) authSubmitBtn.textContent = 'Entrar';
+            if (authToggleModeBtn) authToggleModeBtn.textContent = 'Non ten contas? Rexistrarse';
         }
     }
 
@@ -666,9 +666,9 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const username = authUsernameInput ? authUsernameInput.value.trim() : '';
         const password = authPasswordInput ? authPasswordInput.value : '';
-        
+
         if (!username || !password) return;
-        
+
         const url = isRegisterMode ? 'api/register' : 'api/login';
         try {
             const response = await fetch(getApiUrl(url), {
@@ -676,39 +676,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password })
             });
-            
+
             const result = await response.json();
             if (response.ok) {
-                showToast(isRegisterMode ? 'Акаунт успішно створено' : 'Успішний вхід', 'success');
+                showToast(isRegisterMode ? 'Conta creada con éxito' : 'Sesión iniciada correctamente', 'success');
                 if (authUsernameInput) authUsernameInput.value = '';
                 if (authPasswordInput) authPasswordInput.value = '';
                 await checkAuth();
             } else {
-                showToast(result.message || 'Помилка авторизації', 'delete');
+                showToast(result.message || 'Erro de acceso', 'delete');
             }
         } catch (err) {
-            showToast('Не вдалося зв\'язатися з сервером', 'delete');
+            showToast('Non se puido conectar co servidor', 'delete');
         }
     }
 
     function startDemoMode() {
         isDemoMode = true;
         currentUser = null;
-        
+
         if (authContainer) authContainer.classList.add('hidden');
         if (appContainer) appContainer.classList.remove('hidden');
-        
+
         if (userInfoSection) userInfoSection.classList.remove('hidden');
-        if (currentUsernameDisplay) currentUsernameDisplay.textContent = 'Демо (Локально)';
+        if (currentUsernameDisplay) currentUsernameDisplay.textContent = 'Demo (Local)';
         if (btnImportLocal) btnImportLocal.classList.add('hidden'); // Hide import in demo
         if (btnLogout) {
             btnLogout.classList.remove('hidden');
             const textSpan = btnLogout.querySelector('span:not(.material-symbols-outlined)');
-            if (textSpan) textSpan.textContent = 'Вийти з Демо';
+            if (textSpan) textSpan.textContent = 'Saír do demo';
         }
         const mobileVoiceBtn = document.getElementById('mobile-voice-btn');
         if (mobileVoiceBtn) mobileVoiceBtn.classList.remove('hidden');
-        
+
         // Load local storage data
         loadLocalData();
     }
@@ -716,19 +716,19 @@ document.addEventListener('DOMContentLoaded', () => {
     async function handleLogout() {
         if (isDemoMode) {
             isDemoMode = false;
-            showToast('Вихід з демо-режиму', 'info');
+            showToast('Sesión pechada', 'info');
             showAuthScreen();
             return;
         }
-        
+
         try {
             const response = await fetch(getApiUrl('api/logout'), { method: 'POST', credentials: 'same-origin' });
             if (response.ok) {
-                showToast('Вихід з акаунту успішний', 'info');
+                showToast('Sesión pechada', 'info');
                 showAuthScreen();
             }
         } catch (e) {
-            showToast('Помилка при виході з акаунту', 'delete');
+            showToast('Erro ao pechar sesión', 'delete');
         }
     }
 
@@ -744,18 +744,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const localSavingsTarget = localStorage.getItem('mono_savings_target');
         const localRecurring = localStorage.getItem('mono_recurring_expenses');
         const localGoals = localStorage.getItem('mono_savings_goals');
-        
+
         if (!localTransactions && !localSavingsTarget && !localRecurring && !localGoals) {
-            showToast('Немає локальних даних для імпорту', 'info');
+            showToast('Sem dados locais para importar', 'info');
             return;
         }
-        
+
         // Ask for user confirmation
         const confirmed = await showConfirm(
-            'Імпорт локальних даних',
-            'Ви впевнені, що хочете імпортувати локальні дані з цього браузера? Це перезапише ваші дані на сервері.',
-            'Імпортувати',
-            'Скасувати'
+            'Importar dados locais',
+            'Tem a certeza de que pretende importar os dados locais deste navegador? Isto irá substituir os seus dados no servidor.',
+            'Importar',
+            'Cancelar'
         );
 
         if (confirmed) {
@@ -766,16 +766,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     recurringExpenses: localRecurring ? JSON.parse(localRecurring) : [],
                     savingsGoals: localGoals ? JSON.parse(localGoals) : []
                 };
-                
+
                 const response = await fetch(getApiUrl('api/data'), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'same-origin',
                     body: JSON.stringify(data)
                 });
-                
+
                 if (response.ok) {
-                    showToast('Локальні дані успішно імпортовано', 'success');
+                    showToast('Dados locais importados com sucesso', 'success');
                     transactions = data.transactions;
                     savingsTarget = data.savingsTarget;
                     recurringExpenses = data.recurringExpenses;
@@ -783,10 +783,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     renderAll();
                 } else {
                     const result = await response.json();
-                    showToast(result.message || 'Помилка імпорту даних', 'delete');
+                    showToast(result.message || 'Erro ao importar dados', 'delete');
                 }
             } catch (e) {
-                showToast('Помилка при з\'єднанні з сервером', 'delete');
+                showToast('Erro ao ligar ao servidor', 'delete');
             }
         }
     }
@@ -797,7 +797,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 const data = await response.json();
                 let serverTxs = data.transactions || [];
-                
+
                 // Automatic Recovery: If server returns no transactions, restore transactions from LocalStorage cache
                 if (serverTxs.length === 0) {
                     const localTxStr = localStorage.getItem('mono_transactions');
@@ -824,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 monthlyExpenseLimit = data.monthlyExpenseLimit !== undefined ? data.monthlyExpenseLimit : 30000.0;
                 expenseLimitPeriod = data.expenseLimitPeriod || 'day';
                 recurringExpenses = data.recurringExpenses || [];
-                
+
                 savingsGoals = Array.isArray(data.savingsGoals) ? data.savingsGoals : [];
 
                 // Cache server data in LocalStorage for offline fallback
@@ -852,15 +852,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!t || !t.description) return;
                 ensureTxType(t);
                 const currentCat = t.category;
-                const isUnset = !currentCat || 
-                                currentCat === 'Витрата' || 
-                                currentCat === 'Різне' || 
-                                currentCat === 'Інші витрати' || 
-                                currentCat === 'Інші доходи' || 
-                                currentCat === 'Голосове введення';
+                const isUnset = !currentCat ||
+                    currentCat === 'Despesa' ||
+                    currentCat === 'Diversos' ||
+                    currentCat === 'Outras despesas' ||
+                    currentCat === 'Outros rendimentos' ||
+                    currentCat === 'Entrada por voz';
                 if (isUnset) {
                     const smartCat = getCategoryName(t.description, t.type);
-                    if (smartCat && smartCat !== 'Інші витрати' && smartCat !== 'Інші доходи') {
+                    if (smartCat && smartCat !== 'Outras despesas' && smartCat !== 'Outros rendimentos') {
                         t.category = smartCat;
                         changed = true;
                     }
@@ -947,7 +947,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isDemoMode) {
             return;
         }
-        
+
         try {
             await fetch(getApiUrl('api/data'), {
                 method: 'POST',
@@ -966,7 +966,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         } catch (e) {
             console.error('Failed to sync changes with server', e);
-            showToast('Помилка синхронізації з сервером', 'delete');
+            showToast('Erro de sincronização com o servidor', 'delete');
         }
     };
 
@@ -993,87 +993,87 @@ document.addEventListener('DOMContentLoaded', () => {
                 id: 'p1',
                 amount: 35000,
                 type: 'income',
-                description: 'Заробітна плата',
+                description: 'Salário',
                 date: getPrevOffsetDate(1)
             },
             {
                 id: 'p2',
                 amount: 2450,
                 type: 'expense',
-                description: 'Продукти супермаркет',
+                description: 'Supermercado',
                 date: getPrevOffsetDate(4)
             },
             {
                 id: 'p3',
                 amount: 850,
                 type: 'expense',
-                description: 'Кава та ланч в кафе',
+                description: 'Café e almoço',
                 date: getPrevOffsetDate(10)
             },
             {
                 id: 'p4',
                 amount: 1950,
                 type: 'expense',
-                description: 'Комунальні послуги за дім',
+                description: 'Despesas domésticas',
                 date: getPrevOffsetDate(15)
             },
             {
                 id: 'p5',
                 amount: 5000,
                 type: 'expense',
-                description: 'Поповнення конверта: Резервний фонд',
-                category: 'Конверти',
+                description: 'Depósito envelope: Fundo de reserva',
+                category: 'Envelopes',
                 date: getPrevOffsetDate(20)
             },
             {
                 id: '1',
                 amount: 32000,
                 type: 'income',
-                description: 'Заробітна плата',
+                description: 'Salário',
                 date: getOffsetDate(1)
             },
             {
                 id: '2',
                 amount: 1450,
                 type: 'expense',
-                description: 'Продукти супермаркет',
+                description: 'Supermercado',
                 date: getOffsetDate(5)
             },
             {
                 id: '3',
                 amount: 4000,
                 type: 'expense',
-                description: 'Поповнення конверта: Резервний фонд',
-                category: 'Конверти',
+                description: 'Depósito envelope: Fundo de reserva',
+                category: 'Envelopes',
                 date: getOffsetDate(8)
             },
             {
                 id: '4',
                 amount: 450,
                 type: 'expense',
-                description: 'Кава та ланч в кафе',
+                description: 'Café e almoço',
                 date: getOffsetDate(10)
             },
             {
                 id: '5',
                 amount: 1800,
                 type: 'expense',
-                description: 'Комунальні послуги за дім',
+                description: 'Despesas domésticas',
                 date: getOffsetDate(12)
             },
             {
                 id: '6',
                 amount: 9500,
                 type: 'income',
-                description: 'Фріланс проєкт розробка',
+                description: 'Projeto freelance',
                 date: getOffsetDate(15)
             },
             {
                 id: '7',
                 amount: 1500,
                 type: 'expense',
-                description: 'Поповнення конверта: Відпустка',
-                category: 'Конверти',
+                description: 'Depósito envelope: Férias',
+                category: 'Envelopes',
                 date: getOffsetDate(18)
             }
         ];
@@ -1081,7 +1081,7 @@ document.addEventListener('DOMContentLoaded', () => {
         savingsGoals = [
             {
                 id: 'goal_1',
-                title: 'Резервний фонд',
+                title: 'Fundo de reserva',
                 targetAmount: 50000,
                 currentAmount: 15000,
                 color: '#10B981',
@@ -1089,7 +1089,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             {
                 id: 'goal_2',
-                title: 'Відпустка',
+                title: 'Férias',
                 targetAmount: 25000,
                 currentAmount: 8500,
                 color: '#3B82F6',
@@ -1097,10 +1097,10 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             {
                 id: 'goal_3',
-                title: 'Автомобіль',
+                title: 'Automóvel',
                 targetAmount: 200000,
                 currentAmount: 45000,
-                color: '#FF5A36',
+                color: '#2c3e50',
                 icon: 'directions_car'
             }
         ];
@@ -1116,7 +1116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const viewOrder = ['dashboard', 'income', 'expenses', 'statistics'];
         const activeView = document.querySelector('.dashboard-view.active');
         let currentViewId = activeView ? activeView.id.replace('view-', '') : 'dashboard';
-        
+
         let direction = forceDirection;
         if (!direction) {
             const currentIdx = viewOrder.indexOf(currentViewId);
@@ -1200,7 +1200,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const getSelectedAndPrevMonthPrefixes = () => {
         const year = selectedYear;
         const month = selectedMonth;
-        
+
         const currYearStr = year.toString();
         const currMonthStr = (month + 1).toString().padStart(2, '0');
         const currPrefix = `${currYearStr}-${currMonthStr}`;
@@ -1247,40 +1247,40 @@ document.addEventListener('DOMContentLoaded', () => {
         const momSubtitle = document.getElementById('stats-mom-subtitle');
         if (momSubtitle) {
             if (isCurrentRealMonth) {
-                momSubtitle.textContent = `${UK_MONTH_NAMES[selectedMonth]} (по 1–${realDay} число) проти ${UK_MONTH_NAMES[prevDate.getMonth()]} (по 1–${realDay} число)`;
+                momSubtitle.textContent = `${UK_MONTH_NAMES[selectedMonth]} (dia 1–${realDay} dia) vs ${UK_MONTH_NAMES[prevDate.getMonth()]} (dia 1–${realDay} dia)`;
             } else {
-                momSubtitle.textContent = `${UK_MONTH_NAMES[selectedMonth]} ${selectedYear} проти ${UK_MONTH_NAMES[prevDate.getMonth()]}`;
+                momSubtitle.textContent = `${UK_MONTH_NAMES[selectedMonth]} ${selectedYear} vs ${UK_MONTH_NAMES[prevDate.getMonth()]}`;
             }
         }
 
         const chartSubtitle = document.getElementById('stats-chart-subtitle');
         if (chartSubtitle) {
-            chartSubtitle.textContent = `Амплітуда надходження та списання коштів (${UK_MONTH_NAMES[selectedMonth]} ${selectedYear})`;
+            chartSubtitle.textContent = `Amplitude de entradas e saídas (${UK_MONTH_NAMES[selectedMonth]} ${selectedYear})`;
         }
 
         const dbChartSubtitle = document.getElementById('db-chart-subtitle');
         if (dbChartSubtitle) {
-            dbChartSubtitle.textContent = `Порівняння доходів та витрат (${UK_MONTH_NAMES[selectedMonth]} ${selectedYear})`;
+            dbChartSubtitle.textContent = `Comparação de rendimentos e despesas (${UK_MONTH_NAMES[selectedMonth]} ${selectedYear})`;
         }
 
         const categorySubtitle = document.getElementById('stats-category-subtitle');
         if (categorySubtitle) {
-            categorySubtitle.textContent = `Витрати за категоріями (${UK_MONTH_NAMES[selectedMonth]} ${selectedYear})`;
+            categorySubtitle.textContent = `Despesas por categorias (${UK_MONTH_NAMES[selectedMonth]} ${selectedYear})`;
         }
 
         const topSubtitle = document.getElementById('stats-top-subtitle');
         if (topSubtitle) {
-            topSubtitle.textContent = `Найбільші списання (${UK_MONTH_NAMES[selectedMonth]} ${selectedYear})`;
+            topSubtitle.textContent = `Maiores despesas (${UK_MONTH_NAMES[selectedMonth]} ${selectedYear})`;
         }
 
         const incomeSubtitle = document.getElementById('stats-income-subtitle');
         if (incomeSubtitle) {
-            incomeSubtitle.textContent = `Джерела надходжень (${UK_MONTH_NAMES[selectedMonth]} ${selectedYear})`;
+            incomeSubtitle.textContent = `Fontes de rendimento (${UK_MONTH_NAMES[selectedMonth]} ${selectedYear})`;
         }
 
         const calendarSubtitle = document.getElementById('stats-calendar-subtitle');
         if (calendarSubtitle) {
-            calendarSubtitle.textContent = `Календарний розподіл списань (${UK_MONTH_NAMES[selectedMonth]} ${selectedYear})`;
+            calendarSubtitle.textContent = `Distribuição calendário de despesas (${UK_MONTH_NAMES[selectedMonth]} ${selectedYear})`;
         }
     };
 
@@ -1387,8 +1387,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (dayProgressEl) {
                 dayProgressEl.style.width = `${Math.min(100, dPct)}%`;
                 dayProgressEl.className = dPct > 100
-                    ? 'progress-thumb bg-gradient-to-r from-brand-purple via-[#FF5A36] to-[#EF4444] h-full rounded-full transition-all duration-500'
-                    : 'progress-thumb bg-gradient-to-r from-brand-purple to-[#FF5A36] h-full rounded-full transition-all duration-500';
+                    ? 'progress-thumb bg-gradient-to-r from-brand-purple via-[#2c3e50] to-[#EF4444] h-full rounded-full transition-all duration-500'
+                    : 'progress-thumb bg-gradient-to-r from-brand-purple to-[#2c3e50] h-full rounded-full transition-all duration-500';
             }
         }
 
@@ -1418,8 +1418,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (weekProgressEl) {
                 weekProgressEl.style.width = `${Math.min(100, wPct)}%`;
                 weekProgressEl.className = wPct > 100
-                    ? 'progress-thumb bg-gradient-to-r from-brand-purple via-[#FF5A36] to-[#EF4444] h-full rounded-full transition-all duration-500'
-                    : 'progress-thumb bg-gradient-to-r from-brand-purple to-[#FF5A36] h-full rounded-full transition-all duration-500';
+                    ? 'progress-thumb bg-gradient-to-r from-brand-purple via-[#2c3e50] to-[#EF4444] h-full rounded-full transition-all duration-500'
+                    : 'progress-thumb bg-gradient-to-r from-brand-purple to-[#2c3e50] h-full rounded-full transition-all duration-500';
             }
         }
 
@@ -1449,8 +1449,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (monthProgressEl) {
                 monthProgressEl.style.width = `${Math.min(100, mPct)}%`;
                 monthProgressEl.className = mPct > 100
-                    ? 'progress-thumb bg-gradient-to-r from-brand-purple via-[#FF5A36] to-[#EF4444] h-full rounded-full transition-all duration-500'
-                    : 'progress-thumb bg-gradient-to-r from-brand-purple to-[#FF5A36] h-full rounded-full transition-all duration-500';
+                    ? 'progress-thumb bg-gradient-to-r from-brand-purple via-[#2c3e50] to-[#EF4444] h-full rounded-full transition-all duration-500'
+                    : 'progress-thumb bg-gradient-to-r from-brand-purple to-[#2c3e50] h-full rounded-full transition-all duration-500';
             }
         }
 
@@ -1459,7 +1459,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function ensureTxType(t) {
         if (!t) return;
-        if (t.category === 'Конверти' || (t.description && (t.description.startsWith('Поповнення конверта') || t.description.startsWith('Зняття з конверта')))) {
+        if (t.category === 'Envelopes' || (t.description && (t.description.startsWith('Depósito envelope') || t.description.startsWith('Levantamento envelope')))) {
             t.type = 'savings';
         }
     }
@@ -1495,7 +1495,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const month = selectedMonth;
         const lastDay = new Date(year, month + 1, 0);
         const totalDays = lastDay.getDate();
-        
+
         const isCurrentMonth = (year === realYear && month === realMonth);
         const isPastMonth = (year < realYear) || (year === realYear && month < realMonth);
         const isFutureMonth = (year > realYear) || (year === realYear && month > realMonth);
@@ -1588,11 +1588,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dbSavingsCurrentEl) dbSavingsCurrentEl.textContent = formatCurrency(displaySavingsCurrent);
         if (dbSavingsTargetEl) dbSavingsTargetEl.textContent = formatCurrency(displaySavingsTarget);
         if (dbGoalProgressFillEl) dbGoalProgressFillEl.style.width = `${progressPercent}%`;
-        
+
         const dbEnvelopesCountEl = document.getElementById('db-envelopes-count');
         if (dbEnvelopesCountEl) {
             const count = savingsGoals ? savingsGoals.length : 0;
-            dbEnvelopesCountEl.textContent = `${count} ${count === 1 ? 'конверт' : (count >= 2 && count <= 4 ? 'конверти' : 'конвертів')}`;
+            dbEnvelopesCountEl.textContent = `${count} ${count === 1 ? 'envelope' : (count >= 2 && count <= 4 ? 'envelopes' : 'envelopes')}`;
         }
 
         if (savingsBadgePctEl) {
@@ -1613,7 +1613,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const prefix = incomePct > 0 ? '+' : '';
             incomeTrendBadgeEl.textContent = `${prefix}${incomePct.toFixed(1)}%`;
-            
+
             if (incomePct >= 0) {
                 incomeTrendBadgeEl.className = 'inline-flex px-2.5 py-0.5 rounded-full bg-brand-purpleDim text-brand-purple font-semibold text-[10px]';
             } else {
@@ -1651,7 +1651,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const dates = [];
         const dailyExpenses = {};
-        
+
         for (let d = 1; d <= totalDays; d++) {
             const dateObj = new Date(year, month, d);
             const dateStr = getLocalDateString(dateObj);
@@ -1720,21 +1720,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (statsMonthlyForecastTitleEl) {
             if (isPastMonth) {
-                statsMonthlyForecastTitleEl.textContent = 'Витрати за місяць';
+                statsMonthlyForecastTitleEl.textContent = 'Despesas do mês';
             } else if (isFutureMonth) {
-                statsMonthlyForecastTitleEl.textContent = 'Прогноз витрат на місяць';
+                statsMonthlyForecastTitleEl.textContent = 'Previsão de despesas';
             } else {
-                statsMonthlyForecastTitleEl.textContent = 'Прогноз витрат до кінця місяця';
+                statsMonthlyForecastTitleEl.textContent = 'Previsão até fim do mês';
             }
         }
 
         if (statsMonthlyForecastSubtitleEl) {
             if (isPastMonth) {
-                statsMonthlyForecastSubtitleEl.textContent = 'Фактична сума списань за місяць';
+                statsMonthlyForecastSubtitleEl.textContent = 'Total efetivo do mês';
             } else if (isFutureMonth) {
-                statsMonthlyForecastSubtitleEl.textContent = 'Очікуваний темп на основі історії';
+                statsMonthlyForecastSubtitleEl.textContent = 'Taxa esperada (histórico)';
             } else {
-                statsMonthlyForecastSubtitleEl.textContent = 'Зважений прогноз (історія + поточний темп)';
+                statsMonthlyForecastSubtitleEl.textContent = 'Previsão ponderada';
             }
         }
 
@@ -1791,23 +1791,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (statsRunwayMonthsEl) {
             if (totalReserves <= 0) {
-                statsRunwayMonthsEl.textContent = '0 днів';
+                statsRunwayMonthsEl.textContent = '0 dias';
             } else if (runwayDays < 60) {
-                statsRunwayMonthsEl.textContent = `${runwayDays} днів`;
+                statsRunwayMonthsEl.textContent = `${runwayDays} dias`;
             } else {
                 const monthsVal = parseFloat(runwayMonths.toFixed(1));
-                const getUkrainianMonthDeclension = (num) => {
-                    const isFractional = (num % 1) !== 0;
-                    if (isFractional) return `${num} місяця (${runwayDays} дн.)`;
-                    const intVal = Math.round(num);
-                    const mod10 = intVal % 10;
-                    const mod100 = intVal % 100;
-                    if (mod100 >= 11 && mod100 <= 14) return `${intVal} місяців (${runwayDays} дн.)`;
-                    if (mod10 === 1) return `${intVal} місяць (${runwayDays} дн.)`;
-                    if (mod10 >= 2 && mod10 <= 4) return `${intVal} місяці (${runwayDays} дн.)`;
-                    return `${intVal} місяців (${runwayDays} дн.)`;
+                const getMonthDeclension = (num) => {
+                    const label = num === 1 ? 'mês' : 'meses';
+                    return `${num} ${label} (${runwayDays} dias)`;
                 };
-                statsRunwayMonthsEl.textContent = getUkrainianMonthDeclension(monthsVal);
+                statsRunwayMonthsEl.textContent = getMonthDeclension(monthsVal);
             }
         }
 
@@ -1863,8 +1856,8 @@ document.addEventListener('DOMContentLoaded', () => {
             transactions.forEach(t => {
                 ensureTxType(t);
                 if (t.type === 'expense' && t.date && t.date.startsWith(currPrefix)) {
-                    const catName = (t.category && t.category !== 'Витрата' && t.category !== 'Різне' && t.category !== 'Голосове введення') 
-                        ? t.category 
+                    const catName = (t.category && t.category !== 'Despesa' && t.category !== 'Diversos' && t.category !== 'Entrada por voz')
+                        ? t.category
                         : getCategoryName(t.description, t.type);
                     categorySums[catName] = (categorySums[catName] || 0) + t.amount;
                 }
@@ -1872,7 +1865,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const sortedCats = Object.entries(categorySums).sort((a, b) => b[1] - a[1]);
             if (sortedCats.length === 0) {
-                statsCategoryContainer.innerHTML = '<p class="text-xs text-brand-textSecondary py-4 text-center">Немає зареєстрованих витрат за поточний місяць</p>';
+                statsCategoryContainer.innerHTML = '<p class="text-xs text-brand-textSecondary py-4 text-center">Sem despesas registadas no mês atual</p>';
             } else {
                 sortedCats.forEach(([catName, sum]) => {
                     const pct = totalExpensesInCurrentMonth > 0 ? (sum / totalExpensesInCurrentMonth) * 100 : 0;
@@ -1881,7 +1874,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     row.className = 'category-row-item space-y-1.5 p-3 rounded-2xl bg-[#161619]/60 border border-[#202024]/60 hover:border-brand-purple/80 hover:bg-[#161619] active:scale-[0.98] transition-all cursor-pointer group select-none';
                     row.dataset.category = catName;
                     row.dataset.date = currPrefix;
-                    row.title = 'Натисніть, щоб переглянути детальні витрати цієї категорії';
+                    row.title = 'Clique para ver detalhes das despesas desta categoria';
                     row.innerHTML = `
                         <div class="flex justify-between items-center text-xs pointer-events-none">
                             <span class="text-white font-semibold flex items-center gap-2 group-hover:text-brand-purple transition-colors">
@@ -1896,7 +1889,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </span>
                         </div>
                         <div class="progress-track bg-[#111113] h-2 w-full rounded-full border border-[#202024] overflow-hidden">
-                            <div class="progress-thumb bg-gradient-to-r from-brand-purple to-[#FF5A36] h-full rounded-full transition-all duration-500" style="width: ${Math.min(100, pct)}%"></div>
+                            <div class="progress-thumb bg-gradient-to-r from-brand-purple to-[#2c3e50] h-full rounded-full transition-all duration-500" style="width: ${Math.min(100, pct)}%"></div>
                         </div>
                     `;
                     row.addEventListener('click', () => openCategoryDetailsModal(catName));
@@ -1914,7 +1907,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const top5 = monthExpenses.slice(0, 5);
 
             if (top5.length === 0) {
-                statsTopExpensesContainer.innerHTML = '<p class="text-xs text-brand-textSecondary py-4 text-center">Немає витрат за поточний місяць</p>';
+                statsTopExpensesContainer.innerHTML = '<p class="text-xs text-brand-textSecondary py-4 text-center">Sem despesas no mês atual</p>';
             } else {
                 top5.forEach((t, idx) => {
                     const item = document.createElement('div');
@@ -1924,10 +1917,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span class="w-5 h-5 rounded-full bg-brand-purpleDim text-brand-purple text-[10px] font-bold flex items-center justify-center flex-shrink-0">${idx + 1}</span>
                             <div class="truncate">
                                 <p class="text-xs font-semibold text-white truncate">${escapeHtml(t.description)}</p>
-                                <p class="text-[10px] text-brand-textSecondary truncate">${escapeHtml(t.category || 'Витрата')} • ${t.date}</p>
+                                <p class="text-[10px] text-brand-textSecondary truncate">${escapeHtml(t.category || 'Despesa')} • ${t.date}</p>
                             </div>
                         </div>
-                        <span class="text-xs font-bold font-outfit text-[#FF5A36] flex-shrink-0">${formatCurrency(t.amount)}</span>
+                        <span class="text-xs font-bold font-outfit text-[#2c3e50] flex-shrink-0">${formatCurrency(t.amount)}</span>
                     `;
                     statsTopExpensesContainer.appendChild(item);
                 });
@@ -1942,7 +1935,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let monthIncomeTotal = 0;
             transactions.forEach(t => {
                 if (t.type === 'income' && t.date && t.date.startsWith(currPrefix)) {
-                    const source = t.description || 'Інше джерело';
+                    const source = t.description || 'Outra fonte';
                     incomeSums[source] = (incomeSums[source] || 0) + t.amount;
                     monthIncomeTotal += t.amount;
                 }
@@ -1950,7 +1943,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const sortedIncomes = Object.entries(incomeSums).sort((a, b) => b[1] - a[1]);
             if (sortedIncomes.length === 0) {
-                statsIncomeSourcesContainer.innerHTML = '<p class="text-xs text-brand-textSecondary py-4 text-center">Немає зафіксованих доходів за поточний місяць</p>';
+                statsIncomeSourcesContainer.innerHTML = '<p class="text-xs text-brand-textSecondary py-4 text-center">Sem rendimentos registados no mês atual</p>';
             } else {
                 sortedIncomes.forEach(([sourceName, sum]) => {
                     const pct = monthIncomeTotal > 0 ? (sum / monthIncomeTotal) * 100 : 0;
@@ -1959,7 +1952,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     item.innerHTML = `
                         <div class="truncate max-w-[65%]">
                             <p class="text-xs font-semibold text-white truncate">${escapeHtml(sourceName)}</p>
-                            <p class="text-[10px] text-brand-textSecondary">${pct.toFixed(0)}% від прибутку</p>
+                            <p class="text-[10px] text-brand-textSecondary">${pct.toFixed(0)}% do rendimento</p>
                         </div>
                         <span class="text-xs font-bold font-outfit text-brand-accent flex-shrink-0">${formatCurrency(sum)}</span>
                     `;
@@ -1970,11 +1963,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (dailyExpensesListContainer) {
             dailyExpensesListContainer.innerHTML = '';
-            
+
             // Create calendar grid layout container
             const calendarGrid = document.createElement('div');
             calendarGrid.className = 'grid grid-cols-7 gap-1 sm:gap-2.5 mt-4 w-full min-w-0';
-            
+
             // Add wrapper for horizontal scroll on mobile
             const outerWrapper = document.createElement('div');
             outerWrapper.className = 'w-full overflow-x-auto sm:overflow-visible custom-scrollbar pb-2';
@@ -1982,7 +1975,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dailyExpensesListContainer.appendChild(outerWrapper);
 
             // Add column headers (Days of the week)
-            const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'];
+            const weekdays = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
             weekdays.forEach(day => {
                 const header = document.createElement('div');
                 header.className = 'text-center text-[10px] sm:text-xs font-bold uppercase tracking-wider text-brand-textSecondary pb-2 border-b border-[#202024]/50';
@@ -2015,23 +2008,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 const dateObj = new Date(year, month, d);
                 const dateStr = getLocalDateString(dateObj);
                 const amount = dailyExpenses[dateStr] || 0;
-                
+
                 const isToday = isCurrentMonth && (d === realDay);
                 const isFuture = isCurrentMonth && (d > realDay);
                 const hasExpenses = amount > 0;
-                
+
                 const cell = document.createElement('div');
-                
+
                 // Styling classes
                 let bgClass = 'bg-[#111113]/30 border-[#202024]/30 hover:border-brand-border';
                 let dayBadgeClass = 'text-brand-textSecondary opacity-60';
                 let amountClass = 'hidden';
                 let hoverClass = 'hover:bg-[#161619]/40';
-                
+
                 if (hasExpenses) {
                     bgClass = 'bg-[#2E1B18]/15 border-brand-accent/20 hover:border-brand-accent/50';
                     dayBadgeClass = 'text-white font-semibold';
-                    
+
                     let amountFontSize = 'text-[7.5px] sm:text-xs';
                     if (amount >= 10000) {
                         amountFontSize = 'text-[6.5px] sm:text-[10px]';
@@ -2041,20 +2034,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     amountClass = `text-brand-accent font-outfit ${amountFontSize} font-bold leading-tight mt-0.5 sm:mt-1.5 w-full text-right truncate block calendar-day-amount`;
                     hoverClass = 'hover:bg-[#2E1B18]/25';
                 }
-                
+
                 if (isToday) {
                     bgClass = 'bg-[#161619] border-brand-purple/70 ring-1 ring-brand-purple/20';
                     dayBadgeClass = 'bg-brand-purple text-white px-1 sm:px-2 py-0.5 rounded-md text-[8px] sm:text-xs font-bold';
                     hoverClass = 'hover:bg-[#1C1C20]';
                 }
-                
+
                 if (isFuture) {
                     bgClass = 'bg-[#111113]/10 border-[#202024]/20 opacity-30';
                     hoverClass = '';
                 }
-                
+
                 cell.className = `border rounded-xl sm:rounded-2xl p-1 sm:p-2.5 flex flex-col justify-between min-h-[50px] sm:min-h-[90px] transition-all duration-200 overflow-hidden ${isFuture ? '' : 'cursor-pointer'} ${bgClass} ${hoverClass}`;
-                
+
                 const formattedAmount = formatCalendarDailyAmount(amount);
 
                 cell.innerHTML = `
@@ -2065,33 +2058,33 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${amount > 0 ? formattedAmount : ''}
                     </div>
                 `;
-                
+
                 // Add click handler to show daily expenses popup details
                 if (!isFuture) {
                     cell.addEventListener('click', () => {
                         // Filter expenses for this date
                         const dayExpenses = transactions.filter(t => t.type === 'expense' && t.date === dateStr);
-                        
+
                         // Format date nicely in Ukrainian
                         const formattedDateStr = dateObj.toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' });
                         if (dailyModalDate) dailyModalDate.textContent = formattedDateStr;
-                        
+
                         if (dailyModalList) {
                             dailyModalList.innerHTML = '';
-                            
+
                             if (dayExpenses.length === 0) {
                                 const emptyMsg = document.createElement('div');
                                 emptyMsg.className = 'text-center py-8 text-brand-textSecondary text-xs opacity-60';
-                                emptyMsg.textContent = 'Немає витрат за цей день';
+                                emptyMsg.textContent = 'Sem despesas neste dia';
                                 dailyModalList.appendChild(emptyMsg);
                             } else {
                                 dayExpenses.forEach(t => {
                                     const itemEl = document.createElement('div');
                                     itemEl.className = 'flex justify-between items-center p-3.5 bg-black/40 border border-[#202024]/50 rounded-xl hover:border-brand-purple/40 transition-all';
-                                    
+
                                     const iconName = getCategoryIcon(t.description, t.type);
                                     const categoryName = getCategoryName(t.description, t.type);
-                                    
+
                                     itemEl.innerHTML = `
                                         <div class="flex items-center gap-3">
                                             <span class="material-symbols-outlined text-[18px] text-brand-purple bg-brand-purpleDim p-2 rounded-lg">${iconName}</span>
@@ -2106,18 +2099,18 @@ document.addEventListener('DOMContentLoaded', () => {
                                 });
                             }
                         }
-                        
+
                         // Update total spent
                         const totalSpent = dayExpenses.reduce((sum, t) => sum + t.amount, 0);
                         if (dailyModalTotal) dailyModalTotal.textContent = formatCurrency(totalSpent);
-                        
+
                         // Open modal
                         if (dailyDetailsModal) {
                             dailyDetailsModal.classList.add('active');
                         }
                     });
                 }
-                
+
                 calendarGrid.appendChild(cell);
             }
         }
@@ -2142,24 +2135,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (dbInsightStatus) {
             if (balance > 0) {
-                dbInsightStatus.textContent = 'Позитивний';
+                dbInsightStatus.textContent = 'Positivo';
                 dbInsightStatus.className = 'text-xs font-bold text-brand-accent';
             } else if (balance === 0) {
-                dbInsightStatus.textContent = 'Збалансований';
+                dbInsightStatus.textContent = 'Equilibrado';
                 dbInsightStatus.className = 'text-xs font-bold text-brand-purple';
             } else {
-                dbInsightStatus.textContent = 'Дефіцит';
+                dbInsightStatus.textContent = 'Défice';
                 dbInsightStatus.className = 'text-xs font-bold text-red-500';
             }
         }
 
         if (dbInsightAdvice) {
             if (balance < 0) {
-                dbInsightAdvice.textContent = 'Ваші витрати перевищують доходи. Рекомендується переглянути необов\'язкові списання.';
+                dbInsightAdvice.textContent = 'As suas despesas ultrapassam os rendimentos. Recomenda-se rever despesas não essenciais.';
             } else if (balance === 0) {
-                dbInsightAdvice.textContent = 'Баланс доходів та витрат рівний. Слідкуйте за плановими списаннями.';
+                dbInsightAdvice.textContent = 'O saldo de rendimentos e despesas está equilibrado. Acompanhe as despesas planeadas.';
             } else {
-                dbInsightAdvice.textContent = 'Чудова динаміка! Ваш бюджет у позитивній зоні, доходи перевищують витрати.';
+                dbInsightAdvice.textContent = 'Excelente dinâmica! O orçamento está positivo, rendimentos superam despesas.';
             }
         }
     };
@@ -2265,13 +2258,13 @@ document.addEventListener('DOMContentLoaded', () => {
         "Здоров'я та Спорт": "fitness_center",
         "Покупки та Одяг": "shopping_bag",
         "Розваги та Дозвілля": "movie",
-        "Інші витрати": "receipt_long",
-        "Зарплата": "work",
-        "Фріланс та Проєкти": "computer",
-        "Премії та Чайові": "redeem",
-        "Інвестиції та Кешбек": "trending_up",
-        "Інші доходи": "payments",
-        "Конверти": "account_balance_wallet"
+        "Outras despesas": "receipt_long",
+        "Salário": "work",
+        "Freelance e projetos": "computer",
+        "Prémios e gorjetas": "redeem",
+        "Investimentos e cashback": "trending_up",
+        "Outros rendimentos": "payments",
+        "Envelopes": "account_balance_wallet"
     };
 
     function findSimilarHistoricalCategory(desc, type) {
@@ -2285,7 +2278,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         for (const t of transactions) {
             if (!t || t.type !== type || !t.description) continue;
-            const validCat = (t.category && t.category !== 'Витрата' && t.category !== 'Різне' && t.category !== 'Інші витрати' && t.category !== 'Інші доходи' && t.category !== 'Голосове введення') ? t.category : null;
+            const validCat = (t.category && t.category !== 'Despesa' && t.category !== 'Diversos' && t.category !== 'Outras despesas' && t.category !== 'Outros rendimentos' && t.category !== 'Entrada por voz') ? t.category : null;
             if (!validCat) continue;
 
             const histDesc = String(t.description).toLowerCase().trim();
@@ -2321,8 +2314,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getCategoryName(desc, type) {
         const d = desc ? String(desc).toLowerCase().trim() : '';
-        if (!d) return type === 'income' ? 'Інші доходи' : 'Інші витрати';
-        if (d.includes('конверт')) return 'Конверти';
+        if (!d) return type === 'income' ? 'Outros rendimentos' : 'Outras despesas';
+        if (d.includes('envelope')) return 'Envelopes';
 
         // 1. Check historical similarity first
         const histCat = findSimilarHistoricalCategory(desc, type);
@@ -2333,7 +2326,7 @@ document.addEventListener('DOMContentLoaded', () => {
             for (const [cat, stems] of Object.entries(INCOME_STEM_MAP)) {
                 if (stems.some(s => d.includes(s))) return cat;
             }
-            return 'Інші доходи';
+            return 'Outros rendimentos';
         } else if (type === 'expense') {
             const scores = {};
             for (const [cat, stems] of Object.entries(EXPENSE_STEM_MAP)) {
@@ -2345,7 +2338,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (Object.keys(scores).length > 0) {
-                let bestCat = 'Інші витрати';
+                let bestCat = 'Outras despesas';
                 let maxScore = 0;
                 for (const [cat, score] of Object.entries(scores)) {
                     if (score > maxScore) {
@@ -2355,9 +2348,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 return bestCat;
             }
-            return 'Інші витрати';
+            return 'Outras despesas';
         } else {
-            return 'Збереження';
+            return 'Poupança';
         }
     }
 
@@ -2389,13 +2382,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let matchesType = false;
             if (typeFilter === 'savings') {
-                matchesType = t.type === 'savings' || 
-                              t.category === 'Конверти' || 
-                              (t.description && t.description.toLowerCase().includes('конверт'));
+                matchesType = t.type === 'savings' ||
+                    t.category === 'Envelopes' ||
+                    (t.description && t.description.toLowerCase().includes('envelope'));
             } else {
                 matchesType = typeFilter === 'all' || t.type === typeFilter;
             }
-            
+
             const desc = (t.description || '').toLowerCase();
             const tType = (t.type || '').toLowerCase();
             const q = (searchQuery || '').toLowerCase().trim();
@@ -2408,13 +2401,13 @@ document.addEventListener('DOMContentLoaded', () => {
         filtered.sort((a, b) => {
             const dateCompare = new Date(b.date) - new Date(a.date);
             if (dateCompare !== 0) return dateCompare;
-            
+
             // Extract numeric timestamp safely (first 13 digits)
             const parseIdNum = (idStr) => {
                 const digits = String(idStr || '').replace(/[^0-9]/g, '').slice(0, 13);
                 return parseFloat(digits) || 0;
             };
-            
+
             return parseIdNum(b.id) - parseIdNum(a.id);
         });
 
@@ -2429,10 +2422,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (filtered.length === 0) {
             listEl.innerHTML = `
                 <tr>
-                    <td colspan="6" class="py-12 text-center text-brand-textSecondary opacity-50">Немає транзакцій за обраний період</td>
+                    <td colspan="6" class="py-12 text-center text-brand-textSecondary opacity-50">Sem transações no período selecionado</td>
                 </tr>`;
             if (mobileListEl) {
-                mobileListEl.innerHTML = `<div class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Немає транзакцій за обраний період</div>`;
+                mobileListEl.innerHTML = `<div class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Sem transações no período selecionado</div>`;
             }
             return;
         }
@@ -2440,11 +2433,11 @@ document.addEventListener('DOMContentLoaded', () => {
         filtered.forEach(t => {
             const tr = document.createElement('tr');
             tr.className = `hover:bg-[#161619] transition-colors group`;
-            
+
             const prefix = t.type === 'income' ? '+' : '-';
-            let badgeLabel = t.type === 'income' ? 'Дохід' : (t.type === 'expense' ? 'Витрата' : 'Збереження');
-            if (t.category === 'Конверти' || (t.description && t.description.toLowerCase().includes('конверт'))) {
-                badgeLabel = t.type === 'income' ? 'Зняття з конверта' : 'Поповнення конверта';
+            let badgeLabel = t.type === 'income' ? 'Rendimento' : (t.type === 'expense' ? 'Despesa' : 'Poupança');
+            if (t.category === 'Envelopes' || (t.description && t.description.toLowerCase().includes('envelope'))) {
+                badgeLabel = t.type === 'income' ? 'Levantamento envelope' : 'Depósito envelope';
             }
 
             const iconName = getCategoryIcon(t.category || t.description, t.type);
@@ -2462,7 +2455,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tr.innerHTML = `
                 <td class="py-4 px-3 text-brand-textSecondary font-medium text-xs">${formatDateString(t.date)}</td>
                 <td class="py-4 px-3 font-semibold flex items-center gap-3">
-                    <span class="w-8 h-8 rounded-lg ${iconBgClass} border border-[#202024] flex items-center justify-center group-hover:border-[#FF5A36] transition-colors">
+                    <span class="w-8 h-8 rounded-lg ${iconBgClass} border border-[#202024] flex items-center justify-center group-hover:border-[#2c3e50] transition-colors">
                         <span class="material-symbols-outlined text-[16px]">${iconName}</span>
                     </span>
                     <span class="truncate max-w-[150px]" title="${escapeHtml(t.description)}">${escapeHtml(t.description)}</span>
@@ -2470,12 +2463,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td class="py-4 px-3 text-brand-textSecondary font-semibold text-xs hidden sm:table-cell">${badgeLabel}</td>
                 <td class="py-4 px-3 text-xs hidden sm:table-cell">
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-[#202024] text-[9px] uppercase tracking-widest font-semibold text-white">
-                        <span class="w-1.5 h-1.5 rounded-full bg-brand-accent"></span> Виконано
+                        <span class="w-1.5 h-1.5 rounded-full bg-brand-accent"></span> Concluído
                     </span>
                 </td>
                 <td class="py-4 px-3 text-right font-outfit text-base font-semibold tracking-tight ${t.type === 'income' ? 'text-brand-accent' : 'text-white'}">${prefix}${formatCurrency(t.amount)}</td>
                 <td class="py-4 px-3 text-right">
-                    <button class="delete-button text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${t.id}" title="Видалити">
+                    <button class="delete-button text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${t.id}" title="Eliminar">
                         <span class="material-symbols-outlined text-[18px]">delete</span>
                     </button>
                 </td>
@@ -2493,7 +2486,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (mobileListEl) {
                 const card = document.createElement('div');
                 card.className = 'bg-[#161619] border border-[#202024] p-4 rounded-2xl flex items-center justify-between hover:border-brand-purple transition-all group';
-                
+
                 card.innerHTML = `
                     <div class="flex items-center gap-3 min-w-0">
                         <span class="w-10 h-10 rounded-xl ${iconBgClass} border border-[#202024] flex items-center justify-center flex-shrink-0">
@@ -2506,7 +2499,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="flex items-center gap-3">
                         <span class="font-outfit text-sm font-semibold tracking-tight ${t.type === 'income' ? 'text-brand-accent' : 'text-white'}">${prefix}${formatCurrency(t.amount)}</span>
-                        <button class="delete-button text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${t.id}" title="Видалити">
+                        <button class="delete-button text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${t.id}" title="Eliminar">
                             <span class="material-symbols-outlined text-[18px]">delete</span>
                         </button>
                     </div>
@@ -2543,13 +2536,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderHistory = (swipeDirection) => {
         // Main ledger (in Dashboard overview, limited to last 10, filters by tab + search)
         renderLedger('history-list', currentFilter, true);
-        
+
         // Savings ledger (savings view, all items, filter by search)
         renderLedger('ledger-savings-list', 'savings', false);
-        
+
         // Income ledger (income view, all items, filter by search)
         renderLedger('ledger-income-list', 'income', false);
-        
+
         // Expenses ledger (expenses view, all items, filter by search)
         renderLedger('ledger-expenses-list', 'expense', false);
 
@@ -2560,7 +2553,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const historyList = document.getElementById('history-list');
             const mobileHistoryList = document.getElementById('mobile-history-list');
             const animClass = swipeDirection === 'left' ? 'swipe-animate-left' : (swipeDirection === 'right' ? 'swipe-animate-right' : '');
-            
+
             if (animClass) {
                 if (historyList) {
                     historyList.classList.remove('swipe-animate-left', 'swipe-animate-right');
@@ -2642,14 +2635,14 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="chart-popup-row">
                 <div class="flex items-center gap-1.5 min-w-0">
                     <span class="chart-popup-dot income"></span>
-                    <span class="chart-popup-label">Доходи</span>
+                    <span class="chart-popup-label">Rendimentos</span>
                 </div>
                 <span class="chart-popup-val income">+${formatCurrency(income)}</span>
             </div>
             <div class="chart-popup-row">
                 <div class="flex items-center gap-1.5 min-w-0">
                     <span class="chart-popup-dot expense"></span>
-                    <span class="chart-popup-label">Витрати</span>
+                    <span class="chart-popup-label">Despesas</span>
                 </div>
                 <span class="chart-popup-val expense">-${formatCurrency(expense)}</span>
             </div>
@@ -2698,16 +2691,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         circle.setAttribute('cx', x.toString());
         circle.setAttribute('cy', y.toString());
-        
+
         const isMobile = window.innerWidth < 640;
         circle.setAttribute('r', isMobile ? '2.5' : '4.5');
         circle.className.baseVal = `chart-point ${className}`;
-        
+
         // Simple title tooltip for fallback
         const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
         title.textContent = valueStr;
         circle.appendChild(title);
-        
+
         group.appendChild(circle);
         return circle;
     };
@@ -2994,7 +2987,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 1. Render Main Large Chart (in Statistics View)
         renderSingleChart('finance-chart', 'chart-grid-lines', 'chart-income-path', 'chart-expense-path', 'chart-income-area', 'chart-expense-area', 'chart-points-group', 'chart-dates-labels', true);
-        
+
         // 2. Render Mini Dashboard Chart (in Dashboard View)
         renderSingleChart('dashboard-mini-chart', 'db-chart-grid-lines', 'db-chart-income-path', 'db-chart-expense-path', 'db-chart-income-area', 'db-chart-expense-area', 'db-chart-points-group', 'db-chart-dates-labels', true);
     };
@@ -3018,8 +3011,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data && data.success && data.category) {
                     const localCat = getCategoryName(description, type);
                     // Prevent AI from downgrading a recognized category to 'Інші витрати'/'Інші доходи'
-                    if ((data.category === 'Інші витрати' || data.category === 'Інші доходи') && 
-                        (localCat !== 'Інші витрати' && localCat !== 'Інші доходи')) {
+                    if ((data.category === 'Outras despesas' || data.category === 'Outros rendimentos') &&
+                        (localCat !== 'Outras despesas' && localCat !== 'Outros rendimentos')) {
                         return localCat;
                     }
                     return data.category;
@@ -3034,8 +3027,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const EXPENSE_CATEGORY_ITEMS = [
         {
             id: 'auto',
-            name: 'Автоматично (AI та історія)',
-            shortName: 'Автоматично',
+            name: 'Automático (IA e histórico)',
+            shortName: 'Automático',
             icon: 'auto_awesome',
             color: '#A855F7',
             bg: 'bg-purple-500/15',
@@ -3045,9 +3038,9 @@ document.addEventListener('DOMContentLoaded', () => {
             keywords: 'авто авто-визначення ai штучний інтелект історія подібні'
         },
         {
-            id: 'Продукти харчування',
-            name: 'Продукти харчування',
-            shortName: 'Продукти',
+            id: 'Alimentação',
+            name: 'Alimentação',
+            shortName: 'Alimentação',
             icon: 'shopping_cart',
             color: '#10B981',
             bg: 'bg-emerald-500/15',
@@ -3057,9 +3050,9 @@ document.addEventListener('DOMContentLoaded', () => {
             keywords: 'продукти харчування їжа супермаркет сільпо атб хліб булочка булочки круасан бакалія м\'ясо сир'
         },
         {
-            id: 'Кафе та ресторани',
-            name: 'Кафе та ресторани',
-            shortName: 'Кафе',
+            id: 'Cafés e restaurantes',
+            name: 'Cafés e restaurantes',
+            shortName: 'Cafés',
             icon: 'restaurant',
             color: '#F59E0B',
             bg: 'bg-amber-500/15',
@@ -3069,9 +3062,9 @@ document.addEventListener('DOMContentLoaded', () => {
             keywords: 'кафе ресторан кава чай макдональдс піца суші доставка обід ланч burger kfc'
         },
         {
-            id: 'Транспорт та Авто',
-            name: 'Транспорт та Авто',
-            shortName: 'Транспорт',
+            id: 'Transporte e automóvel',
+            name: 'Transporte e automóvel',
+            shortName: 'Transporte',
             icon: 'directions_car',
             color: '#3B82F6',
             bg: 'bg-blue-500/15',
@@ -3081,11 +3074,11 @@ document.addEventListener('DOMContentLoaded', () => {
             keywords: 'транспорт авто автомобіль пальне бензин газ азс wog okko таксі uber уклон метро поїзд квиток'
         },
         {
-            id: 'Комунальні та Житло',
-            name: 'Комунальні та Житло',
-            shortName: 'Житло',
+            id: 'Habitação e utilidades',
+            name: 'Habitação e utilidades',
+            shortName: 'Habitação',
             icon: 'home',
-            color: '#8B5CF6',
+            color: '#20a034',
             bg: 'bg-indigo-500/15',
             border: 'border-indigo-500/30',
             text: 'text-indigo-400',
@@ -3093,9 +3086,9 @@ document.addEventListener('DOMContentLoaded', () => {
             keywords: 'комунальні житло оренда квартира світло газ вода інтернет телефон зв\'язок kyivstar lifecell'
         },
         {
-            id: 'Здоров\'я та Спорт',
-            name: 'Здоров\'я та Спорт',
-            shortName: 'Здоров\'я',
+            id: 'Saúde e desporto',
+            name: 'Saúde e desporto',
+            shortName: 'Saúde',
             icon: 'fitness_center',
             color: '#EC4899',
             bg: 'bg-pink-500/15',
@@ -3105,9 +3098,9 @@ document.addEventListener('DOMContentLoaded', () => {
             keywords: 'здоров\'я спорт аптека ліки вітаміни лікар клініка стоматолог зал фітнес тренування'
         },
         {
-            id: 'Покупки та Одяг',
-            name: 'Покупки та Одяг',
-            shortName: 'Покупки',
+            id: 'Compras e vestuário',
+            name: 'Compras e vestuário',
+            shortName: 'Compras',
             icon: 'shopping_bag',
             color: '#06B6D4',
             bg: 'bg-cyan-500/15',
@@ -3117,9 +3110,9 @@ document.addEventListener('DOMContentLoaded', () => {
             keywords: 'покупки одяг взуття техніка телефон ноут розетка rozetka prom zara кросівки шопінг'
         },
         {
-            id: 'Розваги та Дозвілля',
-            name: 'Розваги та Дозвілля',
-            shortName: 'Розваги',
+            id: 'Lazer e entretenimento',
+            name: 'Lazer e entretenimento',
+            shortName: 'Lazer',
             icon: 'movie',
             color: '#F97316',
             bg: 'bg-orange-500/15',
@@ -3129,9 +3122,9 @@ document.addEventListener('DOMContentLoaded', () => {
             keywords: 'розваги дозвілля кіно фільм підписка netflix spotify youtube steam гра квитки театр відпочинок'
         },
         {
-            id: 'Інші витрати',
-            name: 'Інші витрати',
-            shortName: 'Інші',
+            id: 'Outras despesas',
+            name: 'Outras despesas',
+            shortName: 'Outras',
             icon: 'receipt_long',
             color: '#64748B',
             bg: 'bg-slate-500/15',
@@ -3155,22 +3148,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectedVal !== 'auto') {
             const catIcon = getCategoryIcon(selectedVal, 'expense');
             if (triggerTitle) triggerTitle.textContent = selectedVal;
-            if (triggerSub) triggerSub.textContent = 'Обрано вручну (клікніть для зміни)';
+            if (triggerSub) triggerSub.textContent = 'Selecionado manualmente (clique para alterar)';
             if (triggerIcon) triggerIcon.textContent = catIcon;
             return;
         }
 
         if (!desc) {
-            if (triggerTitle) triggerTitle.textContent = 'Автоматично (AI)';
-            if (triggerSub) triggerSub.textContent = 'Авто-визначення за описом (клікніть для зміни)';
+            if (triggerTitle) triggerTitle.textContent = 'Automático (IA)';
+            if (triggerSub) triggerSub.textContent = 'Auto-determinação pela descrição (clique para alterar)';
             if (triggerIcon) triggerIcon.textContent = 'auto_awesome';
             return;
         }
 
         const predictedCat = getCategoryName(desc, 'expense');
         const predictedIcon = getCategoryIcon(predictedCat, 'expense');
-        if (triggerTitle) triggerTitle.textContent = `Авто: ${predictedCat}`;
-        if (triggerSub) triggerSub.textContent = 'Визначено автоматично (клікніть для зміни)';
+        if (triggerTitle) triggerTitle.textContent = `Auto: ${predictedCat}`;
+        if (triggerSub) triggerSub.textContent = 'Determinado automaticamente (clique para alterar)';
         if (triggerIcon) triggerIcon.textContent = predictedIcon;
     };
 
@@ -3186,9 +3179,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const isSelected = (item.id === currentVal);
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = `expense-cat-card w-full flex items-center justify-between p-3 rounded-2xl border transition-all text-left group cursor-pointer ${
-                isSelected ? 'active-cat' : 'border-[#202024] bg-[#161619]/40 hover:border-[#2b2b30]'
-            }`;
+            btn.className = `expense-cat-card w-full flex items-center justify-between p-3 rounded-2xl border transition-all text-left group cursor-pointer ${isSelected ? 'active-cat' : 'border-[#202024] bg-[#161619]/40 hover:border-[#2b2b30]'
+                }`;
 
             btn.innerHTML = `
                 <div class="flex items-center gap-3 min-w-0 pr-2">
@@ -3203,9 +3195,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
                 <div class="flex-shrink-0 flex items-center justify-center w-6 h-6">
-                    <span class="material-symbols-outlined text-[20px] transition-all ${
-                        isSelected ? 'text-brand-purple' : 'text-brand-textSecondary/40 group-hover:text-brand-textSecondary'
-                    }">${isSelected ? 'check_circle' : 'radio_button_unchecked'}</span>
+                    <span class="material-symbols-outlined text-[20px] transition-all ${isSelected ? 'text-brand-purple' : 'text-brand-textSecondary/40 group-hover:text-brand-textSecondary'
+                }">${isSelected ? 'check_circle' : 'radio_button_unchecked'}</span>
                 </div>
             `;
 
@@ -3264,19 +3255,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const INCOME_CATEGORY_ITEMS = [
         {
             id: 'auto',
-            name: 'Автоматично (AI та історія)',
-            shortName: 'Автоматично',
+            name: 'Automático (IA e histórico)',
+            shortName: 'Automático',
             icon: 'auto_awesome',
-            color: '#FF5A36',
-            bg: 'bg-[#FF5A36]/15',
-            border: 'border-[#FF5A36]/30',
-            text: 'text-[#FF5A36]',
+            color: '#2c3e50',
+            bg: 'bg-[#2c3e50]/15',
+            border: 'border-[#2c3e50]/30',
+            text: 'text-[#2c3e50]',
             desc: 'Автоматичне визначення за описом транзакції та вашою історією'
         },
         {
-            id: 'Зарплата',
-            name: 'Зарплата',
-            shortName: 'Зарплата',
+            id: 'Salário',
+            name: 'Salário',
+            shortName: 'Salário',
             icon: 'work',
             color: '#10B981',
             bg: 'bg-emerald-500/15',
@@ -3285,9 +3276,9 @@ document.addEventListener('DOMContentLoaded', () => {
             desc: 'Основний оклад, аванс, заробітна плата, щомісячні нарахування'
         },
         {
-            id: 'Фріланс та Проєкти',
-            name: 'Фріланс та Проєкти',
-            shortName: 'Фріланс',
+            id: 'Freelance e projetos',
+            name: 'Freelance e projetos',
+            shortName: 'Freelance',
             icon: 'computer',
             color: '#3B82F6',
             bg: 'bg-blue-500/15',
@@ -3296,9 +3287,9 @@ document.addEventListener('DOMContentLoaded', () => {
             desc: 'Контракти, проєктна робота, аутсорс, гонорари, підробітки'
         },
         {
-            id: 'Премії та Чайові',
-            name: 'Премії та Чайові',
-            shortName: 'Премії',
+            id: 'Prémios e gorjetas',
+            name: 'Prémios e gorjetas',
+            shortName: 'Prémios',
             icon: 'redeem',
             color: '#F59E0B',
             bg: 'bg-amber-500/15',
@@ -3307,26 +3298,26 @@ document.addEventListener('DOMContentLoaded', () => {
             desc: 'Бонуси, грошові подарунки, винагороди, чай, преміальні виплати'
         },
         {
-            id: 'Інвестиції та Кешбек',
-            name: 'Інвестиції та Кешбек',
-            shortName: 'Інвестиції',
+            id: 'Investimentos e cashback',
+            name: 'Investimentos e cashback',
+            shortName: 'Investimentos',
             icon: 'trending_up',
-            color: '#8B5CF6',
+            color: '#20a034',
             bg: 'bg-purple-500/15',
             border: 'border-purple-500/30',
             text: 'text-purple-400',
             desc: 'Дивіденди, відсотки за депозитами, банківський кешбек, пасивний дохід'
         },
         {
-            id: 'Інші доходи',
-            name: 'Інші доходи',
-            shortName: 'Інші',
+            id: 'Outros rendimentos',
+            name: 'Outros rendimentos',
+            shortName: 'Outras',
             icon: 'payments',
             color: '#64748B',
             bg: 'bg-slate-500/15',
             border: 'border-slate-500/30',
             text: 'text-slate-400',
-            desc: 'Повернення боргів, компенсації, продаж речей та інші надходження'
+            desc: 'Повернення боргів, компенсації, продаж речей та інші entradas'
         }
     ];
 
@@ -3343,22 +3334,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectedVal !== 'auto') {
             const catIcon = getCategoryIcon(selectedVal, 'income');
             if (triggerTitle) triggerTitle.textContent = selectedVal;
-            if (triggerSub) triggerSub.textContent = 'Обрано вручну (клікніть для зміни)';
+            if (triggerSub) triggerSub.textContent = 'Selecionado manualmente (clique para alterar)';
             if (triggerIcon) triggerIcon.textContent = catIcon;
             return;
         }
 
         if (!desc) {
-            if (triggerTitle) triggerTitle.textContent = 'Автоматично (AI)';
-            if (triggerSub) triggerSub.textContent = 'Авто-визначення за описом (клікніть для зміни)';
+            if (triggerTitle) triggerTitle.textContent = 'Automático (IA)';
+            if (triggerSub) triggerSub.textContent = 'Auto-determinação pela descrição (clique para alterar)';
             if (triggerIcon) triggerIcon.textContent = 'auto_awesome';
             return;
         }
 
         const predictedCat = getCategoryName(desc, 'income');
         const predictedIcon = getCategoryIcon(predictedCat, 'income');
-        if (triggerTitle) triggerTitle.textContent = `Авто: ${predictedCat}`;
-        if (triggerSub) triggerSub.textContent = 'Визначено автоматично (клікніть для зміни)';
+        if (triggerTitle) triggerTitle.textContent = `Auto: ${predictedCat}`;
+        if (triggerSub) triggerSub.textContent = 'Determinado automaticamente (clique para alterar)';
         if (triggerIcon) triggerIcon.textContent = predictedIcon;
     };
 
@@ -3374,9 +3365,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const isSelected = (item.id === currentVal);
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = `income-cat-card w-full flex items-center justify-between p-3 rounded-2xl border transition-all text-left group cursor-pointer ${
-                isSelected ? 'active-cat' : 'border-[#202024] bg-[#161619]/40 hover:border-[#2b2b30]'
-            }`;
+            btn.className = `income-cat-card w-full flex items-center justify-between p-3 rounded-2xl border transition-all text-left group cursor-pointer ${isSelected ? 'active-cat' : 'border-[#202024] bg-[#161619]/40 hover:border-[#2b2b30]'
+                }`;
 
             btn.innerHTML = `
                 <div class="flex items-center gap-3 min-w-0 pr-2">
@@ -3391,9 +3381,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
                 <div class="flex-shrink-0 flex items-center justify-center w-6 h-6">
-                    <span class="material-symbols-outlined text-[20px] transition-all ${
-                        isSelected ? 'text-brand-accent' : 'text-brand-textSecondary/40 group-hover:text-brand-textSecondary'
-                    }">${isSelected ? 'check_circle' : 'radio_button_unchecked'}</span>
+                    <span class="material-symbols-outlined text-[20px] transition-all ${isSelected ? 'text-brand-accent' : 'text-brand-textSecondary/40 group-hover:text-brand-textSecondary'
+                }">${isSelected ? 'check_circle' : 'radio_button_unchecked'}</span>
                 </div>
             `;
 
@@ -3450,17 +3439,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Historical Amount-Based Auto-Suggestions
-    const DEFAULT_EXPENSE_PLACEHOLDER = 'Наприклад, Супермаркет, Оренда, Кава...';
-    const DEFAULT_INCOME_PLACEHOLDER = 'Наприклад, Заробітна плата, Фріланс...';
+    const DEFAULT_EXPENSE_PLACEHOLDER = 'Ex: Supermercado, Renda, Café...';
+    const DEFAULT_INCOME_PLACEHOLDER = 'Ex: Salário, Freelance...';
 
-    const getTimesWord = (count) => {
-        const n = Math.abs(count) % 100;
-        const n1 = n % 10;
-        if (n > 10 && n < 20) return 'разів';
-        if (n1 > 1 && n1 < 5) return 'рази';
-        if (n1 === 1) return 'раз';
-        return 'разів';
-    };
+    const getTimesWord = (count) => { return count === 1 ? 'vez' : 'vezes'; };
 
     const getAmountSuggestions = (amount, type) => {
         if (!amount && amount !== 0) return [];
@@ -3530,7 +3512,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (descInput) {
             if (!descInput.value.trim()) {
-                descInput.placeholder = `Підказка: ${suggestions[0].displayDesc}`;
+                descInput.placeholder = `Sugestão: ${suggestions[0].displayDesc}`;
                 descInput.dataset.hasAmountPlaceholder = 'true';
             } else if (descInput.dataset.hasAmountPlaceholder === 'true') {
                 descInput.placeholder = DEFAULT_EXPENSE_PLACEHOLDER;
@@ -3562,9 +3544,9 @@ document.addEventListener('DOMContentLoaded', () => {
         header.innerHTML = `
             <span class="flex items-center gap-1.5 text-brand-purple">
                 <span class="material-symbols-outlined text-[14px]">history</span>
-                <span>Підказки за цією сумою:</span>
+                <span>Sugestões para este valor:</span>
             </span>
-            <span class="text-[10px] text-brand-textSecondary/60 hidden sm:inline">гортайте для вибору</span>
+            <span class="text-[10px] text-brand-textSecondary/60 hidden sm:inline">deslize para selecionar</span>
         `;
         container.appendChild(header);
 
@@ -3578,7 +3560,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.dataset.key = s.key;
             const isActive = currentDesc === s.key;
             btn.className = `amount-suggest-chip expense-chip ${isActive ? 'active-chip' : ''}`;
-            btn.title = `Підставити «${s.displayDesc}» (використано ${s.count} ${getTimesWord(s.count)})`;
+            btn.title = `Preencher «${s.displayDesc}» (utilizado ${s.count} ${getTimesWord(s.count)})`;
             btn.innerHTML = `
                 <span class="material-symbols-outlined text-[15px] opacity-70 pointer-events-none">arrow_forward</span>
                 <span class="max-w-[180px] truncate pointer-events-none">${escapeHtml(s.displayDesc)}</span>
@@ -3629,7 +3611,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (descInput) {
             if (!descInput.value.trim()) {
-                descInput.placeholder = `Підказка: ${suggestions[0].displayDesc}`;
+                descInput.placeholder = `Sugestão: ${suggestions[0].displayDesc}`;
                 descInput.dataset.hasAmountPlaceholder = 'true';
             } else if (descInput.dataset.hasAmountPlaceholder === 'true') {
                 descInput.placeholder = DEFAULT_INCOME_PLACEHOLDER;
@@ -3661,9 +3643,9 @@ document.addEventListener('DOMContentLoaded', () => {
         header.innerHTML = `
             <span class="flex items-center gap-1.5 text-brand-accent">
                 <span class="material-symbols-outlined text-[14px]">history</span>
-                <span>Підказки за цією сумою:</span>
+                <span>Sugestões para este valor:</span>
             </span>
-            <span class="text-[10px] text-brand-textSecondary/60 hidden sm:inline">гортайте для вибору</span>
+            <span class="text-[10px] text-brand-textSecondary/60 hidden sm:inline">deslize para selecionar</span>
         `;
         container.appendChild(header);
 
@@ -3677,7 +3659,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.dataset.key = s.key;
             const isActive = currentDesc === s.key;
             btn.className = `amount-suggest-chip income-chip ${isActive ? 'active-chip' : ''}`;
-            btn.title = `Підставити «${s.displayDesc}» (використано ${s.count} ${getTimesWord(s.count)})`;
+            btn.title = `Preencher «${s.displayDesc}» (utilizado ${s.count} ${getTimesWord(s.count)})`;
             btn.innerHTML = `
                 <span class="material-symbols-outlined text-[15px] opacity-70 pointer-events-none">arrow_forward</span>
                 <span class="max-w-[180px] truncate pointer-events-none">${escapeHtml(s.displayDesc)}</span>
@@ -3728,7 +3710,7 @@ document.addEventListener('DOMContentLoaded', () => {
         transactions.unshift(newTx);
         syncData();
         renderAll();
-        showToast(`Транзакцію додано (${category})`, 'success');
+        showToast(`Transação adicionada (${category})`, 'success');
         return true;
     };
 
@@ -3737,7 +3719,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const amount = parseFloat(document.getElementById('savings-amount').value);
         const description = document.getElementById('savings-description').value.trim();
         const date = document.getElementById('savings-date').value;
-        
+
         if (await addTransaction(amount, 'savings', description, date)) {
             formAddSavings.reset();
             const todayStr = getLocalDateString(new Date());
@@ -3752,7 +3734,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const date = document.getElementById('income-date').value;
         const categorySelect = document.getElementById('income-category-select');
         const explicitCategory = categorySelect && categorySelect.value !== 'auto' ? categorySelect.value : null;
-        
+
         if (await addTransaction(amount, 'income', description, date, explicitCategory)) {
             formAddIncome.reset();
             const todayStr = getLocalDateString(new Date());
@@ -3771,7 +3753,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const date = document.getElementById('expense-date').value;
         const categorySelect = document.getElementById('expense-category-select');
         const explicitCategory = categorySelect && categorySelect.value !== 'auto' ? categorySelect.value : null;
-        
+
         if (await addTransaction(amount, 'expense', description, date, explicitCategory)) {
             formAddExpense.reset();
             const todayStr = getLocalDateString(new Date());
@@ -3789,20 +3771,20 @@ document.addEventListener('DOMContentLoaded', () => {
         isDeletingTx = true;
         try {
             const tx = transactions.find(t => String(t.id) === String(id));
-            const desc = tx ? `«${tx.description}»` : 'цю транзакцію';
+            const desc = tx ? `«${tx.description}»` : 'esta transação';
 
             const confirmed = await showConfirm(
-                'Видалення транзакції',
-                `Ви впевнені, що хочете видалити ${desc}?`,
-                'Видалити',
-                'Скасувати'
+                'Eliminar transação',
+                `Tem a certeza de que pretende eliminar ${desc}?`,
+                'Eliminar',
+                'Cancelar'
             );
 
             if (confirmed) {
                 transactions = transactions.filter(t => String(t.id) !== String(id));
                 syncData();
                 renderAll();
-                showToast('Транзакцію видалено', 'delete');
+                showToast('Transação eliminada', 'delete');
             }
         } finally {
             isDeletingTx = false;
@@ -3817,7 +3799,7 @@ document.addEventListener('DOMContentLoaded', () => {
             syncData();
             renderMetrics();
             closeGoalModal();
-            showToast('Ціль збережень оновлено', 'success');
+            showToast('Objetivo de poupança atualizado', 'success');
         }
     };
 
@@ -3922,7 +3904,7 @@ document.addEventListener('DOMContentLoaded', () => {
         UK_MONTH_SHORT.forEach((mName, idx) => {
             const btn = document.createElement('button');
             btn.type = 'button';
-            
+
             const isFuture = (pickerYear > realYear) || (pickerYear === realYear && idx > realMonth);
             const isSelected = (pickerYear === selectedYear && idx === selectedMonth);
 
@@ -4020,19 +4002,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (limitPeriodMonthBtn) limitPeriodMonthBtn.className = period === 'month' ? activeBtnClass : inactiveBtnClass;
 
         if (period === 'month') {
-            if (limitModalHeaderTitle) limitModalHeaderTitle.textContent = 'Місячний ліміт витрат';
-            if (limitModalHeaderSubtitle) limitModalHeaderSubtitle.textContent = 'Максимальна сума витрат на місяць';
-            if (dailyLimitInputLabel) dailyLimitInputLabel.textContent = 'Сума ліміту на місяць (₴)';
+            if (limitModalHeaderTitle) limitModalHeaderTitle.textContent = 'Limite mensal de despesas';
+            if (limitModalHeaderSubtitle) limitModalHeaderSubtitle.textContent = 'Valor máximo de despesas por mês';
+            if (dailyLimitInputLabel) dailyLimitInputLabel.textContent = 'Valor do limite mensal (€)';
             if (dailyLimitInput) dailyLimitInput.value = monthlyExpenseLimit;
         } else if (period === 'week') {
-            if (limitModalHeaderTitle) limitModalHeaderTitle.textContent = 'Тижневий ліміт витрат';
-            if (limitModalHeaderSubtitle) limitModalHeaderSubtitle.textContent = 'Максимальна сума витрат на тиждень';
-            if (dailyLimitInputLabel) dailyLimitInputLabel.textContent = 'Сума ліміту на тиждень (₴)';
+            if (limitModalHeaderTitle) limitModalHeaderTitle.textContent = 'Limite semanal de despesas';
+            if (limitModalHeaderSubtitle) limitModalHeaderSubtitle.textContent = 'Valor máximo de despesas por semana';
+            if (dailyLimitInputLabel) dailyLimitInputLabel.textContent = 'Valor do limite semanal (€)';
             if (dailyLimitInput) dailyLimitInput.value = weeklyExpenseLimit;
         } else {
-            if (limitModalHeaderTitle) limitModalHeaderTitle.textContent = 'Денний ліміт витрат';
-            if (limitModalHeaderSubtitle) limitModalHeaderSubtitle.textContent = 'Максимальна сума витрат на день';
-            if (dailyLimitInputLabel) dailyLimitInputLabel.textContent = 'Сума ліміту на день (₴)';
+            if (limitModalHeaderTitle) limitModalHeaderTitle.textContent = 'Limite diário de despesas';
+            if (limitModalHeaderSubtitle) limitModalHeaderSubtitle.textContent = 'Valor máximo de despesas por dia';
+            if (dailyLimitInputLabel) dailyLimitInputLabel.textContent = 'Valor do limite diário (€)';
             if (dailyLimitInput) dailyLimitInput.value = dailyExpenseLimit;
         }
     };
@@ -4081,8 +4063,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 closeDailyLimitModal();
 
                 const toastText = selectedLimitPeriod === 'month'
-                    ? 'Місячний ліміт витрат оновлено'
-                    : (selectedLimitPeriod === 'week' ? 'Тижневий ліміт витрат оновлено' : 'Денний ліміт витрат оновлено');
+                    ? 'Limite mensal de despesas atualizado'
+                    : (selectedLimitPeriod === 'week' ? 'Limite semanal de despesas atualizado' : 'Limite diário de despesas atualizado');
                 showToast(toastText, 'success');
             }
         });
@@ -4102,7 +4084,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const searchQ = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
         const expenseTx = transactions.filter(t => {
-            const isExpense = t.type === 'expense' || (t.category === 'Конверти' && t.type !== 'income');
+            const isExpense = t.type === 'expense' || (t.category === 'Envelopes' && t.type !== 'income');
             const matchesSearch = !searchQ || (t.description && t.description.toLowerCase().includes(searchQ));
             return isExpense && matchesSearch;
         });
@@ -4121,10 +4103,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (expenseTx.length === 0) {
             modalList.innerHTML = `
                 <tr>
-                    <td colspan="6" class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Жодної витрати не знайдено</td>
+                    <td colspan="6" class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Sem despesas не знайдено</td>
                 </tr>`;
             if (mobileModalList) {
-                mobileModalList.innerHTML = `<div class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Жодної витрати не знайдено</div>`;
+                mobileModalList.innerHTML = `<div class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Sem despesas не знайдено</div>`;
             }
             return;
         }
@@ -4145,12 +4127,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td class="py-3 px-3 text-brand-textSecondary font-semibold text-xs hidden sm:table-cell">${t.category || getCategoryName(t.description, t.type)}</td>
                 <td class="py-3 px-3 text-xs hidden sm:table-cell">
                     <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-[#202024] text-[9px] uppercase tracking-widest font-semibold text-white">
-                        <span class="w-1.5 h-1.5 rounded-full bg-brand-accent"></span> Виконано
+                        <span class="w-1.5 h-1.5 rounded-full bg-brand-accent"></span> Concluído
                     </span>
                 </td>
                 <td class="py-3 px-3 text-right font-outfit text-sm font-semibold tracking-tight text-white">-${formatCurrency(t.amount)}</td>
                 <td class="py-3 px-3 text-right">
-                    <button class="delete-button text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${t.id}" title="Видалити">
+                    <button class="delete-button text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${t.id}" title="Eliminar">
                         <span class="material-symbols-outlined text-[16px]">delete</span>
                     </button>
                 </td>
@@ -4183,7 +4165,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="flex items-center gap-2 flex-shrink-0">
                         <span class="font-outfit text-xs font-bold tracking-tight text-white">-${formatCurrency(t.amount)}</span>
-                        <button class="delete-button text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${t.id}" title="Видалити">
+                        <button class="delete-button text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${t.id}" title="Eliminar">
                             <span class="material-symbols-outlined text-[16px]">delete</span>
                         </button>
                     </div>
@@ -4258,10 +4240,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (incomeTx.length === 0) {
             modalList.innerHTML = `
                 <tr>
-                    <td colspan="6" class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Жодного доходу не знайдено</td>
+                    <td colspan="6" class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Sem rendimentos не знайдено</td>
                 </tr>`;
             if (mobileModalList) {
-                mobileModalList.innerHTML = `<div class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Жодного доходу не знайдено</div>`;
+                mobileModalList.innerHTML = `<div class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Sem rendimentos не знайдено</div>`;
             }
             return;
         }
@@ -4282,12 +4264,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td class="py-3 px-3 text-brand-textSecondary font-semibold text-xs hidden sm:table-cell">${t.category || getCategoryName(t.description, t.type)}</td>
                 <td class="py-3 px-3 text-xs hidden sm:table-cell">
                     <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-[#202024] text-[9px] uppercase tracking-widest font-semibold text-white">
-                        <span class="w-1.5 h-1.5 rounded-full bg-brand-accent"></span> Виконано
+                        <span class="w-1.5 h-1.5 rounded-full bg-brand-accent"></span> Concluído
                     </span>
                 </td>
                 <td class="py-3 px-3 text-right font-outfit text-sm font-semibold tracking-tight text-white">+${formatCurrency(t.amount)}</td>
                 <td class="py-3 px-3 text-right">
-                    <button class="delete-button text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${t.id}" title="Видалити">
+                    <button class="delete-button text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${t.id}" title="Eliminar">
                         <span class="material-symbols-outlined text-[16px]">delete</span>
                     </button>
                 </td>
@@ -4318,7 +4300,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="flex items-center gap-2 flex-shrink-0">
                         <span class="font-outfit text-xs font-bold tracking-tight text-white">+${formatCurrency(t.amount)}</span>
-                        <button class="delete-button text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${t.id}" title="Видалити">
+                        <button class="delete-button text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${t.id}" title="Eliminar">
                             <span class="material-symbols-outlined text-[16px]">delete</span>
                         </button>
                     </div>
@@ -4363,7 +4345,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Category Details Modal Global Handlers
     let currentCategoryModalState = { catName: null, targetDateStr: null };
 
-    window.showCategoryModal = function(catName, targetDateStr = null) {
+    window.showCategoryModal = function (catName, targetDateStr = null) {
         console.log('[showCategoryModal] Triggered for category:', catName, 'targetDateStr:', targetDateStr);
         currentCategoryModalState = { catName, targetDateStr };
 
@@ -4385,19 +4367,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modalIcon) modalIcon.textContent = getCategoryIcon(catName, 'expense');
 
         let currPrefix = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`;
-        let periodText = `Витрати за ${UK_MONTH_NAMES[selectedMonth]} ${selectedYear}`;
+        let periodText = `Despesas de ${UK_MONTH_NAMES[selectedMonth]} ${selectedYear}`;
 
         if (targetDateStr && targetDateStr.length >= 7) {
             currPrefix = targetDateStr.substring(0, 7);
             const parts = currPrefix.split('-');
             const monthIdx = parseInt(parts[1], 10) - 1;
             if (monthIdx >= 0 && monthIdx < 12) {
-                periodText = `Витрати за ${UK_MONTH_NAMES[monthIdx]} ${parts[0]}`;
+                periodText = `Despesas de ${UK_MONTH_NAMES[monthIdx]} ${parts[0]}`;
             }
         }
         if (modalSubtitle) modalSubtitle.textContent = periodText;
 
-        const norm = str => String(str || '').toLowerCase().replace(/[^a-z0-9а-яєіїґ]/gi, '');
+        const norm = str => String(str || '').toLowerCase().replace(/[^a-z0-9]/gi, '');
         const targetNorm = norm(catName);
 
         // 1. Primary filter: Filter transactions for this category in target month
@@ -4406,8 +4388,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ensureTxType(t);
             if (t.type !== 'expense' || !t.date || !t.date.startsWith(currPrefix)) return false;
             const calculatedCat = getCategoryName(t.description, t.type);
-            const actualCat = (t.category && t.category !== 'Витрата' && t.category !== 'Різне' && t.category !== 'Голосове введення') 
-                ? t.category 
+            const actualCat = (t.category && t.category !== 'Despesa' && t.category !== 'Diversos' && t.category !== 'Entrada por voz')
+                ? t.category
                 : calculatedCat;
             return norm(actualCat) === targetNorm || norm(calculatedCat) === targetNorm || norm(t.category) === targetNorm;
         });
@@ -4419,13 +4401,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 ensureTxType(t);
                 if (t.type !== 'expense') return false;
                 const calculatedCat = getCategoryName(t.description, t.type);
-                const actualCat = (t.category && t.category !== 'Витрата' && t.category !== 'Різне' && t.category !== 'Голосове введення') 
-                    ? t.category 
+                const actualCat = (t.category && t.category !== 'Despesa' && t.category !== 'Diversos' && t.category !== 'Entrada por voz')
+                    ? t.category
                     : calculatedCat;
                 return norm(actualCat) === targetNorm || norm(calculatedCat) === targetNorm || norm(t.category) === targetNorm;
             });
             if (modalSubtitle && catTx.length > 0) {
-                modalSubtitle.textContent = `Всі витрати цієї категорії (за весь час)`;
+                modalSubtitle.textContent = `Todas as despesas desta categoria`;
             }
         }
 
@@ -4447,7 +4429,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (catTx.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="py-10 text-center text-brand-textSecondary opacity-60 text-xs">Немає витрат у цій категорії</td>
+                        <td colspan="5" class="py-10 text-center text-brand-textSecondary opacity-60 text-xs">Sem despат у цій категорії</td>
                     </tr>`;
             } else {
                 catTx.forEach(t => {
@@ -4465,12 +4447,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         </td>
                         <td class="py-3 px-3 text-xs hidden sm:table-cell">
                             <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-[#202024] text-[9px] uppercase tracking-widest font-semibold text-white">
-                                <span class="w-1.5 h-1.5 rounded-full bg-brand-accent"></span> Виконано
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-accent"></span> Concluído
                             </span>
                         </td>
                         <td class="py-3 px-3 text-right font-outfit text-sm font-semibold tracking-tight text-white">-${formatCurrency(t.amount)}</td>
                         <td class="py-3 px-3 text-right">
-                            <button class="delete-button text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${t.id}" title="Видалити">
+                            <button class="delete-button text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${t.id}" title="Eliminar">
                                 <span class="material-symbols-outlined text-[16px]">delete</span>
                             </button>
                         </td>
@@ -4491,7 +4473,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (itemsList) {
             itemsList.innerHTML = '';
             if (catTx.length === 0) {
-                itemsList.innerHTML = `<div class="py-8 text-center text-xs text-brand-textSecondary opacity-70">Немає витрат у цій категорії</div>`;
+                itemsList.innerHTML = `<div class="py-8 text-center text-xs text-brand-textSecondary opacity-70">Sem despат у цій категорії</div>`;
             } else {
                 catTx.forEach(t => {
                     const card = document.createElement('div');
@@ -4510,7 +4492,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="flex items-center gap-2 flex-shrink-0">
                             <span class="font-outfit text-xs font-bold tracking-tight text-white">-${formatCurrency(t.amount)}</span>
-                            <button class="delete-button text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${t.id}" title="Видалити">
+                            <button class="delete-button text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${t.id}" title="Eliminar">
                                 <span class="material-symbols-outlined text-[16px]">delete</span>
                             </button>
                         </div>
@@ -4531,7 +4513,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.style.cssText = 'display: flex !important; opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; z-index: 999999 !important;';
     };
 
-    window.closeCategoryModal = function() {
+    window.closeCategoryModal = function () {
         const modal = document.getElementById('category-details-modal');
         if (modal) {
             modal.classList.remove('active');
@@ -4566,7 +4548,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const catTarget = e.target.closest('[data-category], .category-badge, .category-click');
         if (catTarget) {
             const catName = catTarget.dataset.category || (catTarget.dataset.category !== undefined ? catTarget.dataset.category : null);
-            if (catName && catName !== 'Витрата' && catName !== 'Дохід' && catName !== 'Різне' && catName !== 'Категорія') {
+            if (catName && catName !== 'Despesa' && catName !== 'Rendimento' && catName !== 'Diversos' && catName !== 'Категорія') {
                 e.preventDefault();
                 e.stopPropagation();
                 const txDate = catTarget.dataset.date || null;
@@ -4579,7 +4561,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const showToast = (message, type = 'info') => {
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
-        
+
         let iconName = 'info';
         if (type === 'success') iconName = 'check_circle';
         else if (type === 'recurring') iconName = 'sync';
@@ -4589,12 +4571,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="material-symbols-outlined text-[16px]">${iconName}</span>
             <span>${escapeHtml(message)}</span>
         `;
-        
+
         toastContainer.appendChild(toast);
-        
+
         // Trigger reflow to apply animation
         setTimeout(() => toast.classList.add('show'), 10);
-        
+
         // Remove after 3s
         setTimeout(() => {
             toast.classList.remove('show');
@@ -4608,7 +4590,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const formatCurrency = (val) => {
         return new Intl.NumberFormat('uk-UA', {
             style: 'currency',
-            currency: 'UAH',
+            currency: 'EUR',
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         }).format(val);
@@ -4616,8 +4598,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const formatDateToLocal = (date) => {
         // Format to match "Wed, 29 May 2024" format (Ukrainian equivalent or similar)
-        const days = ['Нед', 'Пон', 'Вів', 'Сер', 'Чет', 'Пят', 'Суб'];
-        const months = ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер', 'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру'];
+        const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+        const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
         const d = date.getDate();
         const dayName = days[date.getDay()];
         const monthName = months[date.getMonth()];
@@ -4637,7 +4619,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const initTheme = () => {
         const savedTheme = localStorage.getItem('mono_theme');
         const html = document.documentElement;
-        
+
         if (savedTheme) {
             if (savedTheme === 'light') {
                 html.classList.remove('dark');
@@ -4655,11 +4637,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (html.classList.contains('dark')) {
             html.classList.remove('dark');
             localStorage.setItem('mono_theme', 'light');
-            showToast('Увімкнено світлу тему');
+            showToast('Tema claro ativado');
         } else {
             html.classList.add('dark');
             localStorage.setItem('mono_theme', 'dark');
-            showToast('Увімкнено темну тему');
+            showToast('Tema escuro ativado');
         }
     };
 
@@ -4682,7 +4664,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isDueToday = (todayDayNum === scheduledDay) || (todayDayNum === maxDayInMonth && scheduledDay > maxDayInMonth);
 
                 if (isDueToday) {
-                    const targetDescription = item.description + ' (Автосписання)';
+                    const targetDescription = item.description + ' (Despesa automática)';
                     const alreadyExists = transactions.some(t => t.type === 'expense' && t.description === targetDescription && t.date === todayStr);
 
                     if (!alreadyExists) {
@@ -4702,7 +4684,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (addedCount > 0) {
             syncData();
-            showToast(`Автоматично списано ${addedCount} регулярних витрат`);
+            showToast(`Despesa automática processada ${addedCount} despesas regulares`);
         }
     };
 
@@ -4712,7 +4694,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (recurringExpenses.length === 0) {
             recurringExpensesList.innerHTML = `
-                <div class="text-xs text-brand-textSecondary text-center py-6 opacity-50">Немає активних автосписань</div>
+                <div class="text-xs text-brand-textSecondary text-center py-6 opacity-50">Sem despesas automáticas</div>
             `;
             return;
         }
@@ -4721,9 +4703,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const div = document.createElement('div');
             div.className = 'flex items-center justify-between bg-black border border-[#202024] rounded-xl px-4 py-3 group hover:border-brand-purple transition-all';
             const scheduledDays = item.days || [item.dayOfMonth || 1];
-            const daysText = scheduledDays.length === 1 
-                ? `${scheduledDays[0]}-го числа кожного місяця`
-                : `числа: ${scheduledDays.join(', ')} кожного місяця`;
+            const daysText = scheduledDays.length === 1
+                ? `${scheduledDays[0]}-th de cada mês`
+                : `dias: ${scheduledDays.join(', ')} de cada mês`;
 
             div.innerHTML = `
                 <div class="flex items-center gap-3">
@@ -4737,7 +4719,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-xs font-bold text-white font-outfit font-semibold">${formatCurrency(item.amount)}</span>
-                    <button class="delete-recurring-btn text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${item.id}" title="Видалити">
+                    <button class="delete-recurring-btn text-brand-textSecondary hover:text-red-400 p-1 rounded-lg hover:bg-[#202024] transition-colors" data-id="${item.id}" title="Eliminar">
                         <span class="material-symbols-outlined text-[16px]">close</span>
                     </button>
                 </div>
@@ -4764,7 +4746,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!amount || isNaN(amount) || amount <= 0 || !description) return;
         if (!daysVal) {
-            showToast('Оберіть хоча б один день на календарі', 'info');
+            showToast('Selecione pelo menos um dia no calendário', 'info');
             return;
         }
 
@@ -4781,7 +4763,7 @@ document.addEventListener('DOMContentLoaded', () => {
         syncData();
         renderRecurringExpenses();
         formAddRecurring.reset();
-        
+
         // Reset calendar buttons visual state
         const daysGrid = document.getElementById('recurring-days-grid');
         if (daysGrid) {
@@ -4791,21 +4773,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         document.getElementById('recurring-days-selected').value = '';
 
-        showToast('Автосписання успішно додано', 'success');
-        
+        showToast('Despesa automática adicionada com sucesso', 'success');
+
         // Refresh dashboard metrics
         renderAll();
     };
 
     const handleDeleteRecurring = async (id) => {
         const item = recurringExpenses.find(r => String(r.id) === String(id));
-        const desc = item ? `«${item.description}»` : 'це автосписання';
+        const desc = item ? `«${item.description}»` : 'esta despesa automática';
 
         const confirmed = await showConfirm(
-            'Видалення автосписання',
-            `Ви впевнені, що хочете видалити ${desc}?`,
-            'Видалити',
-            'Скасувати'
+            'Eliminar despesa automática',
+            `Tem a certeza de que pretende eliminar ${desc}?`,
+            'Eliminar',
+            'Cancelar'
         );
 
         if (confirmed) {
@@ -4813,11 +4795,11 @@ document.addEventListener('DOMContentLoaded', () => {
             syncData();
             renderRecurringExpenses();
             renderAll();
-            showToast('Автосписання видалено', 'delete');
+            showToast('Despesa automática eliminada', 'delete');
         }
     };
 
-    /* Ukrainian Voice Text Parser for MonoFinance (Ported 1-to-1 from Android Kotlin) */
+    /* Ukrainian Voice Text Parser for SwiftFinance (Ported 1-to-1 from Android Kotlin) */
     const isNumericOrNumberWord = (word) => {
         if (!word) return false;
         const cleanWord = word.toLowerCase().replace(/[^a-zа-яєіїґ0-9.,']/gi, '');
@@ -4880,10 +4862,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const parseVoiceText = (text) => {
         if (!text || typeof text !== 'string') return [];
-        
+
         const words = text.split(/\s+/);
         const parsedItems = [];
-        
+
         let currentDesc = [];
         let currentAmt = [];
         const conjunctions = new Set(['і', 'й', 'та', 'також', 'ще', 'плюс', 'а', 'але']);
@@ -4894,7 +4876,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const amount = extractNumberFromWords(currentAmt);
 
             if (cleanDesc.length > 0 || amount > 0) {
-                const finalDesc = cleanDesc.length > 0 ? cleanDesc : 'Витрата';
+                const finalDesc = cleanDesc.length > 0 ? cleanDesc : 'Despesa';
                 const descLower = finalDesc.toLowerCase();
                 const isIncome = incomeKeywords.some(kw => descLower.includes(kw));
                 const itemType = isIncome ? 'income' : 'expense';
@@ -4966,16 +4948,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             voiceModal.classList.add('active');
             if (voiceParsedContainer) voiceParsedContainer.classList.add('hidden');
-            if (voiceTranscriptPreview) voiceTranscriptPreview.textContent = '"Наприклад: Кава 75 гривень і обід 200 грн"';
-            if (voiceStatusText) voiceStatusText.textContent = 'Натисніть мікрофон та говоріть';
+            if (voiceTranscriptPreview) voiceTranscriptPreview.textContent = '"Ex: Café 75 e almoço 200"';
+            if (voiceStatusText) voiceStatusText.textContent = 'Prima o microfone e fale';
             if (voiceItemsList) voiceItemsList.innerHTML = '';
 
             const hasMediaRecorder = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
             if (SpeechRecognition || hasMediaRecorder) {
                 startRecording();
             } else {
-                if (voiceStatusText) voiceStatusText.textContent = 'Голосовий ввід не підтримується цим браузером';
-                showToast('Мікрофон недоступний у цьому браузері', 'info');
+                if (voiceStatusText) voiceStatusText.textContent = 'Entrada por voz não suportada neste navegador';
+                showToast('Microfone indisponível neste navegador', 'info');
             }
         };
 
@@ -4991,11 +4973,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const sendAudioForTranscription = async (blob) => {
             if (voiceStatusText) {
-                voiceStatusText.textContent = 'Розпізнаю мову (Whisper AI)...';
+                voiceStatusText.textContent = 'A reconhecer voz (Whisper AI)...';
                 voiceStatusText.classList.add('text-brand-accent');
             }
             if (voiceTranscriptPreview) {
-                voiceTranscriptPreview.textContent = '"Обробка запису..."';
+                voiceTranscriptPreview.textContent = '"A processar gravação..."';
             }
 
             try {
@@ -5018,13 +5000,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     handleVoiceResult(data.text);
                 } else {
                     if (voiceStatusText) {
-                        voiceStatusText.textContent = data.message || 'Не вдалося розпізнати мову. Спробуйте ще раз';
+                        voiceStatusText.textContent = data.message || 'Não foi possível reconhecer a voz. Tente novamente';
                     }
                 }
             } catch (err) {
                 console.error('Transcription error:', err);
                 if (voiceStatusText) {
-                    voiceStatusText.textContent = 'Помилка зв\'язку з сервером розпізнавання';
+                    voiceStatusText.textContent = 'Erro de ligação ao servidor de reconhecimento';
                 }
             } finally {
                 if (voiceStatusText) voiceStatusText.classList.remove('text-brand-accent');
@@ -5034,8 +5016,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const startMediaRecording = async () => {
             try {
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
-                    if (voiceStatusText) voiceStatusText.textContent = 'Голосовий ввід не підтримується пристроєм';
-                    showToast('Мікрофон або запис аудіо недоступний', 'info');
+                    if (voiceStatusText) voiceStatusText.textContent = 'Entrada por voz não suportada pelo dispositivo';
+                    showToast('Microfone ou gravação de áudio indisponível', 'info');
                     return;
                 }
 
@@ -5084,7 +5066,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (voiceRecordPulseBtn) voiceRecordPulseBtn.classList.add('mic-recording');
                 if (voiceStatusText) {
-                    voiceStatusText.textContent = 'Слухаю... Говоріть (Натисніть ще раз для завершення)';
+                    voiceStatusText.textContent = 'A ouvir... Fale (Prima novamente para terminar)';
                     voiceStatusText.classList.add('text-brand-accent');
                 }
             } catch (err) {
@@ -5093,10 +5075,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 isRecording = false;
                 if (voiceRecordPulseBtn) voiceRecordPulseBtn.classList.remove('mic-recording');
                 if (voiceStatusText) {
-                    voiceStatusText.textContent = 'Надайте дозвіл на використання мікрофона';
+                    voiceStatusText.textContent = 'Conceda permissão para usar o microfone';
                     voiceStatusText.classList.remove('text-brand-accent');
                 }
-                showToast('Потрібен дозвіл на мікрофон у налаштуваннях Safari', 'info');
+                showToast('É necessária permissão do microfone nas definições do Safari', 'info');
             }
         };
 
@@ -5106,7 +5088,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (SpeechRecognition) {
                 try {
                     if (recognition) {
-                        try { recognition.abort(); } catch (e) {}
+                        try { recognition.abort(); } catch (e) { }
                     }
 
                     recognition = new SpeechRecognition();
@@ -5118,7 +5100,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         isRecording = true;
                         if (voiceRecordPulseBtn) voiceRecordPulseBtn.classList.add('mic-recording');
                         if (voiceStatusText) {
-                            voiceStatusText.textContent = 'Слухаю... Говоріть';
+                            voiceStatusText.textContent = 'A ouvir... Fale';
                             voiceStatusText.classList.add('text-brand-accent');
                         }
                     };
@@ -5152,9 +5134,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             startMediaRecording();
                         } else if (voiceStatusText) {
                             if (event.error === 'no-speech') {
-                                voiceStatusText.textContent = 'Мову не виявлено. Натисніть ще раз';
+                                voiceStatusText.textContent = 'Voz não detetada. Prima novamente';
                             } else {
-                                voiceStatusText.textContent = `Помилка розпізнавання: ${event.error}`;
+                                voiceStatusText.textContent = `Erro de reconhecimento: ${event.error}`;
                             }
                         }
                     };
@@ -5177,12 +5159,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const stopRecording = () => {
             if (recognition && isRecording && !isMediaRecording) {
-                try { recognition.stop(); } catch (e) {}
+                try { recognition.stop(); } catch (e) { }
                 isRecording = false;
                 if (voiceRecordPulseBtn) voiceRecordPulseBtn.classList.remove('mic-recording');
             }
             if (mediaRecorder && mediaRecorder.state === 'recording') {
-                try { mediaRecorder.stop(); } catch (e) {}
+                try { mediaRecorder.stop(); } catch (e) { }
             }
         };
 
@@ -5191,22 +5173,22 @@ document.addEventListener('DOMContentLoaded', () => {
             row.className = 'voice-item-row bg-[#161619] p-3.5 rounded-2xl border border-[#202024] space-y-3 sm:space-y-0 sm:flex sm:items-end gap-3 shadow-sm';
             row.innerHTML = `
                 <div class="flex-1 min-w-0">
-                    <label class="block text-[9px] font-bold text-brand-textSecondary uppercase tracking-widest mb-1.5 opacity-70">Опис / Назва</label>
-                    <input type="text" class="voice-item-desc w-full bg-[#111113] border border-[#202024] rounded-xl px-3 h-[38px] text-xs text-white focus:border-[#FF5A36] focus:outline-none transition-all" value="${escapeHtml(desc)}" placeholder="Наприклад: Зарплата або Кава">
+                    <label class="block text-[9px] font-bold text-brand-textSecondary uppercase tracking-widest mb-1.5 opacity-70">Descrição / Nome</label>
+                    <input type="text" class="voice-item-desc w-full bg-[#111113] border border-[#202024] rounded-xl px-3 h-[38px] text-xs text-white focus:border-[#2c3e50] focus:outline-none transition-all" value="${escapeHtml(desc)}" placeholder="Ex: Salário ou Café">
                 </div>
                 <div class="w-full sm:w-28 flex-shrink-0">
-                    <label class="block text-[9px] font-bold text-brand-textSecondary uppercase tracking-widest mb-1.5 opacity-70">Сума (₴)</label>
-                    <input type="number" step="0.01" class="voice-item-amount w-full bg-[#111113] border border-[#202024] rounded-xl px-3 h-[38px] text-xs text-white focus:border-[#FF5A36] focus:outline-none transition-all" value="${amount > 0 ? amount : ''}" placeholder="0.00">
+                    <label class="block text-[9px] font-bold text-brand-textSecondary uppercase tracking-widest mb-1.5 opacity-70">Valor (€)</label>
+                    <input type="number" step="0.01" class="voice-item-amount w-full bg-[#111113] border border-[#202024] rounded-xl px-3 h-[38px] text-xs text-white focus:border-[#2c3e50] focus:outline-none transition-all" value="${amount > 0 ? amount : ''}" placeholder="0.00">
                 </div>
                 <div class="w-full sm:w-36 flex-shrink-0">
-                    <label class="block text-[9px] font-bold text-brand-textSecondary uppercase tracking-widest mb-1.5 opacity-70">Тип операції</label>
+                    <label class="block text-[9px] font-bold text-brand-textSecondary uppercase tracking-widest mb-1.5 opacity-70">Tipo de transação</label>
                     <input type="hidden" class="voice-item-type" value="${type}">
                     <div class="flex items-center bg-[#111113] border border-[#202024] p-1 rounded-xl h-[38px]">
-                        <button type="button" class="voice-type-btn text-[10px] font-bold px-2 py-1 rounded-lg transition-all flex-1 text-center ${type === 'expense' ? 'bg-[#8B5CF6]/20 text-[#A78BFA] border border-[#8B5CF6]/40 shadow-sm' : 'text-brand-textSecondary hover:text-white'}" data-type="expense">
-                            Витрата
+                        <button type="button" class="voice-type-btn text-[10px] font-bold px-2 py-1 rounded-lg transition-all flex-1 text-center ${type === 'expense' ? 'bg-[#20a034]/20 text-[#A78BFA] border border-[#20a034]/40 shadow-sm' : 'text-brand-textSecondary hover:text-white'}" data-type="expense">
+                            Despesa
                         </button>
-                        <button type="button" class="voice-type-btn text-[10px] font-bold px-2 py-1 rounded-lg transition-all flex-1 text-center ${type === 'income' ? 'bg-[#FF5A36]/20 text-[#FF5A36] border border-[#FF5A36]/40 shadow-sm' : 'text-brand-textSecondary hover:text-white'}" data-type="income">
-                            Дохід
+                        <button type="button" class="voice-type-btn text-[10px] font-bold px-2 py-1 rounded-lg transition-all flex-1 text-center ${type === 'income' ? 'bg-[#2c3e50]/20 text-[#2c3e50] border border-[#2c3e50]/40 shadow-sm' : 'text-brand-textSecondary hover:text-white'}" data-type="income">
+                            Rendimento
                         </button>
                     </div>
                 </div>
@@ -5222,9 +5204,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     typeBtns.forEach(b => {
                         if (b.dataset.type === 'expense') {
-                            b.className = `voice-type-btn text-[10px] font-bold px-2 py-1 rounded-lg transition-all flex-1 text-center ${selectedType === 'expense' ? 'bg-[#8B5CF6]/20 text-[#A78BFA] border border-[#8B5CF6]/40 shadow-sm' : 'text-brand-textSecondary hover:text-white'}`;
+                            b.className = `voice-type-btn text-[10px] font-bold px-2 py-1 rounded-lg transition-all flex-1 text-center ${selectedType === 'expense' ? 'bg-[#20a034]/20 text-[#A78BFA] border border-[#20a034]/40 shadow-sm' : 'text-brand-textSecondary hover:text-white'}`;
                         } else {
-                            b.className = `voice-type-btn text-[10px] font-bold px-2 py-1 rounded-lg transition-all flex-1 text-center ${selectedType === 'income' ? 'bg-[#FF5A36]/20 text-[#FF5A36] border border-[#FF5A36]/40 shadow-sm' : 'text-brand-textSecondary hover:text-white'}`;
+                            b.className = `voice-type-btn text-[10px] font-bold px-2 py-1 rounded-lg transition-all flex-1 text-center ${selectedType === 'income' ? 'bg-[#2c3e50]/20 text-[#2c3e50] border border-[#2c3e50]/40 shadow-sm' : 'text-brand-textSecondary hover:text-white'}`;
                         }
                     });
                 });
@@ -5247,7 +5229,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (voiceParsedContainer) voiceParsedContainer.classList.remove('hidden');
-            if (voiceStatusText) voiceStatusText.textContent = 'Перевірте та збережіть розпізнані операції';
+            if (voiceStatusText) voiceStatusText.textContent = 'Verifique e guarde as transações reconhecidas';
         };
 
         // Add blank item button
@@ -5299,7 +5281,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
 
                     if (validItems.length === 0) {
-                        showToast('Введіть хоча б одну суму операції', 'info');
+                        showToast('Introduza pelo menos um valor de transação', 'info');
                         return;
                     }
 
@@ -5312,7 +5294,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             id: (baseTime + (validItems.length - idx)).toString(),
                             date: todayStr,
                             amount: item.amount,
-                            description: item.desc || (item.type === 'income' ? 'Голосовий дохід' : 'Голосова витрата'),
+                            description: item.desc || (item.type === 'income' ? 'Rendimento por voz' : 'Despesa por voz'),
                             type: item.type,
                             category: cat
                         };
@@ -5331,17 +5313,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     let msg = '';
                     if (incomeCount > 0 && expenseCount > 0) {
-                        msg = `Успішно додано ${incomeCount} дох. та ${expenseCount} витр.!`;
+                        msg = `Adicionado com sucesso ${incomeCount} rend. e ${expenseCount} desp.!`;
                     } else if (incomeCount > 0) {
-                        msg = `Успішно додано ${incomeCount} доходів!`;
+                        msg = `Adicionado com sucesso ${incomeCount} rendimentos!`;
                     } else {
-                        msg = `Успішно додано ${expenseCount} витрат!`;
+                        msg = `Adicionado com sucesso ${expenseCount} despesas!`;
                     }
 
                     showToast(msg, 'success');
                 } catch (err) {
                     console.error('Error saving voice transactions:', err);
-                    showToast('Помилка при збереженні операцій', 'error');
+                    showToast('Erro ao guardar transações', 'error');
                 } finally {
                     isVoiceSaving = false;
                     if (voiceSaveBtn) {
@@ -5364,11 +5346,10 @@ document.addEventListener('DOMContentLoaded', () => {
         GOAL_ICONS.forEach(icon => {
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = `w-9 h-9 rounded-xl flex items-center justify-center border transition-all flex-shrink-0 ${
-                icon === selectedIcon
-                    ? 'border-[#FF5A36] bg-[#FF5A36]/20 text-[#FF5A36]'
-                    : 'border-[#202024] bg-black text-brand-textSecondary hover:border-[#FF5A36]/50'
-            }`;
+            btn.className = `w-9 h-9 rounded-xl flex items-center justify-center border transition-all flex-shrink-0 ${icon === selectedIcon
+                ? 'border-[#2c3e50] bg-[#2c3e50]/20 text-[#2c3e50]'
+                : 'border-[#202024] bg-black text-brand-textSecondary hover:border-[#2c3e50]/50'
+                }`;
             btn.innerHTML = `<span class="material-symbols-outlined text-[18px]">${icon}</span>`;
             btn.addEventListener('click', () => {
                 if (envelopeIconVal) envelopeIconVal.value = icon;
@@ -5378,15 +5359,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const renderColorPicker = (selectedColor = '#FF5A36') => {
+    const renderColorPicker = (selectedColor = '#2c3e50') => {
         if (!envelopeColorPicker) return;
         envelopeColorPicker.innerHTML = '';
         GOAL_COLORS.forEach(color => {
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = `w-7 h-7 rounded-full border-2 transition-all flex-shrink-0 ${
-                color === selectedColor ? 'border-white scale-110 shadow-md' : 'border-transparent hover:scale-105'
-            }`;
+            btn.className = `w-7 h-7 rounded-full border-2 transition-all flex-shrink-0 ${color === selectedColor ? 'border-white scale-110 shadow-md' : 'border-transparent hover:scale-105'
+                }`;
             btn.style.backgroundColor = color;
             btn.addEventListener('click', () => {
                 if (envelopeColorVal) envelopeColorVal.value = color;
@@ -5398,29 +5378,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const openEnvelopeModal = (goalId = null) => {
         renderIconPicker('savings');
-        renderColorPicker('#FF5A36');
-        
+        renderColorPicker('#2c3e50');
+
         if (goalId) {
             const goal = savingsGoals.find(g => String(g.id) === String(goalId));
             if (goal) {
-                if (envelopeModalTitle) envelopeModalTitle.textContent = 'Редагувати конверт';
+                if (envelopeModalTitle) envelopeModalTitle.textContent = 'Editar envelope';
                 if (envelopeIdInput) envelopeIdInput.value = goal.id;
                 if (envelopeTitleInput) envelopeTitleInput.value = goal.title;
                 if (envelopeTargetAmountInput) envelopeTargetAmountInput.value = goal.targetAmount;
                 if (envelopeCurrentAmountInput) envelopeCurrentAmountInput.value = goal.currentAmount;
                 if (envelopeIconVal) envelopeIconVal.value = goal.icon || 'savings';
-                if (envelopeColorVal) envelopeColorVal.value = goal.color || '#FF5A36';
+                if (envelopeColorVal) envelopeColorVal.value = goal.color || '#2c3e50';
                 renderIconPicker(goal.icon || 'savings');
-                renderColorPicker(goal.color || '#FF5A36');
+                renderColorPicker(goal.color || '#2c3e50');
             }
         } else {
-            if (envelopeModalTitle) envelopeModalTitle.textContent = 'Створити новий конверт';
+            if (envelopeModalTitle) envelopeModalTitle.textContent = 'Criar novo envelope';
             if (envelopeIdInput) envelopeIdInput.value = '';
             if (envelopeTitleInput) envelopeTitleInput.value = '';
             if (envelopeTargetAmountInput) envelopeTargetAmountInput.value = '';
             if (envelopeCurrentAmountInput) envelopeCurrentAmountInput.value = '0';
             if (envelopeIconVal) envelopeIconVal.value = 'savings';
-            if (envelopeColorVal) envelopeColorVal.value = '#FF5A36';
+            if (envelopeColorVal) envelopeColorVal.value = '#2c3e50';
         }
 
         if (envelopeModal) envelopeModal.classList.add('active');
@@ -5437,10 +5417,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetAmount = envelopeTargetAmountInput ? parseFloat(envelopeTargetAmountInput.value) : 0;
         const currentAmount = envelopeCurrentAmountInput ? parseFloat(envelopeCurrentAmountInput.value) || 0 : 0;
         const icon = envelopeIconVal ? envelopeIconVal.value : 'savings';
-        const color = envelopeColorVal ? envelopeColorVal.value : '#FF5A36';
+        const color = envelopeColorVal ? envelopeColorVal.value : '#2c3e50';
 
         if (!title || targetAmount <= 0) {
-            showToast('Введіть коректну назву та цільову суму', 'info');
+            showToast('Introduza um nome e um valor alvo válidos', 'info');
             return;
         }
 
@@ -5452,7 +5432,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 goal.icon = icon;
                 goal.color = color;
             }
-            showToast('Конверт успішно оновлено', 'success');
+            showToast('Envelope atualizado com sucesso', 'success');
         } else {
             const newGoal = {
                 id: 'goal_' + Date.now(),
@@ -5464,7 +5444,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             savingsGoals.push(newGoal);
 
-            showToast('Новий конверт успішно створено', 'success');
+            showToast('Novo envelope criado com sucesso', 'success');
         }
 
         syncData();
@@ -5472,7 +5452,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeEnvelopeModal();
     };
 
-    function showConfirm(title, message, okText = 'Підтвердити', cancelText = 'Скасувати') {
+    function showConfirm(title, message, okText = 'Confirmar', cancelText = 'Cancelar') {
         return new Promise((resolve) => {
             const modal = document.getElementById('custom-confirm-modal');
             const titleEl = document.getElementById('confirm-modal-title');
@@ -5507,19 +5487,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const deleteEnvelope = async (goalId) => {
         const goal = savingsGoals.find(g => String(g.id) === String(goalId));
         if (!goal) return;
-        
+
         const confirmed = await showConfirm(
-            'Видалення конверта',
-            `Ви впевнені, що хочете видалити конверт «${goal.title}»?`,
-            'Видалити',
-            'Скасувати'
+            'Eliminar envelope',
+            `Tem a certeza de que pretende eliminar o envelope «${goal.title}»?`,
+            'Eliminar',
+            'Cancelar'
         );
 
         if (confirmed) {
             savingsGoals = savingsGoals.filter(g => String(g.id) !== String(goalId));
             syncData();
             renderAll();
-            showToast('Конверт видалено', 'delete');
+            showToast('Envelope eliminado', 'delete');
         }
     };
 
@@ -5527,27 +5507,27 @@ document.addEventListener('DOMContentLoaded', () => {
         if (transferTypeVal) transferTypeVal.value = type;
         if (type === 'deposit') {
             if (transferTabDeposit) {
-                transferTabDeposit.className = 'py-2 text-xs font-semibold rounded-lg bg-[#FF5A36] text-white transition-all';
-                transferTabDeposit.textContent = 'Поповнити';
+                transferTabDeposit.className = 'py-2 text-xs font-semibold rounded-lg bg-[#2c3e50] text-white transition-all';
+                transferTabDeposit.textContent = 'Depositar';
             }
             if (transferTabWithdraw) {
                 transferTabWithdraw.className = 'py-2 text-xs font-semibold rounded-lg text-brand-textSecondary hover:text-white transition-all';
-                transferTabWithdraw.textContent = 'Зняти';
+                transferTabWithdraw.textContent = 'Levantar';
             }
-            if (transferModalTitle) transferModalTitle.textContent = 'Поповнити конверт';
-            if (submitTransferBtn) submitTransferBtn.textContent = 'Поповнити';
+            if (transferModalTitle) transferModalTitle.textContent = 'Depositar no envelope';
+            if (submitTransferBtn) submitTransferBtn.textContent = 'Depositar';
         } else {
             if (transferTypeVal) transferTypeVal.value = 'withdraw';
             if (transferTabDeposit) {
                 transferTabDeposit.className = 'py-2 text-xs font-semibold rounded-lg text-brand-textSecondary hover:text-white transition-all';
-                transferTabDeposit.textContent = 'Поповнити';
+                transferTabDeposit.textContent = 'Depositar';
             }
             if (transferTabWithdraw) {
-                transferTabWithdraw.className = 'py-2 text-xs font-semibold rounded-lg bg-[#FF5A36] text-white transition-all';
-                transferTabWithdraw.textContent = 'Зняти';
+                transferTabWithdraw.className = 'py-2 text-xs font-semibold rounded-lg bg-[#2c3e50] text-white transition-all';
+                transferTabWithdraw.textContent = 'Levantar';
             }
-            if (transferModalTitle) transferModalTitle.textContent = 'Зняти кошти з конверта';
-            if (submitTransferBtn) submitTransferBtn.textContent = 'Зняти';
+            if (transferModalTitle) transferModalTitle.textContent = 'Levantar fundos do envelope';
+            if (submitTransferBtn) submitTransferBtn.textContent = 'Levantar';
         }
     };
 
@@ -5556,9 +5536,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!goal) return;
 
         if (transferEnvelopeIdInput) transferEnvelopeIdInput.value = goal.id;
-        if (transferModalSubtitle) transferModalSubtitle.textContent = `Конверт: «${goal.title}» (Поточний баланс: ${formatCurrency(goal.currentAmount)})`;
+        if (transferModalSubtitle) transferModalSubtitle.textContent = `Envelope: «${goal.title}» (Saldo atual: ${formatCurrency(goal.currentAmount)})`;
         if (transferAmountInput) transferAmountInput.value = '';
-        
+
         setTransferType(initialType);
         if (envelopeTransferModal) envelopeTransferModal.classList.add('active');
     };
@@ -5577,7 +5557,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const type = transferTypeVal ? transferTypeVal.value : 'deposit';
 
         if (!amount || amount <= 0) {
-            showToast('Введіть коректну суму', 'info');
+            showToast('Introduza um valor válido', 'info');
             return;
         }
 
@@ -5585,32 +5565,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (type === 'deposit') {
             goal.currentAmount = (parseFloat(goal.currentAmount) || 0) + amount;
-            
+
             // Record deposit as savings transfer so it doesn't inflate consumer expense statistics
             transactions.unshift({
                 id: Date.now().toString(),
                 amount: amount,
                 type: 'savings',
-                description: `Поповнення конверта: ${goal.title}`,
-                category: 'Конверти',
+                description: `Depósito envelope: ${goal.title}`,
+                category: 'Envelopes',
                 date: todayStr
             });
 
-            showToast(`Поповнено «${goal.title}» на ${formatCurrency(amount)}`, 'success');
+            showToast(`Depositado «${goal.title}» de ${formatCurrency(amount)}`, 'success');
         } else {
             const current = parseFloat(goal.currentAmount) || 0;
             let actualAmount = amount;
-            
+
             if (amount > current) {
                 if (current <= 0) {
-                    showToast('Конверт порожній', 'info');
+                    showToast('Envelope vazio', 'info');
                     return;
                 }
                 const confirmed = await showConfirm(
-                    'Перевищення балансу',
-                    `У конверті лише ${formatCurrency(current)}. Зняти всю доступну суму?`,
-                    'Зняти все',
-                    'Скасувати'
+                    'Excedente de saldo',
+                    `O envelope tem apenas ${formatCurrency(current)}. Levantar todo o valor disponível?`,
+                    'Levantar tudo',
+                    'Cancelar'
                 );
                 if (!confirmed) return;
                 actualAmount = current;
@@ -5624,12 +5604,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 id: Date.now().toString(),
                 amount: -actualAmount,
                 type: 'savings',
-                description: `Зняття з конверта: ${goal.title}`,
-                category: 'Конверти',
+                description: `Levantamento envelope: ${goal.title}`,
+                category: 'Envelopes',
                 date: todayStr
             });
 
-            showToast(`Знято ${formatCurrency(actualAmount)} з «${goal.title}»`, 'info');
+            showToast(`Levantado ${formatCurrency(actualAmount)} de «${goal.title}»`, 'info');
         }
 
         syncData();
@@ -5673,9 +5653,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const summaryCards = document.getElementById('savings-summary-cards');
         const envelopesSection = document.getElementById('savings-envelopes-section');
         const historySection = document.getElementById('savings-history-section');
-        
+
         if (!grid && !dbMiniList) return;
-        
+
         const hasGoals = Boolean(savingsGoals && savingsGoals.length > 0);
 
         if (summaryCards) {
@@ -5695,7 +5675,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (dbMiniList) {
                 dbMiniList.innerHTML = `
                     <div class="p-3 text-center bg-[#161619] rounded-xl border border-dashed border-[#202024]">
-                        <p class="text-[11px] text-brand-textSecondary">Немає активних конвертів</p>
+                        <p class="text-[11px] text-brand-textSecondary">Sem envelopes ativos</p>
                     </div>
                 `;
             }
@@ -5706,13 +5686,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const target = parseFloat(goal.targetAmount) || 1;
             const current = parseFloat(goal.currentAmount) || 0;
             const pct = Math.min(Math.round((current / target) * 100), 100);
-            const color = goal.color || '#FF5A36';
+            const color = goal.color || '#2c3e50';
             const icon = goal.icon || 'savings';
 
             // Render main grid card
             if (grid) {
                 const card = document.createElement('div');
-                card.className = 'bg-[#161619] border border-[#202024] hover:border-[#FF5A36]/40 rounded-2xl p-4 transition-all flex flex-col justify-between group relative overflow-hidden shadow-md';
+                card.className = 'bg-[#161619] border border-[#202024] hover:border-[#2c3e50]/40 rounded-2xl p-4 transition-all flex flex-col justify-between group relative overflow-hidden shadow-md';
 
                 card.innerHTML = `
                     <div>
@@ -5722,15 +5702,15 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <span class="material-symbols-outlined text-[20px]">${icon}</span>
                                 </div>
                                 <div class="min-w-0 flex-1">
-                                    <h4 class="font-semibold text-xs sm:text-sm text-white group-hover:text-[#FF5A36] transition-colors line-clamp-2 break-words leading-snug" title="${escapeHtml(goal.title)}">${escapeHtml(goal.title)}</h4>
+                                    <h4 class="font-semibold text-xs sm:text-sm text-white group-hover:text-[#2c3e50] transition-colors line-clamp-2 break-words leading-snug" title="${escapeHtml(goal.title)}">${escapeHtml(goal.title)}</h4>
                                 </div>
                             </div>
                             
                             <div class="flex items-center gap-0.5 flex-shrink-0 ml-auto">
-                                <button type="button" class="btn-edit-envelope p-1 rounded-lg text-brand-textSecondary hover:text-white hover:bg-[#202024] transition-colors" data-id="${goal.id}" title="Редагувати">
+                                <button type="button" class="btn-edit-envelope p-1 rounded-lg text-brand-textSecondary hover:text-white hover:bg-[#202024] transition-colors" data-id="${goal.id}" title="Editar">
                                     <span class="material-symbols-outlined text-[15px]">edit</span>
                                 </button>
-                                <button type="button" class="btn-delete-envelope p-1 rounded-lg text-brand-textSecondary hover:text-red-400 hover:bg-[#202024] transition-colors" data-id="${goal.id}" title="Видалити">
+                                <button type="button" class="btn-delete-envelope p-1 rounded-lg text-brand-textSecondary hover:text-red-400 hover:bg-[#202024] transition-colors" data-id="${goal.id}" title="Eliminar">
                                     <span class="material-symbols-outlined text-[15px]">delete</span>
                                 </button>
                             </div>
@@ -5738,7 +5718,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         <div class="space-y-2 mt-2">
                             <div class="flex justify-between items-baseline text-xs">
-                                <span class="text-brand-textSecondary text-[11px]">Зібрано</span>
+                                <span class="text-brand-textSecondary text-[11px]">Acumulado</span>
                                 <span class="text-white font-bold font-outfit text-xs sm:text-sm">${formatCurrency(current)} / <span class="text-brand-textSecondary text-[11px]">${formatCurrency(target)}</span></span>
                             </div>
 
@@ -5747,20 +5727,20 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
 
                             <div class="flex justify-between items-center text-[10px] text-brand-textSecondary pt-0.5">
-                                <span class="font-bold px-2.5 py-0.5 rounded-full bg-brand-accentDim text-brand-accent border border-brand-accent/20 text-[10px] envelope-badge-chip">${pct}% накопичено</span>
-                                <span class="text-[10px]">Залишилось: <strong class="text-white">${formatCurrency(Math.max(0, target - current))}</strong></span>
+                                <span class="font-bold px-2.5 py-0.5 rounded-full bg-brand-accentDim text-brand-accent border border-brand-accent/20 text-[10px] envelope-badge-chip">${pct}% acumulado</span>
+                                <span class="text-[10px]">Restante: <strong class="text-white">${formatCurrency(Math.max(0, target - current))}</strong></span>
                             </div>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-2 mt-3 pt-2.5 border-t border-[#202024]/60">
-                        <button type="button" class="btn-deposit-envelope py-1.5 bg-[#FF5A36] hover:bg-[#FF5A36]/90 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-1 transition-all active:scale-95" data-id="${goal.id}">
+                        <button type="button" class="btn-deposit-envelope py-1.5 bg-[#2c3e50] hover:bg-[#2c3e50]/90 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-1 transition-all active:scale-95" data-id="${goal.id}">
                             <span class="material-symbols-outlined text-[14px]">add_circle</span>
-                            <span>Поповнити</span>
+                            <span>Depositar</span>
                         </button>
                         <button type="button" class="btn-withdraw-envelope py-1.5 bg-[#111113] border border-[#202024] hover:bg-[#202024] text-brand-textSecondary hover:text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-1 transition-all active:scale-95" data-id="${goal.id}">
                             <span class="material-symbols-outlined text-[14px]">remove_circle</span>
-                            <span>Зняти</span>
+                            <span>Levantar</span>
                         </button>
                     </div>
                 `;
@@ -5770,7 +5750,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Render dashboard mini items
             if (dbMiniList) {
                 const miniItem = document.createElement('div');
-                miniItem.className = 'flex items-center justify-between p-2 rounded-xl bg-[#161619] border border-[#202024] hover:border-[#FF5A36]/30 transition-all text-xs';
+                miniItem.className = 'flex items-center justify-between p-2 rounded-xl bg-[#161619] border border-[#202024] hover:border-[#2c3e50]/30 transition-all text-xs';
                 miniItem.innerHTML = `
                     <div class="flex items-center gap-2 overflow-hidden min-w-0 flex-1 pr-2">
                         <div class="envelope-icon-box w-6 h-6 rounded-lg flex items-center justify-center text-white text-[12px] flex-shrink-0" style="background-color: ${color}">

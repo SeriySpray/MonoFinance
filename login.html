@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="pt-PT">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description"
+    content="Entrar en SwiftFinance — xestione as súas finanzas persoais de forma sinxela e segura.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <title>Entrar — SwiftFinance</title>
+  <style>
+    :root {
+      --bg: #0A0A0C;
+      --surface: #111113;
+      --line: #202024;
+      --text: #fff;
+      --muted: #8E8E93;
+      --accent: #2c3e50;
+      --purple: #20a034
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px
+    }
+
+    .card {
+      width: min(430px, 100%);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 30px 26px
+    }
+
+    .brand {
+      display: flex;
+      justify-content: center;
+      margin: 0 0 20px
+    }
+
+    .brand img {
+      height: 64px;
+      width: auto
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      text-align: center
+    }
+
+    p.sub {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      margin: 6px 0 22px
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      margin: 0 0 6px
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      outline: none
+    }
+
+    input:focus {
+      border-color: var(--accent)
+    }
+
+    .field {
+      margin: 0 0 14px
+    }
+
+    .error {
+      display: none;
+      color: #F87171;
+      font-size: 13px;
+      margin: 0 0 12px;
+      text-align: center
+    }
+
+    button[type=submit] {
+      width: 100%;
+      padding: 13px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: .2s
+    }
+
+    button[type=submit]:hover {
+      opacity: .9
+    }
+
+    .toggle {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      margin-top: 16px
+    }
+
+    .toggle a {
+      color: var(--purple);
+      cursor: pointer;
+      text-decoration: none
+    }
+
+    .demo {
+      margin: 18px 0 0;
+      text-align: center
+    }
+
+    .demo a {
+      color: var(--muted);
+      font-size: 12.5px;
+      text-decoration: none
+    }
+
+    .demo a:hover {
+      color: var(--text)
+    }
+
+    .back {
+      margin: 10px 0 0;
+      text-align: center
+    }
+
+    .back a {
+      color: var(--muted);
+      font-size: 12.5px;
+      text-decoration: none
+    }
+
+    .separator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin: 18px 0 10px
+    }
+
+    .separator:before,
+    .separator:after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--line)
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <div class="brand"><img src="swiftlight.png" alt="SwiftFinance"></div>
+    <h1 id="title">Entrar</h1>
+    <p class="sub" id="subtitle">Aceda ao seu panel SwiftFinance</p>
+
+    <form id="auth-form" novalidate>
+      <div class="field">
+        <label for="username">Nome de utilizador</label>
+        <input id="username" type="text" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="password">Contrasinal</label>
+        <input id="password" type="password" autocomplete="current-password" required>
+      </div>
+      <div class="error" id="error"></div>
+      <button type="submit" id="submit">Entrar</button>
+    </form>
+
+    <div class="toggle"><span id="toggle-label"></span> <a id="toggle-link"></a></div>
+
+    <div class="separator">ou</div>
+
+    <div class="demo"><a href="/index.html">Probar sen contas (modo demo)</a></div>
+
+    <div class="back"><a href="/">← Volver á páxina principal</a></div>
+  </div>
+
+  <script>
+    let registerMode = false;
+    const texts = {
+      login: {
+        title: 'Entrar', subtitle: 'Aceda ao seu panel SwiftFinance', submit: 'Entrar',
+        toggle: 'Non ten contas?', link: 'Rexistrarse'
+      },
+      register: {
+        title: 'Rexistrarse', subtitle: 'Cree unha conta para sincronizar os seus datos', submit: 'Crear conta',
+        toggle: 'Xa ten contas?', link: 'Entrar'
+      }
+    };
+    const $ = id => document.getElementById(id);
+    function setMode() {
+      const t = texts[registerMode ? 'register' : 'login'];
+      $('title').textContent = t.title;
+      $('subtitle').textContent = t.subtitle;
+      $('submit').textContent = t.submit;
+      $('toggle-label').textContent = t.toggle;
+      $('toggle-link').textContent = t.link;
+      $('error').style.display = 'none';
+    }
+    $('toggle-link').onclick = () => { registerMode = !registerMode; setMode(); };
+
+    $('auth-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = $('username').value.trim();
+      const password = $('password').value;
+      if (!username || !password) return;
+      const btn = $('submit');
+      btn.disabled = true;
+      const errBox = $('error');
+      errBox.style.display = 'none';
+      try {
+        const res = await fetch(registerMode ? 'api/register' : 'api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok) {
+          window.location.href = '/index.html';
+          return;
+        }
+        errBox.textContent = registerMode
+          ? 'Non se puido crear a conta. Comprobe que o nome estea dispoñible e tenteo de novo.'
+          : 'Nome de utilizador ou contrasinal incorrectos.';
+        errBox.style.display = 'block';
+      } catch (err) {
+        errBox.textContent = 'Non se puido conectar co servidor. Tenteo de novo.';
+        errBox.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    setMode();
+  </script>
+</body>
+
+</html>

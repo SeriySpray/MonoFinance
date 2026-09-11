@@ -1,4 +1,4 @@
-# MonoFinance
+# SwiftFinance
 
 > **Live Application**: [https://monofinance.duckdns.org](https://monofinance.duckdns.org)
 >
@@ -14,9 +14,9 @@
 
 ## Application Preview
 
-![MonoFinance Dashboard Preview](dashboard_preview.png)
+![SwiftFinance Dashboard Preview](dashboard_preview.png)
 
-*MonoFinance Dark Theme Dashboard featuring live financial health metrics, calendar-scale cashflow trend charts, multi-period spending limits carousel, and target savings envelopes.*
+*SwiftFinance Dark Theme Dashboard featuring live financial health metrics, calendar-scale cashflow trend charts, multi-period spending limits carousel, and target savings envelopes.*
 
 ---
 
@@ -26,7 +26,7 @@
 
 ---
 
-MonoFinance is a modern, privacy-first personal finance tracking platform engineered for high performance, intuitive data visualization, and seamless cross-device synchronization. Built with a dark charcoal aesthetic and vibrant orange-red accents (`#FF5A36`) inspired by the Metric Flow design language, MonoFinance combines comprehensive cashflow monitoring, target-based savings envelopes, dynamic budget limits, and AI-driven expense categorization with voice dictation support across web, iOS PWA, and native Android clients.
+SwiftFinance is a modern, privacy-first personal finance tracking platform engineered for high performance, intuitive data visualization, and seamless cross-device synchronization. Built with a dark charcoal aesthetic and vibrant orange-red accents (`#2c3e50`) inspired by the Metric Flow design language, SwiftFinance combines comprehensive cashflow monitoring, target-based savings envelopes, dynamic budget limits, and AI-driven expense categorization with voice dictation support across web, iOS PWA, and native Android clients.
 
 ---
 
@@ -51,13 +51,13 @@ MonoFinance is a modern, privacy-first personal finance tracking platform engine
 
 ## Overview
 
-Managing personal finances often suffers from cluttered interfaces, rigid third-party banking integrations, and lack of customization. MonoFinance solves this by delivering an ultra-fast, single-page application (SPA) backed by a lightweight Python/Flask REST service and SQLite database. Users can operate MonoFinance in full cloud-sync mode with password-protected sessions, or run it completely client-side in Demo/Local mode via browser `localStorage`.
+Managing personal finances often suffers from cluttered interfaces, rigid third-party banking integrations, and lack of customization. SwiftFinance solves this by delivering an ultra-fast, single-page application (SPA) backed by a lightweight Python/Flask REST service and SQLite database. Users can operate SwiftFinance in full cloud-sync mode with password-protected sessions, or run it completely client-side in Demo/Local mode via browser `localStorage`.
 
 ---
 
 ## Design Philosophy
 
-- **Metric Flow Aesthetic**: High-contrast, dark charcoal background (`#121212` / `#0A0A0A`) with an energetic orange-red brand accent (`#FF5A36`), purple utility accents (`#8B5CF6`), and clear typography.
+- **Metric Flow Aesthetic**: High-contrast, dark charcoal background (`#121212` / `#0A0A0A`) with an energetic orange-red brand accent (`#2c3e50`), purple utility accents (`#20a034`), and clear typography.
 - **Zero Distractions**: Essential data is prioritized. Unnecessary headers, promotional banners, and complex nested menus are eliminated in favor of clean cards, sliding pills, and responsive widgets.
 - **Adaptive Ergonomics**: Tailored layouts for both large desktop monitors and mobile touchscreens (smartphones such as iPhone 13 and POCO X6), featuring gesture-friendly controls, bottom sheets, and swipeable carousels.
 - **Strictly No Emojis**: Minimalist, professional iconography using clean vector SVG glyphs and Google Material Symbols.
@@ -158,7 +158,7 @@ Managing personal finances often suffers from cluttered interfaces, rigid third-
 ## Repository Structure
 
 ```
-MonoFinance/
+SwiftFinance/
 |-- app.js                           # Core frontend application logic, state, UI rendering
 |-- app_server.py                    # Flask REST API server, authentication, SQLite handlers
 |-- index.html                       # Main single-page application structure and modals
@@ -200,8 +200,8 @@ MonoFinance/
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/SeriySpray/MonoFinance.git
-   cd MonoFinance
+   git clone https://github.com/SeriySpray/SwiftFinance.git
+   cd SwiftFinance
    ```
 
 2. **Configure Python Virtual Environment**:
@@ -245,7 +245,7 @@ The project includes an automated deployment script (`deploy.sh`) targeting an O
    ./deploy.sh
    ```
 3. The deployment script performs the following operations:
-   - Syncs code to `/home/ubuntu/MonoFinance` via SSH/rsync.
+   - Syncs code to `/home/ubuntu/SwiftFinance` via SSH/rsync.
    - Updates Python dependencies in the remote virtual environment.
    - Executes database migration checks (`update_server.py`).
    - Reloads the `monofinance.service` systemd daemon.
@@ -256,7 +256,7 @@ The project includes an automated deployment script (`deploy.sh`) targeting an O
 
 ## Android Application
 
-The `MonoFinanceAndroid` directory contains a native companion application designed for rapid expense recording on the go.
+The `SwiftFinanceAndroid` directory contains a native companion application designed for rapid expense recording on the go.
 
 ### Android Capabilities
 - Native voice recognition in Ukrainian via `SpeechRecognizer`.
@@ -267,7 +267,7 @@ The `MonoFinanceAndroid` directory contains a native companion application desig
 
 ### Building the APK
 ```bash
-cd MonoFinanceAndroid
+cd SwiftFinanceAndroid
 ./gradlew assembleDebug
 ```
 The output APK will be located at `app/build/outputs/apk/debug/app-debug.apk`.
@@ -282,7 +282,7 @@ Below is the complete development history and major milestones compiled from pro
 
 - **2026-07-15: Project Initialization and Metric Flow Design**
   - Designed core single-page application structure.
-  - Implemented the Metric Flow charcoal/orange visual palette (`#FF5A36`).
+  - Implemented the Metric Flow charcoal/orange visual palette (`#2c3e50`).
   - Integrated 30-day SVG line trend graphs with responsive vector scaling.
   - Added real-time financial health insight cards and dynamic metrics calculation.
   - Complete Ukrainian localization across all interface components.
@@ -300,7 +300,7 @@ Below is the complete development history and major milestones compiled from pro
   - Added responsive smartphone layout tested on iPhone 13 and POCO X6.
 
 - **2026-07-18: Native Android Companion App**
-  - Created standalone Kotlin Android project in `MonoFinanceAndroid`.
+  - Created standalone Kotlin Android project in `SwiftFinanceAndroid`.
   - Built speech recognition parser for Ukrainian language expense dictation.
   - Implemented OkHttp persistent CookieJar for seamless session synchronization.
   - Built multi-item parsing algorithm for compound voice entries.

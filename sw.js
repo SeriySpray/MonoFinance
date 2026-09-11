@@ -1,12 +1,19 @@
-// MonoFinance PWA Service Worker
-const CACHE_NAME = 'monofinance-pwa-v76';
+// SwiftFinance PWA Service Worker
+const CACHE_NAME = 'swiftfinance-pwa-v78';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './styles.css?v=113',
   './app.js?v=133',
   './manifest.json',
-  './favicon.svg'
+  './favicon.svg',
+  './favicon.png',
+  './icon-192.png',
+  './icon-512.png',
+  './login.html',
+  './swiftfinance-landing-page.html',
+  './darkswiftfinance.png',
+  './swiftlight.png'
 ];
 
 // Install Event

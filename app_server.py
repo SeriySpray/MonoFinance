@@ -26,7 +26,7 @@ def load_env():
 load_env()
 
 app = Flask(__name__)
-app.secret_key = 'monofinance_secret_super_key_2026'
+app.secret_key = 'swiftfinance_secret_super_key_2026'
 # Configure session cookie settings
 app.config['PERMANENT_SESSION_LIFETIME'] = 86400 * 30  # 30 days
 app.config['SESSION_COOKIE_PATH'] = '/'
@@ -261,7 +261,11 @@ def add_no_cache_headers(response):
 # Serve static files
 @app.route('/')
 def serve_index():
-    return send_from_directory('.', 'index.html')
+    return send_from_directory('.', 'swiftfinance-landing-page.html')
+
+@app.route('/login')
+def serve_login():
+    return send_from_directory('.', 'login.html')
 
 @app.route('/styles.css')
 def serve_css():
@@ -311,7 +315,7 @@ def register():
     password = str(data.get('password', ''))
     
     if not username or not password:
-        return jsonify({'message': 'Ім\'я користувача та пароль є обов\'язковими'}), 400
+        return jsonify({'message': 'O nome de utilizador e a contrasinal son obrigatorios'}), 400
         
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -319,7 +323,7 @@ def register():
     cursor.execute("SELECT id FROM users WHERE LOWER(username) = LOWER(?)", (username,))
     if cursor.fetchone():
         conn.close()
-        return jsonify({'message': 'Користувач з таким іменем вже існує'}), 400
+        return jsonify({'message': 'Xa existe un utilizador con ese nome'}), 400
 
     try:
         p_hash = generate_password_hash(password)
@@ -336,9 +340,9 @@ def register():
         session.permanent = True
         session['user_id'] = user_id
         session['username'] = username
-        return jsonify({'message': 'Реєстрація успішна', 'username': username}), 201
+        return jsonify({'message': 'Rexistro realizado con éxito', 'username': username}), 201
     except sqlite3.IntegrityError:
-        return jsonify({'message': 'Користувач з таким іменем вже існує'}), 400
+        return jsonify({'message': 'Xa existe un utilizador con ese nome'}), 400
     finally:
         conn.close()
 
@@ -349,7 +353,7 @@ def login():
     password = str(data.get('password', ''))
     
     if not username or not password:
-        return jsonify({'message': 'Ім\'я користувача та пароль є обов\'язковими'}), 400
+        return jsonify({'message': 'O nome de utilizador e a contrasinal son obrigatorios'}), 400
         
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -361,28 +365,28 @@ def login():
         session.permanent = True
         session['user_id'] = user['id']
         session['username'] = user['username']
-        return jsonify({'message': 'Вхід успішний', 'username': user['username']})
+        return jsonify({'message': 'Sesión iniciada correctamente', 'username': user['username']})
         
-    return jsonify({'message': 'Неправильне ім\'я користувача або пароль'}), 401
+    return jsonify({'message': 'Nome de utilizador ou contrasinal incorrectos'}), 401
 
 @app.route('/api/logout', methods=['POST'])
 def logout():
     session.pop('user_id', None)
     session.pop('username', None)
-    return jsonify({'message': 'Вихід успішний'})
+    return jsonify({'message': 'Sesión pechada correctamente'})
 
 @app.route('/api/me', methods=['GET'])
 def me():
     if 'user_id' in session:
         return jsonify({'username': session['username']})
-    return jsonify({'message': 'Неавторизовано'}), 401
+    return jsonify({'message': 'Non autenticado'}), 401
 
 # Data Sync API
 # Data Sync API
 @app.route('/api/data', methods=['GET'])
 def get_user_data():
     if 'user_id' not in session:
-        return jsonify({'message': 'Неавторизовано'}), 401
+        return jsonify({'message': 'Non autenticado'}), 401
         
     process_all_recurring_expenses()
 
@@ -473,7 +477,7 @@ def get_user_data():
 @app.route('/api/data', methods=['POST'])
 def save_user_data():
     if 'user_id' not in session:
-        return jsonify({'message': 'Неавторизовано'}), 401
+        return jsonify({'message': 'Non autenticado'}), 401
         
     data = get_request_data()
     transactions = data.get('transactions', [])
@@ -819,7 +823,7 @@ def categorize_transaction():
     if groq_api_key:
         try:
             import requests
-            prompt = f"""Ти інтелектуальний фінансовий аналітик додатка MonoFinance.
+            prompt = f"""Ти інтелектуальний фінансовий аналітик додатка SwiftFinance.
 Твоє завдання — визначити найбільш відповідну категорію для витрати/доходу.
 ВАЖЛИВО: Поріг класифікації МАКСИМАЛЬНО ЗНИЖЕНИЙ та гнучкий. Категорія 'Інші витрати' або 'Інші доходи' використовується ЛИШЕ у крайньому випадку випадкового набору символів.
 
@@ -865,7 +869,7 @@ def categorize_transaction():
     elif openai_api_key:
         try:
             import requests
-            prompt = f"""Ти інтелектуальний фінансовий аналітик додатка MonoFinance.
+            prompt = f"""Ти інтелектуальний фінансовий аналітик додатка SwiftFinance.
 Твоє завдання — класифікувати транзакцію з мінімальним порогом фільтрації. Будь-яка їжа та випічка (булочка, хліб тощо) належить до 'Продукти харчування' або 'Кафе та ресторани'.
 
 Список дозволених категорій: {allowed_cats}
