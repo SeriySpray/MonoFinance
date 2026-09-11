@@ -451,9 +451,16 @@ document.addEventListener('DOMContentLoaded', () => {
             // Setup Auth Event Listeners
             if (authForm) authForm.addEventListener('submit', handleAuthSubmit);
             if (authToggleModeBtn) authToggleModeBtn.addEventListener('click', toggleAuthMode);
-            if (authDemoBtn) authDemoBtn.addEventListener('click', startDemoMode);
             if (btnLogout) btnLogout.addEventListener('click', handleLogout);
             if (btnImportLocal) btnImportLocal.addEventListener('click', handleImportLocal);
+
+            // Admin Panel
+            const adminModal = document.getElementById('admin-modal');
+            const btnAdmin = document.getElementById('btn-admin');
+            const closeAdminModalBtn = document.getElementById('close-admin-modal');
+            if (btnAdmin) btnAdmin.addEventListener('click', () => { if(adminModal) adminModal.classList.add('active'); loadAdminUsers(); });
+            if (closeAdminModalBtn) closeAdminModalBtn.addEventListener('click', () => { if(adminModal) adminModal.classList.remove('active'); });
+            if (adminModal) adminModal.addEventListener('click', e => { if(e.target===adminModal) adminModal.classList.remove('active'); });
 
             // Settings Modal Event Listeners
             const settingsModal = document.getElementById('settings-modal');
@@ -628,6 +635,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Fetch user data from server
                 await fetchUserData();
+
+                // Show admin button if admin
+                if (data.role === 'admin') {
+                    const adminBtn = document.getElementById('btn-admin');
+                    if (adminBtn) adminBtn.classList.remove('hidden');
+                }
             } else {
                 showAuthScreen();
             }
@@ -3034,7 +3047,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bg: 'bg-purple-500/15',
             border: 'border-purple-500/30',
             text: 'text-purple-400',
-            desc: 'Автоматичне визначення за описом транзакції та вашою історією',
+            desc: 'Determinação automática pela descrição da transação e o seu histórico',
             keywords: 'авто авто-визначення ai штучний інтелект історія подібні'
         },
         {
@@ -3046,7 +3059,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bg: 'bg-emerald-500/15',
             border: 'border-emerald-500/30',
             text: 'text-emerald-400',
-            desc: 'Супермаркети, хліб, булочки, випічка, молоко, м\'ясо, овочі, фрукти',
+            desc: 'Supermercados, pão, lacticínios, carne, legumes, frutas',
             keywords: 'продукти харчування їжа супермаркет сільпо атб хліб булочка булочки круасан бакалія м\'ясо сир'
         },
         {
@@ -3058,7 +3071,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bg: 'bg-amber-500/15',
             border: 'border-amber-500/30',
             text: 'text-amber-400',
-            desc: 'Кав\'ярні, заклади, бари, піцерії, доставка їжі, фастфуд, обіди',
+            desc: 'Cafetarias, bares, pizzarias, take-away, fast-food, almoços',
             keywords: 'кафе ресторан кава чай макдональдс піца суші доставка обід ланч burger kfc'
         },
         {
@@ -3070,7 +3083,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bg: 'bg-blue-500/15',
             border: 'border-blue-500/30',
             text: 'text-blue-400',
-            desc: 'Пальне, АЗС, таксі, метро, квитки, паркування, мийка, СТО',
+            desc: 'Combustível, posto, táxi, metro, bilhetes, estacionamento, lavagem, oficina',
             keywords: 'транспорт авто автомобіль пальне бензин газ азс wog okko таксі uber уклон метро поїзд квиток'
         },
         {
@@ -3082,7 +3095,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bg: 'bg-indigo-500/15',
             border: 'border-indigo-500/30',
             text: 'text-indigo-400',
-            desc: 'Оренда житла, квартплата, світло, газ, інтернет, зв\'язок, ремонт',
+            desc: 'Renda, condomínio, eletricidade, gás, internet, comunicações, reparações',
             keywords: 'комунальні житло оренда квартира світло газ вода інтернет телефон зв\'язок kyivstar lifecell'
         },
         {
@@ -3094,7 +3107,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bg: 'bg-pink-500/15',
             border: 'border-pink-500/30',
             text: 'text-pink-400',
-            desc: 'Аптеки, ліки, вітаміни, лікарі, аналізи, стоматологія, спортзал',
+            desc: 'Farmácias, medicamentos, vitaminas, médicos, análises, dentista, ginásio',
             keywords: 'здоров\'я спорт аптека ліки вітаміни лікар клініка стоматолог зал фітнес тренування'
         },
         {
@@ -3106,7 +3119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bg: 'bg-cyan-500/15',
             border: 'border-cyan-500/30',
             text: 'text-cyan-400',
-            desc: 'Одяг, взуття, техніка, електроніка, товари для дому, маркетплейси',
+            desc: 'Vestuário, calçado, tecnologia, eletrónica, artigos para casa, marketplace',
             keywords: 'покупки одяг взуття техніка телефон ноут розетка rozetka prom zara кросівки шопінг'
         },
         {
@@ -3118,7 +3131,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bg: 'bg-orange-500/15',
             border: 'border-orange-500/30',
             text: 'text-orange-400',
-            desc: 'Кіно, підписки (Netflix, Spotify, YouTube), ігри, хобі, відпочинок',
+            desc: 'Cinema, subscrições (Netflix, Spotify, YouTube), jogos, hobbies, lazer',
             keywords: 'розваги дозвілля кіно фільм підписка netflix spotify youtube steam гра квитки театр відпочинок'
         },
         {
@@ -3130,7 +3143,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bg: 'bg-slate-500/15',
             border: 'border-slate-500/30',
             text: 'text-slate-400',
-            desc: 'Різні інші щоденні списання, банківські комісії, донати',
+            desc: 'Diversas outras despesas diárias, comissões bancárias, donativos',
             keywords: 'інші різні комісія податки переказ благодійність донат готівка'
         }
     ];
@@ -3262,7 +3275,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bg: 'bg-[#2c3e50]/15',
             border: 'border-[#2c3e50]/30',
             text: 'text-[#2c3e50]',
-            desc: 'Автоматичне визначення за описом транзакції та вашою історією'
+            desc: 'Determinação automática pela descrição da transação e o seu histórico'
         },
         {
             id: 'Salário',
@@ -3273,7 +3286,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bg: 'bg-emerald-500/15',
             border: 'border-emerald-500/30',
             text: 'text-emerald-400',
-            desc: 'Основний оклад, аванс, заробітна плата, щомісячні нарахування'
+            desc: 'Salário base, adiantamento, remuneração, prestações mensais'
         },
         {
             id: 'Freelance e projetos',
@@ -3284,7 +3297,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bg: 'bg-blue-500/15',
             border: 'border-blue-500/30',
             text: 'text-blue-400',
-            desc: 'Контракти, проєктна робота, аутсорс, гонорари, підробітки'
+            desc: 'Contratos, trabalho por projetos, outsourcing, honorários, biscates'
         },
         {
             id: 'Prémios e gorjetas',
@@ -3295,7 +3308,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bg: 'bg-amber-500/15',
             border: 'border-amber-500/30',
             text: 'text-amber-400',
-            desc: 'Бонуси, грошові подарунки, винагороди, чай, преміальні виплати'
+            desc: 'Prémios, presentes em dinheiro, recompensas, gorjetas, bonificações'
         },
         {
             id: 'Investimentos e cashback',
@@ -3306,7 +3319,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bg: 'bg-purple-500/15',
             border: 'border-purple-500/30',
             text: 'text-purple-400',
-            desc: 'Дивіденди, відсотки за депозитами, банківський кешбек, пасивний дохід'
+            desc: 'Dividendos, juros de depósitos, cashback bancário, rendimento passivo'
         },
         {
             id: 'Outros rendimentos',
@@ -3317,7 +3330,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bg: 'bg-slate-500/15',
             border: 'border-slate-500/30',
             text: 'text-slate-400',
-            desc: 'Повернення боргів, компенсації, продаж речей та інші entradas'
+            desc: 'Devoluções, compensações, venda de artigos e outros rendimentos'
         }
     ];
 
@@ -4103,10 +4116,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (expenseTx.length === 0) {
             modalList.innerHTML = `
                 <tr>
-                    <td colspan="6" class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Sem despesas не знайдено</td>
+                    <td colspan="6" class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Sem despesas nesta categoria</td>
                 </tr>`;
             if (mobileModalList) {
-                mobileModalList.innerHTML = `<div class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Sem despesas не знайдено</div>`;
+                mobileModalList.innerHTML = `<div class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Sem despesas nesta categoria</div>`;
             }
             return;
         }
@@ -4240,10 +4253,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (incomeTx.length === 0) {
             modalList.innerHTML = `
                 <tr>
-                    <td colspan="6" class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Sem rendimentos не знайдено</td>
+                    <td colspan="6" class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Sem rendimentos nesta categoria</td>
                 </tr>`;
             if (mobileModalList) {
-                mobileModalList.innerHTML = `<div class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Sem rendimentos не знайдено</div>`;
+                mobileModalList.innerHTML = `<div class="py-12 text-center text-brand-textSecondary opacity-50 text-xs">Sem rendimentos nesta categoria</div>`;
             }
             return;
         }
@@ -4429,7 +4442,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (catTx.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="py-10 text-center text-brand-textSecondary opacity-60 text-xs">Sem despат у цій категорії</td>
+                        <td colspan="5" class="py-10 text-center text-brand-textSecondary opacity-60 text-xs">Sem despesas nesta categoria</td>
                     </tr>`;
             } else {
                 catTx.forEach(t => {
@@ -4473,7 +4486,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (itemsList) {
             itemsList.innerHTML = '';
             if (catTx.length === 0) {
-                itemsList.innerHTML = `<div class="py-8 text-center text-xs text-brand-textSecondary opacity-70">Sem despат у цій категорії</div>`;
+                itemsList.innerHTML = `<div class="py-8 text-center text-xs text-brand-textSecondary opacity-70">Sem despesas nesta categoria</div>`;
             } else {
                 catTx.forEach(t => {
                     const card = document.createElement('div');
@@ -4548,7 +4561,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const catTarget = e.target.closest('[data-category], .category-badge, .category-click');
         if (catTarget) {
             const catName = catTarget.dataset.category || (catTarget.dataset.category !== undefined ? catTarget.dataset.category : null);
-            if (catName && catName !== 'Despesa' && catName !== 'Rendimento' && catName !== 'Diversos' && catName !== 'Категорія') {
+            if (catName && catName !== 'Despesa' && catName !== 'Rendimento' && catName !== 'Diversos' && catName !== 'Categoria') {
                 e.preventDefault();
                 e.stopPropagation();
                 const txDate = catTarget.dataset.date || null;
@@ -5769,6 +5782,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
         attachEnvelopeEventListeners();
     };
+
+    // Admin: load users list
+    window.loadAdminUsers = async function() {
+        const listEl = document.getElementById('admin-users-list');
+        if (!listEl) return;
+        try {
+            const res = await fetch(getApiUrl('api/admin/users'), { credentials: 'same-origin' });
+            const data = await res.json();
+            if (!res.ok) { listEl.innerHTML = `<p class="text-xs text-red-400">${data.message}</p>`; return; }
+            listEl.innerHTML = '';
+            data.users.forEach(u => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between bg-[#0A0A0C] border border-[#202024] rounded-xl px-3 py-2';
+                div.innerHTML = '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-brand-textSecondary">person</span><span class="text-xs text-white">' + u.username + '</span><span class="text-[9px] px-1.5 py-0.5 rounded-full ' + (u.role === 'admin' ? 'bg-brand-accentDim text-brand-accent' : 'bg-[#202024] text-brand-textSecondary') + '">' + u.role + '</span></div><div class="flex gap-1"><button class="adm-role-btn text-[9px] px-2 py-1 rounded-lg bg-[#202024] text-brand-textSecondary hover:text-white" data-id="' + u.id + '" data-role="' + u.role + '">' + (u.role === 'admin' ? 'Rebaixar' : 'Promover') + '</button><button class="adm-del-btn text-[9px] px-2 py-1 rounded-lg bg-red-900/30 text-red-400 hover:bg-red-900/50" data-id="' + u.id + '">Eliminar</button></div>';
+                listEl.appendChild(div);
+            });
+            listEl.querySelectorAll('.adm-role-btn').forEach(btn => {
+                btn.onclick = async () => {
+                    await fetch(getApiUrl('api/admin/user/' + btn.dataset.id + '/role'), { method:'PUT', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body: JSON.stringify({role: btn.dataset.role==='admin'?'user':'admin'}) });
+                    loadAdminUsers();
+                };
+            });
+            listEl.querySelectorAll('.adm-del-btn').forEach(btn => {
+                btn.onclick = async () => {
+                    if (!confirm('Eliminar este utilizador?')) return;
+                    await fetch(getApiUrl('api/admin/user/' + btn.dataset.id), { method:'DELETE', credentials:'same-origin' });
+                    loadAdminUsers();
+                };
+            });
+        } catch(e) { listEl.innerHTML = '<p class="text-xs text-red-400">Erro ao carregar</p>'; }
+    };
+
+    // Admin: create user form
+    const adminCreateForm = document.getElementById('admin-create-user-form');
+    if (adminCreateForm) adminCreateForm.addEventListener('submit', async e => {
+        e.preventDefault();
+        const username = document.getElementById('admin-new-username').value.trim();
+        const password = document.getElementById('admin-new-password').value;
+        if (!username || !password) return;
+        try {
+            const res = await fetch(getApiUrl('api/admin/user'), { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body: JSON.stringify({username, password}) });
+            const data = await res.json();
+            showToast(data.message || 'Feito', res.ok ? 'success' : 'error');
+            if (res.ok) { document.getElementById('admin-new-username').value=''; document.getElementById('admin-new-password').value=''; loadAdminUsers(); }
+        } catch { showToast('Erro ao criar', 'error'); }
+    });
 
     // Register Service Worker for PWA
     if ('serviceWorker' in navigator) {

@@ -120,36 +120,8 @@
       opacity: .9
     }
 
-    .toggle {
-      color: var(--muted);
-      font-size: 13px;
-      text-align: center;
-      margin-top: 16px
-    }
-
-    .toggle a {
-      color: var(--purple);
-      cursor: pointer;
-      text-decoration: none
-    }
-
-    .demo {
-      margin: 18px 0 0;
-      text-align: center
-    }
-
-    .demo a {
-      color: var(--muted);
-      font-size: 12.5px;
-      text-decoration: none
-    }
-
-    .demo a:hover {
-      color: var(--text)
-    }
-
     .back {
-      margin: 10px 0 0;
+      margin: 18px 0 0;
       text-align: center
     }
 
@@ -159,24 +131,6 @@
       text-decoration: none
     }
 
-    .separator {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      margin: 18px 0 10px
-    }
-
-    .separator:before,
-    .separator:after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: var(--line)
-    }
   </style>
 </head>
 
@@ -199,38 +153,11 @@
       <button type="submit" id="submit">Entrar</button>
     </form>
 
-    <div class="toggle"><span id="toggle-label"></span> <a id="toggle-link"></a></div>
-
-    <div class="separator">ou</div>
-
-    <div class="demo"><a href="/index.html">Probar sen contas (modo demo)</a></div>
-
     <div class="back"><a href="/">← Volver á páxina principal</a></div>
   </div>
 
   <script>
-    let registerMode = false;
-    const texts = {
-      login: {
-        title: 'Entrar', subtitle: 'Aceda ao seu panel SwiftFinance', submit: 'Entrar',
-        toggle: 'Non ten contas?', link: 'Rexistrarse'
-      },
-      register: {
-        title: 'Rexistrarse', subtitle: 'Cree unha conta para sincronizar os seus datos', submit: 'Crear conta',
-        toggle: 'Xa ten contas?', link: 'Entrar'
-      }
-    };
     const $ = id => document.getElementById(id);
-    function setMode() {
-      const t = texts[registerMode ? 'register' : 'login'];
-      $('title').textContent = t.title;
-      $('subtitle').textContent = t.subtitle;
-      $('submit').textContent = t.submit;
-      $('toggle-label').textContent = t.toggle;
-      $('toggle-link').textContent = t.link;
-      $('error').style.display = 'none';
-    }
-    $('toggle-link').onclick = () => { registerMode = !registerMode; setMode(); };
 
     $('auth-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -242,7 +169,7 @@
       const errBox = $('error');
       errBox.style.display = 'none';
       try {
-        const res = await fetch(registerMode ? 'api/register' : 'api/login', {
+        const res = await fetch('api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password })
@@ -252,9 +179,7 @@
           window.location.href = '/index.html';
           return;
         }
-        errBox.textContent = registerMode
-          ? 'Non se puido crear a conta. Comprobe que o nome estea dispoñible e tenteo de novo.'
-          : 'Nome de utilizador ou contrasinal incorrectos.';
+        errBox.textContent = 'Nome de utilizador ou contrasinal incorrectos.';
         errBox.style.display = 'block';
       } catch (err) {
         errBox.textContent = 'Non se puido conectar co servidor. Tenteo de novo.';
@@ -263,8 +188,6 @@
         btn.disabled = false;
       }
     });
-
-    setMode();
   </script>
 </body>
 

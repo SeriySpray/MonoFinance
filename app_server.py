@@ -146,7 +146,8 @@ def init_db():
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL
+            password_hash TEXT NOT NULL,
+            role TEXT NOT NULL DEFAULT 'user'
         )
     ''')
     # Create user_data table
@@ -161,7 +162,13 @@ def init_db():
         )
     ''')
     
-    # Check and perform migration if savings_goals or daily_expense_limit column is missing
+    # Migration: add role column if missing
+    cursor.execute("PRAGMA table_info(users)")
+    user_cols = [col['name'] for col in cursor.fetchall()]
+    if 'role' not in user_cols:
+        cursor.execute("ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'user'")
+    
+    # Migration for user_data columns
     cursor.execute("PRAGMA table_info(user_data)")
     columns = [col['name'] for col in cursor.fetchall()]
     if 'savings_goals' not in columns:
@@ -177,72 +184,24 @@ def init_db():
     
     conn.commit()
 
-    # Pre-seed a default user 'serg' / 'password123' if not exists
-    cursor.execute("SELECT id FROM users WHERE username = ?", ('serg',))
+    # Seed master admin if not exists
+    cursor.execute("SELECT id FROM users WHERE username = ?", ('ivandro.work@gmail.com',))
     user = cursor.fetchone()
     if not user:
-        p_hash = generate_password_hash('password123')
-        cursor.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", ('serg', p_hash))
+        p_hash = generate_password_hash('admin123')
+        cursor.execute("INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)",
+                       ('ivandro.work@gmail.com', p_hash, 'admin'))
         user_id = cursor.lastrowid
-        
-        # Initial sample seed data
-        initial_transactions = [
-            {
-                "id": "1",
-                "amount": 32000,
-                "type": "income",
-                "description": "Заробітна плата",
-                "date": "2026-07-01"
-            },
-            {
-                "id": "2",
-                "amount": 1450,
-                "type": "expense",
-                "description": "Продукти супермаркет",
-                "date": "2026-07-05"
-            },
-            {
-                "id": "3",
-                "amount": 4000,
-                "type": "savings",
-                "description": "Резервний фонд накопичення",
-                "date": "2026-07-08"
-            },
-            {
-                "id": "4",
-                "amount": 450,
-                "type": "expense",
-                "description": "Кава та ланч в кафе",
-                "date": "2026-07-10"
-            },
-            {
-                "id": "5",
-                "amount": 1800,
-                "type": "expense",
-                "description": "Комунальні послуги за дім",
-                "date": "2026-07-12"
-            },
-            {
-                "id": "6",
-                "amount": 9500,
-                "type": "income",
-                "description": "Фріланс проєкт розробка",
-                "date": "2026-07-15"
-            },
-            {
-                "id": "7",
-                "amount": 1500,
-                "type": "savings",
-                "description": "Накопичення на девайс",
-                "date": "2026-07-18"
-            }
-        ]
-        initial_recurring = []
-        
-        cursor.execute('''
-            INSERT INTO user_data (user_id, transactions, savings_target, recurring_expenses)
-            VALUES (?, ?, ?, ?)
-        ''', (user_id, json.dumps(initial_transactions), 10000.0, json.dumps(initial_recurring)))
+        cursor.execute('''INSERT OR IGNORE INTO user_data (user_id, transactions, savings_target, recurring_expenses, savings_goals, daily_expense_limit, weekly_expense_limit, monthly_expense_limit, expense_limit_period)
+            VALUES (?, '[]', 10000.0, '[]', '[]', 1000.0, 7000.0, 30000.0, 'day')''', (user_id,))
+        conn.commit()
+    
+    # Remove legacy demo user 'serg' if exists
+    cursor.execute("SELECT id FROM users WHERE username = ?", ('serg',))
+    serg = cursor.fetchone()
+    if serg:
+        cursor.execute("DELETE FROM user_data WHERE user_id = ?", (serg[0],))
+        cursor.execute("DELETE FROM users WHERE id = ?", (serg[0],))
         conn.commit()
 
     conn.close()
@@ -378,8 +337,103 @@ def logout():
 @app.route('/api/me', methods=['GET'])
 def me():
     if 'user_id' in session:
-        return jsonify({'username': session['username']})
-    return jsonify({'message': 'Non autenticado'}), 401
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT role FROM users WHERE id = ?", (session['user_id'],))
+        row = cursor.fetchone()
+        conn.close()
+        role = row['role'] if row else 'user'
+        return jsonify({'username': session['username'], 'role': role})
+    return jsonify({'message': 'Não autenticado'}), 401
+
+# Admin API
+@app.route('/api/admin/users', methods=['GET'])
+def admin_list_users():
+    if 'user_id' not in session:
+        return jsonify({'message': 'Não autenticado'}), 401
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT role FROM users WHERE id = ?", (session['user_id'],))
+    me_row = cursor.fetchone()
+    if not me_row or me_row['role'] != 'admin':
+        conn.close()
+        return jsonify({'message': 'Sem permissão'}), 403
+    cursor.execute("SELECT id, username, role FROM users ORDER BY id")
+    users = [{'id': r['id'], 'username': r['username'], 'role': r['role']} for r in cursor.fetchall()]
+    conn.close()
+    return jsonify({'users': users})
+
+@app.route('/api/admin/user', methods=['POST'])
+def admin_create_user():
+    if 'user_id' not in session:
+        return jsonify({'message': 'Não autenticado'}), 401
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT role FROM users WHERE id = ?", (session['user_id'],))
+    me_row = cursor.fetchone()
+    if not me_row or me_row['role'] != 'admin':
+        conn.close()
+        return jsonify({'message': 'Sem permissão'}), 403
+    data = request.get_json() or {}
+    username = (data.get('username') or '').strip()
+    password = data.get('password') or ''
+    role = data.get('role') or 'user'
+    if not username or not password:
+        conn.close()
+        return jsonify({'message': 'Nome e password obrigatórios'}), 400
+    cursor.execute("SELECT id FROM users WHERE LOWER(username) = LOWER(?)", (username,))
+    if cursor.fetchone():
+        conn.close()
+        return jsonify({'message': 'Utilizador já existe'}), 409
+    p_hash = generate_password_hash(password)
+    cursor.execute("INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)", (username, p_hash, role))
+    user_id = cursor.lastrowid
+    cursor.execute('''INSERT OR IGNORE INTO user_data (user_id, transactions, savings_target, recurring_expenses, savings_goals, daily_expense_limit, weekly_expense_limit, monthly_expense_limit, expense_limit_period)
+        VALUES (?, '[]', 10000.0, '[]', '[]', 1000.0, 7000.0, 30000.0, 'day')''', (user_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({'message': 'Conta criada com sucesso'}), 201
+
+@app.route('/api/admin/user/<int:target_id>', methods=['DELETE'])
+def admin_delete_user(target_id):
+    if 'user_id' not in session:
+        return jsonify({'message': 'Não autenticado'}), 401
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT role FROM users WHERE id = ?", (session['user_id'],))
+    me_row = cursor.fetchone()
+    if not me_row or me_row['role'] != 'admin':
+        conn.close()
+        return jsonify({'message': 'Sem permissão'}), 403
+    if target_id == session['user_id']:
+        conn.close()
+        return jsonify({'message': 'Não é possível eliminar a própria conta'}), 400
+    cursor.execute("DELETE FROM user_data WHERE user_id = ?", (target_id,))
+    cursor.execute("DELETE FROM users WHERE id = ?", (target_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({'message': 'Utilizador eliminado'})
+
+@app.route('/api/admin/user/<int:target_id>/role', methods=['PUT'])
+def admin_update_role(target_id):
+    if 'user_id' not in session:
+        return jsonify({'message': 'Não autenticado'}), 401
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT role FROM users WHERE id = ?", (session['user_id'],))
+    me_row = cursor.fetchone()
+    if not me_row or me_row['role'] != 'admin':
+        conn.close()
+        return jsonify({'message': 'Sem permissão'}), 403
+    data = request.get_json() or {}
+    new_role = data.get('role') or 'user'
+    if new_role not in ('admin', 'user'):
+        conn.close()
+        return jsonify({'message': 'Role inválido'}), 400
+    cursor.execute("UPDATE users SET role = ? WHERE id = ?", (new_role, target_id))
+    conn.commit()
+    conn.close()
+    return jsonify({'message': 'Role atualizado'})
 
 # Data Sync API
 # Data Sync API
