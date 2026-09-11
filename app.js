@@ -3145,8 +3145,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateExpenseCategoryPreview = () => {
         const descInput = document.getElementById('expense-description');
         const select = document.getElementById('expense-category-select');
-        const badgeText = document.getElementById('expense-category-badge-text');
-        const badgeIcon = document.getElementById('expense-category-badge-icon');
         const triggerTitle = document.getElementById('expense-category-trigger-title');
         const triggerSub = document.getElementById('expense-category-trigger-sub');
         const triggerIcon = document.getElementById('expense-category-trigger-icon');
@@ -3156,8 +3154,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (selectedVal !== 'auto') {
             const catIcon = getCategoryIcon(selectedVal, 'expense');
-            if (badgeText) badgeText.textContent = selectedVal;
-            if (badgeIcon) badgeIcon.textContent = catIcon;
             if (triggerTitle) triggerTitle.textContent = selectedVal;
             if (triggerSub) triggerSub.textContent = 'Обрано вручну (клікніть для зміни)';
             if (triggerIcon) triggerIcon.textContent = catIcon;
@@ -3165,8 +3161,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!desc) {
-            if (badgeText) badgeText.textContent = 'Авто-визначення';
-            if (badgeIcon) badgeIcon.textContent = 'auto_awesome';
             if (triggerTitle) triggerTitle.textContent = 'Автоматично (AI)';
             if (triggerSub) triggerSub.textContent = 'Авто-визначення за описом (клікніть для зміни)';
             if (triggerIcon) triggerIcon.textContent = 'auto_awesome';
@@ -3175,8 +3169,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const predictedCat = getCategoryName(desc, 'expense');
         const predictedIcon = getCategoryIcon(predictedCat, 'expense');
-        if (badgeText) badgeText.textContent = predictedCat;
-        if (badgeIcon) badgeIcon.textContent = predictedIcon;
         if (triggerTitle) triggerTitle.textContent = `Авто: ${predictedCat}`;
         if (triggerSub) triggerSub.textContent = 'Визначено автоматично (клікніть для зміни)';
         if (triggerIcon) triggerIcon.textContent = predictedIcon;
@@ -3248,12 +3240,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initExpenseCategoryModal() {
         const triggerBtn = document.getElementById('expense-category-trigger-btn');
-        const badgeBtn = document.getElementById('expense-category-badge');
         const closeBtn = document.getElementById('close-expense-category-modal-btn');
         const modal = document.getElementById('expense-category-modal');
 
         if (triggerBtn) triggerBtn.addEventListener('click', openExpenseCategoryModal);
-        if (badgeBtn) badgeBtn.addEventListener('click', openExpenseCategoryModal);
         if (closeBtn) closeBtn.addEventListener('click', closeExpenseCategoryModal);
 
         if (modal) {
@@ -3343,8 +3333,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateIncomeCategoryPreview = () => {
         const descInput = document.getElementById('income-description');
         const select = document.getElementById('income-category-select');
-        const badgeText = document.getElementById('income-category-badge-text');
-        const badgeIcon = document.getElementById('income-category-badge-icon');
         const triggerTitle = document.getElementById('income-category-trigger-title');
         const triggerSub = document.getElementById('income-category-trigger-sub');
         const triggerIcon = document.getElementById('income-category-trigger-icon');
@@ -3354,8 +3342,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (selectedVal !== 'auto') {
             const catIcon = getCategoryIcon(selectedVal, 'income');
-            if (badgeText) badgeText.textContent = selectedVal;
-            if (badgeIcon) badgeIcon.textContent = catIcon;
             if (triggerTitle) triggerTitle.textContent = selectedVal;
             if (triggerSub) triggerSub.textContent = 'Обрано вручну (клікніть для зміни)';
             if (triggerIcon) triggerIcon.textContent = catIcon;
@@ -3363,8 +3349,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!desc) {
-            if (badgeText) badgeText.textContent = 'Авто-визначення';
-            if (badgeIcon) badgeIcon.textContent = 'auto_awesome';
             if (triggerTitle) triggerTitle.textContent = 'Автоматично (AI)';
             if (triggerSub) triggerSub.textContent = 'Авто-визначення за описом (клікніть для зміни)';
             if (triggerIcon) triggerIcon.textContent = 'auto_awesome';
@@ -3373,8 +3357,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const predictedCat = getCategoryName(desc, 'income');
         const predictedIcon = getCategoryIcon(predictedCat, 'income');
-        if (badgeText) badgeText.textContent = predictedCat;
-        if (badgeIcon) badgeIcon.textContent = predictedIcon;
         if (triggerTitle) triggerTitle.textContent = `Авто: ${predictedCat}`;
         if (triggerSub) triggerSub.textContent = 'Визначено автоматично (клікніть для зміни)';
         if (triggerIcon) triggerIcon.textContent = predictedIcon;
@@ -3446,12 +3428,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initIncomeCategoryModal() {
         const triggerBtn = document.getElementById('income-category-trigger-btn');
-        const badgeBtn = document.getElementById('income-category-badge');
         const closeBtn = document.getElementById('close-income-category-modal-btn');
         const modal = document.getElementById('income-category-modal');
 
         if (triggerBtn) triggerBtn.addEventListener('click', openIncomeCategoryModal);
-        if (badgeBtn) badgeBtn.addEventListener('click', openIncomeCategoryModal);
         if (closeBtn) closeBtn.addEventListener('click', closeIncomeCategoryModal);
 
         if (modal) {
