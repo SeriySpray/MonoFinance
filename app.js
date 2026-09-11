@@ -440,11 +440,13 @@ document.addEventListener('DOMContentLoaded', () => {
             window.addEventListener('resize', renderChart);
 
             // Dismiss chart popups on click outside
-            document.addEventListener('pointerdown', (e) => {
-                if (!e.target.closest('.chart-wrapper, svg, .chart-popup-tooltip')) {
+            const handleOutsideChartDismiss = (e) => {
+                if (!e.target.closest('.chart-wrapper, svg, .chart-popup-tooltip, .chart-hit-group')) {
                     hideAllChartPopups();
                 }
-            });
+            };
+            document.addEventListener('pointerdown', handleOutsideChartDismiss);
+            document.addEventListener('click', handleOutsideChartDismiss);
 
             // Setup Auth Event Listeners
             if (authForm) authForm.addEventListener('submit', handleAuthSubmit);
@@ -2813,23 +2815,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 hitRect.setAttribute('y', '0');
                 hitRect.setAttribute('width', rectW.toString());
                 hitRect.setAttribute('height', height.toString());
-                hitRect.setAttribute('fill', 'transparent');
+                hitRect.setAttribute('fill', 'rgba(0, 0, 0, 0.001)');
+                hitRect.setAttribute('pointer-events', 'all');
                 hitRect.style.cursor = 'pointer';
+                hitRect.style.pointerEvents = 'all';
                 hitRect.style.touchAction = 'manipulation';
 
-                const triggerDayPopup = () => {
+                const triggerDayPopup = (e) => {
+                    if (e && e.stopPropagation) e.stopPropagation();
                     const targetY = Math.min(yIncome, yExpense);
                     showChartPopup(chartWrapper, svg, x, targetY, d, aggregates[d].income, aggregates[d].expense, dayPoints, guideLine);
                 };
 
-                hitRect.addEventListener('pointerdown', (e) => {
-                    e.stopPropagation();
-                    triggerDayPopup();
-                });
+                hitRect.addEventListener('pointerdown', triggerDayPopup);
+                hitRect.addEventListener('click', triggerDayPopup);
+                hitRect.addEventListener('touchstart', triggerDayPopup, { passive: true });
 
                 hitRect.addEventListener('pointerenter', (e) => {
                     if (e.pointerType === 'mouse') {
-                        triggerDayPopup();
+                        triggerDayPopup(e);
                     }
                 });
 
@@ -5691,8 +5695,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Register Service Worker for PWA
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').catch(err => {
+            navigator.serviceWorker.register('./sw.js').then(reg => {
+                reg.update();
+            }).catch(err => {
                 console.log('ServiceWorker registration skipped:', err);
+            });
+
+            // Auto-refresh when a new Service Worker takes control
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!refreshing) {
+                    refreshing = true;
+                    window.location.reload();
+                }
             });
         });
     }
