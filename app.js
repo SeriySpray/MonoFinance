@@ -322,9 +322,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     const targetBtn = e.target.closest('.filter-tab') || e.currentTarget;
                     if (!targetBtn) return;
                     
-                    const oldIdx = ['all', 'income', 'expense', 'savings'].indexOf(currentFilter);
+                    const oldIdx = ['all', 'income', 'expense'].indexOf(currentFilter);
                     const newFilter = targetBtn.dataset.filter || 'all';
-                    const newIdx = ['all', 'income', 'expense', 'savings'].indexOf(newFilter);
+                    const newIdx = ['all', 'income', 'expense'].indexOf(newFilter);
                     const direction = newIdx > oldIdx ? 'left' : (newIdx < oldIdx ? 'right' : '');
 
                     filterTabs.forEach(t => t.classList.remove('active'));
@@ -356,7 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         // Check horizontal swipe with threshold 40px and dominant horizontal axis
                         if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
-                            const filters = ['all', 'income', 'expense', 'savings'];
+                            const filters = ['all', 'income', 'expense'];
                             let currentIdx = filters.indexOf(currentFilter);
                             if (currentIdx === -1) currentIdx = 0;
 
@@ -504,7 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const initSwipeNavigation = () => {
-        const viewOrder = ['dashboard', 'savings', 'income', 'expenses', 'statistics'];
+        const viewOrder = ['dashboard', 'income', 'expenses', 'statistics'];
         let touchStartX = 0;
         let touchStartY = 0;
 
@@ -1101,7 +1101,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // SPA Routing switch with direction parameter ('right' = slide from right, 'left' = slide from left)
     const switchView = (targetView, forceDirection) => {
-        const viewOrder = ['dashboard', 'savings', 'income', 'expenses', 'statistics'];
+        if (targetView === 'savings') {
+            targetView = 'dashboard';
+        }
+        const viewOrder = ['dashboard', 'income', 'expenses', 'statistics'];
         const activeView = document.querySelector('.dashboard-view.active');
         let currentViewId = activeView ? activeView.id.replace('view-', '') : 'dashboard';
         
@@ -1166,9 +1169,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Refresh all registries, charts, and metrics when switching views
         renderAll();
-        if (targetView === 'savings') {
-            renderSavingsGoals();
-        }
     };
 
     // 2. Render Functions
@@ -1532,10 +1532,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Total balance: All Income - All Expenses (operations with envelopes do not affect the total balance)
         const balance = income - expenses;
 
-        totalBalanceEl.textContent = formatCurrency(balance);
-        totalIncomeEl.textContent = formatCurrency(currMonthIncome);
-        totalExpensesEl.textContent = formatCurrency(currMonthExpenses);
-        totalSavingsEl.textContent = formatCurrency(displaySavingsCurrent);
+        if (totalBalanceEl) totalBalanceEl.textContent = formatCurrency(balance);
+        if (totalIncomeEl) totalIncomeEl.textContent = formatCurrency(currMonthIncome);
+        if (totalExpensesEl) totalExpensesEl.textContent = formatCurrency(currMonthExpenses);
+        if (totalSavingsEl) totalSavingsEl.textContent = formatCurrency(displaySavingsCurrent);
 
         // Update view totals (All-time registered totals on separate income and expenses ledger screens)
         if (tabIncomeTotalEl) tabIncomeTotalEl.textContent = formatCurrency(income);
@@ -5389,6 +5389,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const summaryCards = document.getElementById('savings-summary-cards');
         const envelopesSection = document.getElementById('savings-envelopes-section');
         const historySection = document.getElementById('savings-history-section');
+        
+        if (!grid && !dbMiniList) return;
         
         const hasGoals = Boolean(savingsGoals && savingsGoals.length > 0);
 

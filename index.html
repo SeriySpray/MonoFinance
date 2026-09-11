@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=106">
+    <link rel="stylesheet" href="styles.css?v=107">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -66,10 +66,6 @@
                     <button class="nav-item active" data-view="dashboard">
                         <span class="material-symbols-outlined text-[22px]">dashboard</span>
                         <span class="font-medium">Панель керування</span>
-                    </button>
-                    <button class="nav-item" data-view="savings">
-                        <span class="material-symbols-outlined text-[22px]">account_balance_wallet</span>
-                        <span class="font-medium">Збереження</span>
                     </button>
                     <button class="nav-item" data-view="income">
                         <span class="material-symbols-outlined text-[22px]">payments</span>
@@ -133,7 +129,7 @@
                 <!-- VIEW 1: Overview Dashboard -->
                 <div class="dashboard-view active" id="view-dashboard">
                     <!-- Metric Cards row -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                         <!-- Balance Metric Card -->
                         <div class="bg-[#111113] border border-[#202024] rounded-3xl p-4 sm:p-6 relative hover:bg-[#161619] transition-colors cursor-pointer" data-go-view="dashboard">
                             <p class="text-brand-textSecondary text-[11px] font-bold uppercase tracking-wider mb-2 sm:mb-3">Загальний баланс</p>
@@ -141,16 +137,6 @@
                             <div class="flex justify-between items-center mt-3 sm:mt-4">
                                 <span class="text-[10px] text-brand-textSecondary">Вільні кошти</span>
                                 <span class="inline-flex px-2 py-0.5 rounded-full bg-brand-accentDim text-brand-accent font-semibold text-[10px]">Активний</span>
-                            </div>
-                        </div>
-
-                        <!-- Savings Metric Card -->
-                        <div class="bg-[#111113] border border-[#202024] rounded-3xl p-4 sm:p-6 relative hover:bg-[#161619] transition-colors cursor-pointer" data-go-view="savings">
-                            <p class="text-brand-textSecondary text-[11px] font-bold uppercase tracking-wider mb-2 sm:mb-3">Загальні збереження</p>
-                            <h2 class="font-outfit font-bold text-2xl sm:text-3xl text-white mb-1.5" id="total-savings">0.00 ₴</h2>
-                            <div class="flex justify-between items-center mt-3 sm:mt-4">
-                                <span class="text-[10px] text-brand-textSecondary">Накопичення</span>
-                                <span class="inline-flex px-2.5 py-0.5 rounded-full bg-brand-purpleDim text-brand-purple font-semibold text-[10px]" id="savings-badge-pct">0%</span>
                             </div>
                         </div>
 
@@ -272,113 +258,55 @@
                         </div>
                     </div>
 
-                    <!-- Split row: Breakdown & Savings Left / Chart Right -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Left sidebar metrics -->
-                        <div class="lg:col-span-1 flex flex-col">
-                            <!-- Envelope Savings Dashboard Widget -->
-                            <div class="bg-[#111113] border border-[#202024] hover:border-[#FF5A36]/30 transition-all rounded-3xl p-6 cursor-pointer flex flex-col justify-between h-full min-h-[380px]" data-go-view="savings">
-                                <div>
-                                    <div class="flex justify-between items-center mb-4">
-                                        <div class="flex items-center gap-2.5">
-                                            <div class="w-9 h-9 rounded-xl bg-[#FF5A36]/10 border border-[#FF5A36]/20 flex items-center justify-center text-[#FF5A36]">
-                                                <span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
-                                            </div>
-                                            <div>
-                                                <h3 class="font-semibold text-sm text-white">Конверти збережень</h3>
-                                                <p class="text-[11px] text-brand-textSecondary mt-0.5">Активні цілі накопичення коштів</p>
-                                            </div>
-                                        </div>
-                                        <span class="text-xs text-[#FF5A36] hover:underline font-semibold flex items-center gap-0.5">
-                                            <span>Усі цілі</span>
-                                            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                                        </span>
+                    <!-- Financial Flow Dynamic Chart Card (Full Width) -->
+                    <div class="w-full bg-[#111113] border border-[#202024] rounded-3xl p-6 min-h-[400px] flex flex-col justify-between relative overflow-hidden">
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 z-10">
+                            <div>
+                                <h3 class="font-semibold text-base text-white">Динаміка фінансових потоків</h3>
+                                <p id="db-chart-subtitle" class="text-xs text-brand-textSecondary mt-0.5">Порівняння доходів та витрат (Поточний місяць)</p>
+                            </div>
+                            <div class="flex items-center gap-3 self-start sm:self-auto">
+                                <div class="month-selector-widget flex items-center bg-[#161619] border border-[#202024] rounded-xl p-0.5 shadow-inner gap-0.5">
+                                    <button type="button" class="btn-prev-month w-6 h-6 rounded-lg bg-[#111113] hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-all flex items-center justify-center" title="Попередній місяць">
+                                        <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+                                    </button>
+                                    <div class="px-2 py-0.5 flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity open-month-picker-btn">
+                                        <span class="selected-month-label text-[11px] font-semibold text-white font-outfit whitespace-nowrap">Серпень 2026</span>
                                     </div>
-
-                                    <div class="flex items-baseline justify-between mt-3 mb-3 p-3.5 bg-[#161619] rounded-2xl border border-[#202024]">
-                                        <div>
-                                            <span class="text-[10px] text-brand-textSecondary block uppercase font-bold tracking-wider mb-1">Зібрано в конвертах</span>
-                                            <span class="text-2xl font-bold font-outfit text-white" id="db-savings-current">0.00 ₴</span>
-                                        </div>
-                                        <div class="text-right">
-                                            <span class="text-[10px] text-brand-textSecondary block uppercase font-bold tracking-wider mb-1">Цільова сума</span>
-                                            <span class="text-xs font-semibold font-outfit text-brand-textSecondary" id="db-savings-target">0.00 ₴</span>
-                                        </div>
-                                    </div>
+                                    <button type="button" class="btn-next-month w-6 h-6 rounded-lg bg-[#111113] hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-all flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed" title="Наступний місяць">
+                                        <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                                    </button>
                                 </div>
-
-                                <div class="mt-3 pt-3.5 border-t border-[#202024]/60 flex-grow flex flex-col justify-between">
-                                    <div>
-                                        <div class="flex justify-between items-center mb-2.5">
-                                            <span class="text-xs text-brand-textSecondary uppercase font-bold tracking-wider">Мої конверти</span>
-                                            <span class="text-xs text-brand-textSecondary font-semibold" id="db-envelopes-count">0 конвертів</span>
-                                        </div>
-                                        <div id="db-envelopes-mini-list" class="space-y-2 max-h-[220px] overflow-y-auto pr-1 custom-scrollbar">
-                                            <!-- Mini envelope items injected here -->
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-4 pt-3 border-t border-[#202024]/40 flex justify-between items-center text-xs">
-                                        <span class="text-brand-textSecondary text-[11px]">Натисніть для відкриття</span>
-                                        <span class="text-[#FF5A36] font-semibold flex items-center gap-1 text-xs">
-                                            <span>Перейти до збережень</span>
-                                            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-                                        </span>
-                                    </div>
+                                <div class="hidden sm:flex items-center gap-3 text-xs">
+                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-accent"></span>Доходи</span>
+                                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-purple"></span>Витрати</span>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Right double curve chart card -->
-                        <div class="lg:col-span-2 bg-[#111113] border border-[#202024] rounded-3xl p-6 h-[400px] lg:h-full flex flex-col justify-between relative overflow-hidden">
-                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 z-10">
-                                <div>
-                                    <h3 class="font-semibold text-base text-white">Динаміка фінансових потоків</h3>
-                                    <p id="db-chart-subtitle" class="text-xs text-brand-textSecondary mt-0.5">Порівняння доходів та витрат (Поточний місяць)</p>
-                                </div>
-                                <div class="flex items-center gap-3 self-start sm:self-auto">
-                                    <div class="month-selector-widget flex items-center bg-[#161619] border border-[#202024] rounded-xl p-0.5 shadow-inner gap-0.5">
-                                        <button type="button" class="btn-prev-month w-6 h-6 rounded-lg bg-[#111113] hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-all flex items-center justify-center" title="Попередній місяць">
-                                            <span class="material-symbols-outlined text-[14px]">chevron_left</span>
-                                        </button>
-                                        <div class="px-2 py-0.5 flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity open-month-picker-btn">
-                                            <span class="selected-month-label text-[11px] font-semibold text-white font-outfit whitespace-nowrap">Серпень 2026</span>
-                                        </div>
-                                        <button type="button" class="btn-next-month w-6 h-6 rounded-lg bg-[#111113] hover:bg-[#202024] text-brand-textSecondary hover:text-white transition-all flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed" title="Наступний місяць">
-                                            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                                        </button>
-                                    </div>
-                                    <div class="hidden sm:flex items-center gap-3 text-xs">
-                                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-accent"></span>Доходи</span>
-                                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-purple"></span>Витрати</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="flex-grow relative w-full h-full my-4">
-                                <svg id="dashboard-mini-chart" class="absolute inset-0 w-full h-full" viewBox="0 0 500 200">
-                                    <defs>
-                                        <linearGradient id="db-income-grad" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="0%" stop-color="var(--color-chart-income)" stop-opacity="0.12" />
-                                            <stop offset="100%" stop-color="var(--color-chart-income)" stop-opacity="0.00" />
-                                        </linearGradient>
-                                        <linearGradient id="db-expense-grad" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="0%" stop-color="var(--color-chart-expense)" stop-opacity="0.08" />
-                                            <stop offset="100%" stop-color="var(--color-chart-expense)" stop-opacity="0.00" />
-                                        </linearGradient>
-                                    </defs>
-                                    <g id="db-chart-grid-lines"></g>
-                                    <path id="db-chart-income-area" fill="url(#db-income-grad)" d=""></path>
-                                    <path id="db-chart-expense-area" fill="url(#db-expense-grad)" d=""></path>
-                                    <path id="db-chart-income-path" fill="none" stroke="#FF5A36" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    <path id="db-chart-expense-path" fill="none" stroke="#8B5CF6" stroke-dasharray="4,4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    <g id="db-chart-points-group"></g>
-                                </svg>
-                            </div>
-                            
-                            <div class="flex justify-between text-[10px] text-brand-textSecondary pt-2 border-t border-[#202024]/40" id="db-chart-dates-labels">
-                                <!-- Dates injected here -->
-                            </div>
+                        
+                        <div class="flex-grow relative w-full h-full min-h-[220px] my-4">
+                            <svg id="dashboard-mini-chart" class="absolute inset-0 w-full h-full" viewBox="0 0 500 200">
+                                <defs>
+                                    <linearGradient id="db-income-grad" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="var(--color-chart-income)" stop-opacity="0.12" />
+                                        <stop offset="100%" stop-color="var(--color-chart-income)" stop-opacity="0.00" />
+                                    </linearGradient>
+                                    <linearGradient id="db-expense-grad" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="var(--color-chart-expense)" stop-opacity="0.08" />
+                                        <stop offset="100%" stop-color="var(--color-chart-expense)" stop-opacity="0.00" />
+                                    </linearGradient>
+                                </defs>
+                                <g id="db-chart-grid-lines"></g>
+                                <path id="db-chart-income-area" fill="url(#db-income-grad)" d=""></path>
+                                <path id="db-chart-expense-area" fill="url(#db-expense-grad)" d=""></path>
+                                <path id="db-chart-income-path" fill="none" stroke="#FF5A36" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path id="db-chart-expense-path" fill="none" stroke="#8B5CF6" stroke-dasharray="4,4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <g id="db-chart-points-group"></g>
+                            </svg>
+                        </div>
+                        
+                        <div class="flex justify-between text-[10px] text-brand-textSecondary pt-2 border-t border-[#202024]/40" id="db-chart-dates-labels">
+                            <!-- Dates injected here -->
                         </div>
                     </div>
 
@@ -402,10 +330,6 @@
                                 <button class="filter-tab flex-1 sm:flex-initial flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl text-[10px] sm:text-xs font-semibold whitespace-nowrap transition-colors relative z-10 cursor-pointer" data-filter="expense">
                                     <span class="material-symbols-outlined text-[14px] sm:text-[15px]">north_east</span>
                                     <span>Витрати</span>
-                                </button>
-                                <button class="filter-tab flex-1 sm:flex-initial flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl text-[10px] sm:text-xs font-semibold whitespace-nowrap transition-colors relative z-10 cursor-pointer" data-filter="savings">
-                                    <span class="material-symbols-outlined text-[14px] sm:text-[15px]">savings</span>
-                                    <span>Збереження</span>
                                 </button>
                             </div>
                         </div>
@@ -435,8 +359,8 @@
                     </div>
                 </div>
 
-                <!-- VIEW 2: Savings Screen -->
-                <div class="dashboard-view" id="view-savings">
+                <!-- VIEW 2: Savings Screen (Legacy / Dormant) -->
+                <div class="dashboard-view hidden" id="view-savings" style="display: none !important;">
                     <div class="view-header mb-2 sm:mb-3 flex justify-between items-center flex-wrap gap-2">
                         <div>
                             <h2 class="font-outfit font-bold text-xl sm:text-2xl text-white">Конверти збережень</h2>
@@ -1285,10 +1209,6 @@
             <span class="material-symbols-outlined text-[20px]">dashboard</span>
             <span class="text-[9px] font-medium">Панель</span>
         </button>
-        <button class="mobile-nav-item" data-view="savings" title="Збереження">
-            <span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
-            <span class="text-[9px] font-medium">Збереження</span>
-        </button>
         <button class="mobile-nav-item" data-view="income" title="Доходи">
             <span class="material-symbols-outlined text-[20px]">payments</span>
             <span class="text-[9px] font-medium">Доходи</span>
@@ -1604,6 +1524,6 @@
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
-    <script src="app.js?v=125" defer></script>
+    <script src="app.js?v=126" defer></script>
 </body>
 </html>
