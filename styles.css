@@ -1088,11 +1088,18 @@ html:not(.dark) .amount-suggest-badge {
     box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 90, 54, 0.15);
     border-radius: 16px;
     padding: 10px 14px;
-    min-width: 155px;
+    min-width: 140px;
     opacity: 0;
     visibility: hidden;
     transform: translate(var(--popup-tx, -50%), var(--popup-ty, -100%)) scale(0.92);
-    transition: opacity 0.18s cubic-bezier(0.16, 1, 0.3, 1), transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.18s;
+    transition: opacity 0.18s cubic-bezier(0.16, 1, 0.3, 1), transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.18s, left 0.08s cubic-bezier(0.16, 1, 0.3, 1), top 0.08s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chart-scrub-overlay {
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .chart-popup-tooltip.visible {

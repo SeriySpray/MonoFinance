@@ -2547,12 +2547,21 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.chart-point.active-point').forEach(el => {
             el.classList.remove('active-point');
         });
+        document.querySelectorAll('svg').forEach(s => {
+            s._activeDayIdx = -1;
+        });
     };
 
     const showChartPopup = (chartWrapper, svg, x, yTarget, dateStr, income, expense, points, guideLine) => {
         if (!chartWrapper || !svg) return;
 
-        hideAllChartPopups();
+        // Hide previous active lines and points across this svg without flickering popup
+        svg.querySelectorAll('.chart-guide-line.visible').forEach(el => {
+            el.classList.remove('visible');
+        });
+        svg.querySelectorAll('.chart-point.active-point').forEach(el => {
+            el.classList.remove('active-point');
+        });
 
         if (guideLine) guideLine.classList.add('visible');
         if (points && points.length > 0) {
@@ -2574,10 +2583,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const weekday = dateObj.toLocaleDateString('uk-UA', { weekday: 'short' });
         const formattedDate = `${dayNum} ${monthName}, ${weekday}`;
 
-        const net = income - expense;
-        const netFormatted = (net >= 0 ? '+' : '') + formatCurrency(net);
-        const netClass = net >= 0 ? 'net-positive' : 'net-negative';
-
         popup.innerHTML = `
             <div class="chart-popup-date">${formattedDate}</div>
             <div class="chart-popup-row">
@@ -2594,11 +2599,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <span class="chart-popup-val expense">-${formatCurrency(expense)}</span>
             </div>
-            <div class="chart-popup-divider"></div>
-            <div class="chart-popup-row">
-                <span class="chart-popup-label">Сальдо</span>
-                <span class="chart-popup-val ${netClass}">${netFormatted}</span>
-            </div>
         `;
 
         const wrapperRect = chartWrapper.getBoundingClientRect();
@@ -2612,7 +2612,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const pixelX = (x * scaleX) + (svgRect.left - wrapperRect.left);
         const pixelY = (yTarget * scaleY) + (svgRect.top - wrapperRect.top);
 
-        const halfTooltipWidth = 85;
+        const halfTooltipWidth = 75;
         let tx = '-50%';
         let leftPos = pixelX;
 
@@ -2627,7 +2627,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let ty = '-100%';
         let topPos = pixelY - 14;
 
-        if (pixelY < 120) {
+        if (pixelY < 85) {
             ty = '0%';
             topPos = pixelY + 16;
         }
@@ -2781,6 +2781,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const colWidth = dates.length > 1 ? (chartWidth / (dates.length - 1)) : chartWidth;
         const halfCol = colWidth / 2;
 
+        const dayData = [];
+
         dates.forEach((d, idx) => {
             const x = paddingX + colWidth * idx;
             const yIncome = (height - paddingY) - (aggregates[d].income / maxVal) * chartHeight;
@@ -2805,40 +2807,17 @@ document.addEventListener('DOMContentLoaded', () => {
             guideLine.setAttribute('class', 'chart-guide-line');
             guidesGroup.appendChild(guideLine);
 
-            // Hit zone rect for responsive touch and hover
-            if (showInteractive && hitGroup) {
-                const rectX = idx === 0 ? 0 : x - halfCol;
-                const rectW = (idx === 0 || idx === dates.length - 1) ? (halfCol + paddingX) : colWidth;
-
-                const hitRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                hitRect.setAttribute('x', rectX.toString());
-                hitRect.setAttribute('y', '0');
-                hitRect.setAttribute('width', rectW.toString());
-                hitRect.setAttribute('height', height.toString());
-                hitRect.setAttribute('fill', 'rgba(0, 0, 0, 0.001)');
-                hitRect.setAttribute('pointer-events', 'all');
-                hitRect.style.cursor = 'pointer';
-                hitRect.style.pointerEvents = 'all';
-                hitRect.style.touchAction = 'manipulation';
-
-                const triggerDayPopup = (e) => {
-                    if (e && e.stopPropagation) e.stopPropagation();
-                    const targetY = Math.min(yIncome, yExpense);
-                    showChartPopup(chartWrapper, svg, x, targetY, d, aggregates[d].income, aggregates[d].expense, dayPoints, guideLine);
-                };
-
-                hitRect.addEventListener('pointerdown', triggerDayPopup);
-                hitRect.addEventListener('click', triggerDayPopup);
-                hitRect.addEventListener('touchstart', triggerDayPopup, { passive: true });
-
-                hitRect.addEventListener('pointerenter', (e) => {
-                    if (e.pointerType === 'mouse') {
-                        triggerDayPopup(e);
-                    }
-                });
-
-                hitGroup.appendChild(hitRect);
-            }
+            dayData.push({
+                idx,
+                dateStr: d,
+                x,
+                yIncome,
+                yExpense,
+                income: aggregates[d].income,
+                expense: aggregates[d].expense,
+                dayPoints,
+                guideLine
+            });
 
             if (datesLabels) {
                 if (idx % 6 === 0 || idx === dates.length - 1) {
@@ -2851,6 +2830,91 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+
+        // Interactive touch & pointer scrubbing overlay across the entire chart
+        if (showInteractive && hitGroup) {
+            svg._activeDayIdx = -1;
+
+            const scrubToClientX = (clientX) => {
+                if (dayData.length === 0) return;
+                const rect = svg.getBoundingClientRect();
+                if (!rect || rect.width <= 0) return;
+
+                const svgX = ((clientX - rect.left) / rect.width) * width;
+                const clampedX = Math.max(paddingX, Math.min(paddingX + chartWidth, svgX));
+                const dayIdx = Math.max(0, Math.min(dayData.length - 1, Math.round(((clampedX - paddingX) / chartWidth) * (dayData.length - 1))));
+
+                if (dayIdx === svg._activeDayIdx) return;
+                svg._activeDayIdx = dayIdx;
+
+                const dInfo = dayData[dayIdx];
+                if (dInfo) {
+                    const targetY = Math.min(dInfo.yIncome, dInfo.yExpense);
+                    showChartPopup(chartWrapper, svg, dInfo.x, targetY, dInfo.dateStr, dInfo.income, dInfo.expense, dInfo.dayPoints, dInfo.guideLine);
+                }
+            };
+
+            const overlay = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            overlay.setAttribute('x', '0');
+            overlay.setAttribute('y', '0');
+            overlay.setAttribute('width', width.toString());
+            overlay.setAttribute('height', height.toString());
+            overlay.setAttribute('fill', 'rgba(0, 0, 0, 0.001)');
+            overlay.setAttribute('pointer-events', 'all');
+            overlay.setAttribute('class', 'chart-scrub-overlay');
+            overlay.style.cursor = 'crosshair';
+            overlay.style.pointerEvents = 'all';
+            overlay.style.touchAction = 'none';
+
+            let isTouching = false;
+
+            // Touch events for mobile scrub / slide
+            overlay.addEventListener('touchstart', (e) => {
+                if (e.touches && e.touches.length > 0) {
+                    isTouching = true;
+                    e.stopPropagation();
+                    scrubToClientX(e.touches[0].clientX);
+                    if (e.cancelable) e.preventDefault();
+                }
+            }, { passive: false });
+
+            overlay.addEventListener('touchmove', (e) => {
+                if (isTouching && e.touches && e.touches.length > 0) {
+                    e.stopPropagation();
+                    scrubToClientX(e.touches[0].clientX);
+                    if (e.cancelable) e.preventDefault();
+                }
+            }, { passive: false });
+
+            overlay.addEventListener('touchend', (e) => {
+                isTouching = false;
+                if (e.cancelable) e.preventDefault();
+            }, { passive: false });
+
+            overlay.addEventListener('touchcancel', () => {
+                isTouching = false;
+            }, { passive: true });
+
+            // Desktop pointer events for hover & drag
+            overlay.addEventListener('pointerenter', (e) => {
+                if (e.pointerType === 'mouse') {
+                    scrubToClientX(e.clientX);
+                }
+            });
+
+            overlay.addEventListener('pointermove', (e) => {
+                if (e.pointerType === 'mouse' || isTouching) {
+                    scrubToClientX(e.clientX);
+                }
+            });
+
+            overlay.addEventListener('pointerdown', (e) => {
+                e.stopPropagation();
+                scrubToClientX(e.clientX);
+            });
+
+            hitGroup.appendChild(overlay);
+        }
 
         const incomeD = getBezierPath(incomePoints);
         const expenseD = getBezierPath(expensePoints);
