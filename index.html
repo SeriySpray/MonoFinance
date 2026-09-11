@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=107">
+    <link rel="stylesheet" href="styles.css?v=108">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -305,7 +305,7 @@
                             </svg>
                         </div>
                         
-                        <div class="flex justify-between text-[10px] text-brand-textSecondary pt-2 border-t border-[#202024]/40" id="db-chart-dates-labels">
+                        <div class="flex justify-between text-[10px] text-brand-textSecondary pt-2.5 pb-0.5 border-t border-[#202024]/40 flex-shrink-0 leading-normal" id="db-chart-dates-labels">
                             <!-- Dates injected here -->
                         </div>
                     </div>
@@ -756,8 +756,8 @@
                     <!-- Main Chart Row & Month-over-Month Comparison Grid (8 / 4 Split) -->
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 mb-4">
                         <!-- Main large chart (lg:col-span-8) -->
-                        <div class="lg:col-span-8 bg-[#111113] border border-[#202024] rounded-3xl p-5 sm:p-6 h-[340px] flex flex-col justify-between relative overflow-hidden">
-                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 z-10">
+                        <div class="lg:col-span-8 bg-[#111113] border border-[#202024] rounded-3xl p-5 sm:p-6 min-h-[360px] lg:h-[350px] flex flex-col justify-between relative overflow-hidden">
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 z-10 flex-shrink-0">
                                 <div>
                                     <h3 class="font-semibold text-base text-white">Тренди фінансових потоків</h3>
                                     <p id="stats-chart-subtitle" class="text-xs text-brand-textSecondary mt-0.5">Амплітуда надходження та списання коштів (Поточний місяць)</p>
@@ -768,7 +768,7 @@
                                 </div>
                             </div>
                             
-                            <div class="flex-grow relative w-full h-full my-2">
+                            <div class="flex-1 min-h-[160px] relative w-full my-2">
                                 <svg id="finance-chart" class="absolute inset-0 w-full h-full z-10" viewBox="0 0 1000 300">
                                     <defs>
                                         <linearGradient id="incomeGradient" x1="0" x2="0" y1="0" y2="1">
@@ -788,13 +788,13 @@
                                     <g id="chart-points-group"></g>
                                 </svg>
                             </div>
-                            <div class="flex justify-between text-[10px] text-brand-textSecondary pt-2 border-t border-[#202024]/40 overflow-hidden" id="chart-dates-labels">
+                            <div class="flex justify-between text-[10px] text-brand-textSecondary pt-2.5 pb-0.5 border-t border-[#202024]/40 flex-shrink-0 leading-normal" id="chart-dates-labels">
                                 <!-- Dates injected here -->
                             </div>
                         </div>
 
                         <!-- Month-over-Month Comparison Panel (lg:col-span-4) -->
-                        <div class="lg:col-span-4 bg-[#111113] border border-[#202024] rounded-3xl p-5 sm:p-6 h-[340px] flex flex-col justify-between space-y-3">
+                        <div class="lg:col-span-4 bg-[#111113] border border-[#202024] rounded-3xl p-5 sm:p-6 min-h-[340px] lg:h-[350px] flex flex-col justify-between space-y-3">
                             <div>
                                 <div class="flex justify-between items-center mb-0.5">
                                     <h3 class="font-semibold text-base text-white">Порівняння з минулим місяцем</h3>
@@ -1524,6 +1524,6 @@
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
-    <script src="app.js?v=126" defer></script>
+    <script src="app.js?v=127" defer></script>
 </body>
 </html>
