@@ -656,8 +656,8 @@ input[type="number"] {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    padding: 6px 12px;
+    gap: 3px;
+    padding: 6px 6px;
     border-radius: 12px;
     color: #8E8E93;
     background: none;
@@ -666,6 +666,12 @@ input[type="number"] {
     cursor: pointer;
     font-weight: 500;
     transition: color 0.15s ease, background-color 0.15s ease;
+    flex: 1;
+    min-width: 0;
+}
+
+.mobile-nav-item span:last-child {
+    white-space: nowrap;
 }
 
 .mobile-nav-item span.material-symbols-outlined {
@@ -1234,4 +1240,14 @@ html:not(.dark) .chart-popup-divider {
 html:not(.dark) .chart-guide-line {
     stroke: rgba(0, 0, 0, 0.25);
 }
+
+.calendar-day-amount {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.035em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
 

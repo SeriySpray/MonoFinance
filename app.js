@@ -1464,6 +1464,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function formatCalendarDailyAmount(val) {
+        if (!val || val <= 0) return '';
+        const isMobile = window.innerWidth < 640;
+        if (isMobile) {
+            if (val >= 100000) {
+                return `${(val / 1000).toFixed(0)}k ₴`;
+            } else if (val >= 10000) {
+                const kVal = val / 1000;
+                return `${kVal.toFixed(val % 1000 >= 100 ? 1 : 0)}k ₴`;
+            } else {
+                return `${Math.round(val)} ₴`;
+            }
+        } else {
+            if (val >= 1000000) {
+                return `${(val / 1000000).toFixed(1)}M ₴`;
+            }
+            return `${Math.round(val).toLocaleString('uk-UA')} ₴`;
+        }
+    }
+
     const renderMetrics = () => {
         // Retrieve selected & current month date parameters right at start
         const realNow = new Date();
@@ -1477,6 +1497,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalDays = lastDay.getDate();
         
         const isCurrentMonth = (year === realYear && month === realMonth);
+        const isPastMonth = (year < realYear) || (year === realYear && month < realMonth);
+        const isFutureMonth = (year > realYear) || (year === realYear && month > realMonth);
         const currentDay = isCurrentMonth ? realDay : totalDays;
         const elapsedDays = isCurrentMonth ? Math.max(1, currentDay) : totalDays;
 
@@ -1691,6 +1713,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (statsMonthlyForecastEl) {
             statsMonthlyForecastEl.textContent = formatCurrency(forecastExpenses);
+        }
+
+        const statsMonthlyForecastTitleEl = document.getElementById('stats-monthly-forecast-title');
+        const statsMonthlyForecastSubtitleEl = document.getElementById('stats-monthly-forecast-subtitle');
+
+        if (statsMonthlyForecastTitleEl) {
+            if (isPastMonth) {
+                statsMonthlyForecastTitleEl.textContent = 'Витрати за місяць';
+            } else if (isFutureMonth) {
+                statsMonthlyForecastTitleEl.textContent = 'Прогноз витрат на місяць';
+            } else {
+                statsMonthlyForecastTitleEl.textContent = 'Прогноз витрат до кінця місяця';
+            }
+        }
+
+        if (statsMonthlyForecastSubtitleEl) {
+            if (isPastMonth) {
+                statsMonthlyForecastSubtitleEl.textContent = 'Фактична сума списань за місяць';
+            } else if (isFutureMonth) {
+                statsMonthlyForecastSubtitleEl.textContent = 'Очікуваний темп на основі історії';
+            } else {
+                statsMonthlyForecastSubtitleEl.textContent = 'Зважений прогноз (історія + поточний темп)';
+            }
         }
 
         // Financial Safety Cushion (Подушка безпеки):
@@ -1928,7 +1973,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Create calendar grid layout container
             const calendarGrid = document.createElement('div');
-            calendarGrid.className = 'grid grid-cols-7 gap-1 sm:gap-3 mt-4 w-full';
+            calendarGrid.className = 'grid grid-cols-7 gap-1 sm:gap-2.5 mt-4 w-full min-w-0';
             
             // Add wrapper for horizontal scroll on mobile
             const outerWrapper = document.createElement('div');
@@ -1986,7 +2031,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (hasExpenses) {
                     bgClass = 'bg-[#2E1B18]/15 border-brand-accent/20 hover:border-brand-accent/50';
                     dayBadgeClass = 'text-white font-semibold';
-                    amountClass = 'text-brand-accent font-outfit text-[8px] sm:text-xs font-bold mt-1 sm:mt-2';
+                    
+                    let amountFontSize = 'text-[7.5px] sm:text-xs';
+                    if (amount >= 10000) {
+                        amountFontSize = 'text-[6.5px] sm:text-[10px]';
+                    } else if (amount >= 1000) {
+                        amountFontSize = 'text-[7px] sm:text-[11px]';
+                    }
+                    amountClass = `text-brand-accent font-outfit ${amountFontSize} font-bold leading-tight mt-0.5 sm:mt-1.5 w-full text-right truncate block calendar-day-amount`;
                     hoverClass = 'hover:bg-[#2E1B18]/25';
                 }
                 
@@ -2001,14 +2053,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     hoverClass = '';
                 }
                 
-                cell.className = `border rounded-xl sm:rounded-2xl p-1 sm:p-3 flex flex-col justify-between min-h-[50px] sm:min-h-[95px] transition-all duration-200 ${isFuture ? '' : 'cursor-pointer'} ${bgClass} ${hoverClass}`;
+                cell.className = `border rounded-xl sm:rounded-2xl p-1 sm:p-2.5 flex flex-col justify-between min-h-[50px] sm:min-h-[90px] transition-all duration-200 overflow-hidden ${isFuture ? '' : 'cursor-pointer'} ${bgClass} ${hoverClass}`;
                 
+                const formattedAmount = formatCalendarDailyAmount(amount);
+
                 cell.innerHTML = `
                     <div class="flex justify-between items-center w-full">
                         <span class="${isToday ? dayBadgeClass : 'text-[8px] sm:text-xs ' + dayBadgeClass}">${d}</span>
                     </div>
-                    <div class="text-right ${amountClass}">
-                        ${amount > 0 ? (window.innerWidth < 640 ? amount.toFixed(0) + ' ₴' : formatCurrency(amount)) : ''}
+                    <div class="${amountClass}" title="${amount > 0 ? formatCurrency(amount) : ''}">
+                        ${amount > 0 ? formattedAmount : ''}
                     </div>
                 `;
                 
