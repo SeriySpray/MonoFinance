@@ -49,7 +49,14 @@ html, body {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
-    touch-action: pan-x;
+    touch-action: pan-y pan-x;
+}
+
+@media (min-width: 768px) {
+    #limit-swipe-hint,
+    .limit-swipe-hint {
+        display: none !important;
+    }
 }
 
 #limit-carousel-track > div {
@@ -748,6 +755,18 @@ html:not(.dark) .mobile-nav-item.active span.material-symbols-outlined {
         font-size: 1.875rem !important;
         line-height: 2.25rem !important;
     }
+
+    #daily-limit-modal.modal-overlay {
+        padding: 16px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #daily-limit-modal .modal {
+        margin: auto;
+        max-height: calc(100dvh - 32px);
+        transform-origin: center center;
+    }
 }
 
 /* Light Theme Readability & Styling Enhancements */
@@ -1102,7 +1121,7 @@ html:not(.dark) .amount-suggest-badge {
 }
 
 .chart-scrub-overlay {
-    touch-action: none;
+    touch-action: pan-y;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;

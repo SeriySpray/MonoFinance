@@ -2207,7 +2207,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "пальн", "заправк", "азс", "окко", "wog", "socar", "upg", "брсм", "авіас", "shell", "автомийк",
             "автомийн", "мийка авто", "шиномонтаж", "сто", "ремонт авто", "запчастин", "детал", "масло моторн",
             "страховк", "осаго", "каско", "парковк", "паркінг", "штраф", "пдр", "прокат", "каршерінг",
-            "самокат", "скутер", "байк", "велосипед", "авто", "машин"
+            "самокат", "скутер", "байк", "велосипед", "авто", "машин", "транспорт"
         ],
         "Комунальні та Житло": [
             "комунал", "квартплат", "оренд", "rent", "житл", "квартир", "світл", "електроенерг", "дтек",
@@ -2247,6 +2247,10 @@ document.addEventListener('DOMContentLoaded', () => {
             "netflix", "spotify", "youtube premium", "apple music", "megogo", "sweet tv", "patreon",
             "telegram premium", "хобі", "настілк", "подорож", "туризм", "відпочинок", "готель",
             "hotel", "booking", "airbnb"
+        ],
+        "Інші витрати": [
+            "паспорт", "закордонний паспорт", "id-картк", "документ", "держмит", "податк", "штраф",
+            "нотаріус", "цнап", "послуг", "юрист", "довідк", "комісі", "страхуванн", "банк"
         ]
     };
 
@@ -2319,6 +2323,18 @@ document.addEventListener('DOMContentLoaded', () => {
         return bestMatch;
     }
 
+    function matchStemInText(stem, text, tokens) {
+        if (!stem || !text) return false;
+        const s = stem.toLowerCase();
+        if (s.includes(' ')) {
+            return text.includes(s);
+        }
+        if (s.length <= 3) {
+            return tokens.some(t => t === s);
+        }
+        return tokens.some(t => t.startsWith(s) || (t.length >= 6 && s.length >= 6 && s.startsWith(t)));
+    }
+
     function getCategoryName(desc, type) {
         const d = desc ? String(desc).toLowerCase().trim() : '';
         if (!d) return type === 'income' ? 'Інші доходи' : 'Інші витрати';
@@ -2328,10 +2344,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const histCat = findSimilarHistoricalCategory(desc, type);
         if (histCat) return histCat;
 
-        // 2. Semantic matching with lowered threshold
+        // Tokenize description into clean word tokens
+        const tokens = d.split(/[\s,.;:!?+*\/\\-_()]+/).filter(w => w.length >= 2);
+
+        // 2. Semantic matching with tokenized prefix threshold
         if (type === 'income') {
             for (const [cat, stems] of Object.entries(INCOME_STEM_MAP)) {
-                if (stems.some(s => d.includes(s))) return cat;
+                if (stems.some(s => matchStemInText(s, d, tokens))) return cat;
             }
             return 'Інші доходи';
         } else if (type === 'expense') {
@@ -2339,7 +2358,7 @@ document.addEventListener('DOMContentLoaded', () => {
             for (const [cat, stems] of Object.entries(EXPENSE_STEM_MAP)) {
                 let score = 0;
                 for (const s of stems) {
-                    if (d.includes(s)) score++;
+                    if (matchStemInText(s, d, tokens)) score++;
                 }
                 if (score > 0) scores[cat] = score;
             }
@@ -2917,33 +2936,27 @@ document.addEventListener('DOMContentLoaded', () => {
             overlay.setAttribute('pointer-events', 'all');
             overlay.setAttribute('class', 'chart-scrub-overlay');
             overlay.style.cursor = 'crosshair';
-            overlay.style.pointerEvents = 'all';
-            overlay.style.touchAction = 'none';
+            overlay.style.touchAction = 'pan-y';
 
             let isTouching = false;
 
-            // Touch events for mobile scrub / slide
+            // Touch events for mobile scrub / slide with seamless vertical scroll
             overlay.addEventListener('touchstart', (e) => {
                 if (e.touches && e.touches.length > 0) {
                     isTouching = true;
-                    e.stopPropagation();
                     scrubToClientX(e.touches[0].clientX);
-                    if (e.cancelable) e.preventDefault();
                 }
-            }, { passive: false });
+            }, { passive: true });
 
             overlay.addEventListener('touchmove', (e) => {
                 if (isTouching && e.touches && e.touches.length > 0) {
-                    e.stopPropagation();
                     scrubToClientX(e.touches[0].clientX);
-                    if (e.cancelable) e.preventDefault();
                 }
-            }, { passive: false });
+            }, { passive: true });
 
-            overlay.addEventListener('touchend', (e) => {
+            overlay.addEventListener('touchend', () => {
                 isTouching = false;
-                if (e.cancelable) e.preventDefault();
-            }, { passive: false });
+            }, { passive: true });
 
             overlay.addEventListener('touchcancel', () => {
                 isTouching = false;
@@ -4006,7 +4019,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const period = btn.getAttribute('data-period') || 'day';
             setModalPeriodUI(period);
             if (dailyLimitModal) dailyLimitModal.classList.add('active');
-            if (dailyLimitInput) dailyLimitInput.focus();
         }
     });
 
@@ -4044,7 +4056,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const openDailyLimitModal = () => {
         setModalPeriodUI(expenseLimitPeriod);
         if (dailyLimitModal) dailyLimitModal.classList.add('active');
-        if (dailyLimitInput) dailyLimitInput.focus();
     };
 
     const closeDailyLimitModal = () => {
