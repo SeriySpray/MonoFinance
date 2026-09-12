@@ -852,6 +852,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!t || !t.description) return;
                 ensureTxType(t);
                 const currentCat = t.category;
+                const dLower = String(t.description || '').toLowerCase();
+                // Fix legacy stem-collision misclassifications (e.g. "паспорт" misclassified as "Здоров'я та Спорт" because of stem collision with "спорт")
+                if (currentCat === "Здоров'я та Спорт" && dLower.includes('паспорт')) {
+                    t.category = 'Інші витрати';
+                    changed = true;
+                    return;
+                }
                 const isUnset = !currentCat || 
                                 currentCat === 'Витрата' || 
                                 currentCat === 'Різне' || 
@@ -2291,6 +2298,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!t || t.type !== type || !t.description) continue;
             const validCat = (t.category && t.category !== 'Витрата' && t.category !== 'Різне' && t.category !== 'Інші витрати' && t.category !== 'Інші доходи' && t.category !== 'Голосове введення') ? t.category : null;
             if (!validCat) continue;
+            // Guard against legacy stem-collision misclassification (e.g. "паспорт" matched "спорт")
+            if (cleanDesc.includes('паспорт') && validCat === "Здоров'я та Спорт") continue;
 
             const histDesc = String(t.description).toLowerCase().trim();
             if (histDesc === cleanDesc) return validCat;

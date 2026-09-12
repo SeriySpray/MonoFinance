@@ -621,6 +621,9 @@ def find_historical_category(desc, tx_type, user_id):
             cat = t.get('category')
             if not cat or cat in ['Витрата', 'Різне', 'Інші витрати', 'Інші доходи', 'Голосове введення']:
                 continue
+            # Guard against legacy stem-collision misclassification (e.g. "паспорт" matched "спорт")
+            if 'паспорт' in clean_desc and cat == "Здоров'я та Спорт":
+                continue
 
             hist_desc = str(t.get('description', '')).lower().strip()
             if not hist_desc:
