@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=115">
+    <link rel="stylesheet" href="styles.css?v=116">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -162,9 +162,10 @@
                     </div>
 
                     <!-- Swipeable Expense Limits Carousel (Day, Week, Month) -->
-                    <div id="limit-card-viewport" class="relative my-4 sm:my-6 overflow-hidden rounded-3xl touch-pan-y">
-                        <!-- Transform-based slider track -->
-                        <div id="limit-carousel-track" class="flex w-[300%] transition-transform duration-300 ease-out">
+                    <div id="limit-card-viewport" class="relative my-4 sm:my-6 touch-pan-y">
+                        <!-- Transform-based slider track viewport -->
+                        <div class="overflow-hidden rounded-3xl">
+                            <div id="limit-carousel-track" class="flex w-[300%] transition-transform duration-300 ease-out">
                             
                             <!-- Slide 1: Day Limit Card -->
                             <div id="limit-slide-day" class="w-1/3 flex-shrink-0 bg-[#111113] border border-[#202024] rounded-3xl p-5 sm:p-6 shadow-lg select-none">
@@ -242,9 +243,10 @@
                             </div>
 
                         </div>
+                        </div>
 
                         <!-- Carousel Indicator Dots & Quick Switcher -->
-                        <div class="flex items-center justify-between md:justify-end mt-2.5 px-1">
+                        <div class="flex items-center justify-between md:justify-end mt-2.5 px-1.5 pb-1">
                             <div id="limit-swipe-hint" class="limit-swipe-hint flex md:hidden items-center gap-1.5 text-xs text-brand-textSecondary">
                                 <span class="material-symbols-outlined text-[14px]">swipe</span>
                                 <span class="text-[11px]">Свайпайте для перемикання</span>
@@ -1503,6 +1505,6 @@
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
-    <script src="app.js?v=135" defer></script>
+    <script src="app.js?v=136" defer></script>
 </body>
 </html>

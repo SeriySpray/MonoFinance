@@ -518,8 +518,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let touchStartY = 0;
 
         document.addEventListener('touchstart', (e) => {
-            // Ignore swipe gesture inside active modals and category rows
-            if (e.target.closest('.modal-overlay.active, .modal.active, .category-row-item, #stats-category-breakdown-container')) {
+            // Ignore swipe gesture inside active modals, category rows, limit carousel, recent transactions swipe, and chart scrub
+            if (e.target.closest('.modal-overlay.active, .modal.active, .category-row-item, #stats-category-breakdown-container, #limit-card-viewport, #recent-transactions-card, .chart-scrub-overlay')) {
                 touchStartX = 0;
                 touchStartY = 0;
                 return;
@@ -532,6 +532,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.addEventListener('touchend', (e) => {
             if (!touchStartX || !touchStartY) return;
+
+            if (e.target.closest('.modal-overlay.active, .modal.active, .category-row-item, #stats-category-breakdown-container, #limit-card-viewport, #recent-transactions-card, .chart-scrub-overlay')) {
+                touchStartX = 0;
+                touchStartY = 0;
+                return;
+            }
 
             if (e.changedTouches && e.changedTouches.length > 0) {
                 const touchEndX = e.changedTouches[0].clientX;
@@ -3869,23 +3875,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const dailyLimitInputLabel = document.getElementById('daily-limit-input-label');
 
     const limitViewport = document.getElementById('limit-card-viewport');
-    let touchStartX = 0;
-    let touchStartY = 0;
+    let limitTouchStartX = 0;
+    let limitTouchStartY = 0;
 
     if (limitViewport) {
         limitViewport.addEventListener('touchstart', (e) => {
             if (e.touches.length === 1) {
-                touchStartX = e.touches[0].clientX;
-                touchStartY = e.touches[0].clientY;
+                limitTouchStartX = e.touches[0].clientX;
+                limitTouchStartY = e.touches[0].clientY;
             }
         }, { passive: true });
 
         limitViewport.addEventListener('touchend', (e) => {
-            if (e.changedTouches.length === 1) {
-                const diffX = touchStartX - e.changedTouches[0].clientX;
-                const diffY = touchStartY - e.changedTouches[0].clientY;
+            if (!limitTouchStartX || !limitTouchStartY) return;
 
-                if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+            if (e.changedTouches.length === 1) {
+                const diffX = limitTouchStartX - e.changedTouches[0].clientX;
+                const diffY = limitTouchStartY - e.changedTouches[0].clientY;
+
+                limitTouchStartX = 0;
+                limitTouchStartY = 0;
+
+                if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY) * 1.1) {
                     const periods = ['day', 'week', 'month'];
                     let currentIdx = periods.indexOf(expenseLimitPeriod);
                     if (currentIdx === -1) currentIdx = 0;
@@ -3898,6 +3909,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         setLimitCarouselPeriod(periods[currentIdx - 1], true);
                     }
                 }
+            } else {
+                limitTouchStartX = 0;
+                limitTouchStartY = 0;
             }
         }, { passive: true });
     }
