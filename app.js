@@ -516,14 +516,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const viewOrder = ['dashboard', 'income', 'expenses', 'statistics'];
         let touchStartX = 0;
         let touchStartY = 0;
+        let touchStartLimitPeriod = null;
 
         document.addEventListener('touchstart', (e) => {
-            // Ignore swipe gesture inside active modals, category rows, limit carousel, recent transactions swipe, and chart scrub
-            if (e.target.closest('.modal-overlay.active, .modal.active, .category-row-item, #stats-category-breakdown-container, #limit-card-viewport, #recent-transactions-card, .chart-scrub-overlay')) {
+            // Ignore swipe gesture inside active modals, category rows, recent transactions swipe, and chart scrub
+            if (e.target.closest('.modal-overlay.active, .modal.active, .category-row-item, #stats-category-breakdown-container, #recent-transactions-card, .chart-scrub-overlay')) {
                 touchStartX = 0;
                 touchStartY = 0;
+                touchStartLimitPeriod = null;
                 return;
             }
+
+            // Track if touch started within limit carousel to gate page swiping
+            const inLimitViewport = !!e.target.closest('#limit-card-viewport');
+            touchStartLimitPeriod = inLimitViewport ? expenseLimitPeriod : null;
+
             if (e.touches && e.touches.length === 1) {
                 touchStartX = e.touches[0].clientX;
                 touchStartY = e.touches[0].clientY;
@@ -533,9 +540,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('touchend', (e) => {
             if (!touchStartX || !touchStartY) return;
 
-            if (e.target.closest('.modal-overlay.active, .modal.active, .category-row-item, #stats-category-breakdown-container, #limit-card-viewport, #recent-transactions-card, .chart-scrub-overlay')) {
+            if (e.target.closest('.modal-overlay.active, .modal.active, .category-row-item, #stats-category-breakdown-container, #recent-transactions-card, .chart-scrub-overlay')) {
                 touchStartX = 0;
                 touchStartY = 0;
+                touchStartLimitPeriod = null;
                 return;
             }
 
@@ -546,9 +554,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 const deltaX = touchEndX - touchStartX;
                 const deltaY = touchEndY - touchStartY;
 
+                const startLimitPeriod = touchStartLimitPeriod;
+
                 // Reset touch coordinates
                 touchStartX = 0;
                 touchStartY = 0;
+                touchStartLimitPeriod = null;
+
+                // For gestures originating within the limit carousel:
+                // Only allow switching to next page (deltaX < 0) when already in extreme 'month' mode.
+                // For right swipe (deltaX > 0), only allow if already in leftmost 'day' mode.
+                if (startLimitPeriod !== null) {
+                    if (deltaX < 0 && startLimitPeriod !== 'month') {
+                        return;
+                    }
+                    if (deltaX > 0 && startLimitPeriod !== 'day') {
+                        return;
+                    }
+                }
 
                 // Threshold: 50px horizontal movement, dominant over vertical scroll
                 if (Math.abs(deltaX) >= 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
@@ -571,6 +594,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 }
+            } else {
+                touchStartX = 0;
+                touchStartY = 0;
+                touchStartLimitPeriod = null;
             }
         }, { passive: true });
     };
