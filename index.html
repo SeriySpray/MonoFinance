@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=120">
+    <link rel="stylesheet" href="styles.css?v=121">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -911,15 +911,15 @@
             
             <!-- Theme Switcher Slider (Inside pill modal, bottom-left) -->
             <button type="button" id="auth-theme-toggle" class="auth-theme-slider-track absolute bottom-5 left-5 sm:bottom-6 sm:left-6 z-20 flex items-center justify-between w-[56px] h-[28px] sm:w-[62px] sm:h-[30px] p-[3px] rounded-full bg-zinc-200/90 dark:bg-[#1A1A1E] border border-black/[0.08] dark:border-white/[0.1] shadow-inner backdrop-blur-md cursor-pointer transition-colors duration-300" title="Змінити тему оформлення" aria-label="Перемикач теми">
-                <span class="flex items-center justify-center w-[20px] h-[20px] text-zinc-400 dark:text-zinc-600 transition-colors">
+                <span class="flex items-center justify-center w-[20px] h-[20px] text-zinc-400 dark:text-zinc-500 transition-colors">
                     <span class="material-symbols-outlined text-[13px] sm:text-[14px]">light_mode</span>
                 </span>
-                <span class="flex items-center justify-center w-[20px] h-[20px] text-zinc-400 dark:text-zinc-600 transition-colors">
+                <span class="flex items-center justify-center w-[20px] h-[20px] text-zinc-400 dark:text-zinc-500 transition-colors">
                     <span class="material-symbols-outlined text-[13px] sm:text-[14px]">dark_mode</span>
                 </span>
-                <span class="auth-theme-slider-thumb absolute top-[3px] left-[3px] w-[22px] h-[22px] sm:w-[24px] sm:h-[24px] rounded-full bg-white dark:bg-[#2C2C32] shadow-sm flex items-center justify-center pointer-events-none">
-                    <span class="material-symbols-outlined text-[13px] sm:text-[14px] text-amber-500 dark:hidden">light_mode</span>
-                    <span class="material-symbols-outlined text-[13px] sm:text-[14px] text-zinc-100 hidden dark:inline">dark_mode</span>
+                <span class="auth-theme-slider-thumb absolute top-[3px] left-[3px] w-[22px] h-[22px] sm:w-[24px] sm:h-[24px] rounded-full bg-zinc-900 dark:bg-white shadow-sm flex items-center justify-center pointer-events-none">
+                    <span class="material-symbols-outlined text-[13px] sm:text-[14px] text-white dark:hidden">light_mode</span>
+                    <span class="material-symbols-outlined text-[13px] sm:text-[14px] text-zinc-950 hidden dark:inline">dark_mode</span>
                 </span>
             </button>
 
@@ -929,13 +929,11 @@
             <!-- Left Form Column -->
             <div class="relative z-10 w-full max-w-[320px] sm:max-w-[340px]">
                 
-                <!-- Minimalist Monochrome Logo Mark with Linear Moving Inner Diamond -->
+                <!-- Minimalist Monochrome Logo Mark (Static, Classic Scale) -->
                 <div class="flex items-center gap-2.5 mb-6 sm:mb-7">
                     <svg class="w-7 h-7 sm:w-8 sm:h-8 overflow-visible" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 2L4 10L12 18L20 10L12 2Z" class="fill-zinc-950 dark:fill-white transition-colors"/>
-                        <g class="auth-logo-inner-diamond">
-                            <path d="M12 7L8 11L12 15L16 11Z" class="fill-white dark:fill-zinc-950 transition-colors"/>
-                        </g>
+                        <path d="M12 7L8 11L12 15L16 11Z" class="fill-white dark:fill-zinc-950 transition-colors"/>
                     </svg>
                 </div>
                 
@@ -1533,6 +1531,6 @@
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
-    <script src="app.js?v=140" defer></script>
+    <script src="app.js?v=141" defer></script>
 </body>
 </html>

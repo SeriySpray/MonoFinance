@@ -679,7 +679,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (rect.width <= 0 || rect.height <= 0) return;
 
             const isMobile = window.innerWidth < 640;
-            width = isMobile ? Math.floor(rect.width) : Math.floor(rect.width * 0.60) + 16;
+            const widthFactor = isMobile ? 0.58 : 0.60;
+            width = Math.floor(rect.width * widthFactor) + 16;
             height = Math.floor(rect.height);
 
             dpr = window.devicePixelRatio || 1;
@@ -700,9 +701,10 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fill();
         }
 
-        // Exact mathematical silhouette of the reference image (shifted right for clean breathing room)
+        // Exact mathematical silhouette of the reference image (shifted right for clean breathing room on all screens)
         function getReferenceContour(ny) {
-            const shift = 0.08;
+            const isMobile = window.innerWidth < 640;
+            const shift = isMobile ? 0.12 : 0.08;
             if (ny < 0.25) {
                 const t = ny / 0.25;
                 return (0.40 + shift) + 0.18 * Math.sin(t * Math.PI * 0.5);
