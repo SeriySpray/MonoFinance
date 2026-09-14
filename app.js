@@ -455,6 +455,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btnLogout) btnLogout.addEventListener('click', handleLogout);
             if (btnImportLocal) btnImportLocal.addEventListener('click', handleImportLocal);
 
+            // Auth Screen Theme Toggle
+            const authThemeToggleBtn = document.getElementById('auth-theme-toggle');
+            if (authThemeToggleBtn) {
+                authThemeToggleBtn.addEventListener('click', () => {
+                    toggleTheme();
+                    if (window.authAscii) window.authAscii.resize();
+                });
+            }
+
+            // Initialize Animated ASCII Halftone Art
+            window.authAscii = initAuthAsciiCanvas();
+
             // Settings Modal Event Listeners
             const settingsModal = document.getElementById('settings-modal');
             const btnSettings = document.getElementById('btn-settings');
@@ -616,7 +628,159 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${basePath}${cleanEndpoint}`;
     }
 
+    // ASCII Halftone Organic Canvas Animation (Reference Matching Diamond Dither)
+    function initAuthAsciiCanvas() {
+        const canvas = document.getElementById('auth-ascii-canvas');
+        if (!canvas) return null;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return null;
+
+        let animationFrameId = null;
+        let width = 0;
+        let height = 0;
+        let dpr = window.devicePixelRatio || 1;
+
+        function resize() {
+            const card = document.getElementById('auth-card-pill');
+            if (!card) return;
+            const rect = card.getBoundingClientRect();
+            if (rect.width <= 0 || rect.height <= 0) return;
+
+            const isMobile = window.innerWidth < 640;
+            width = isMobile ? Math.floor(rect.width) : Math.floor(rect.width * 0.60);
+            height = Math.floor(rect.height);
+
+            dpr = window.devicePixelRatio || 1;
+            canvas.width = Math.floor(width * dpr);
+            canvas.height = Math.floor(height * dpr);
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        function drawDiamond(cx, cy, r) {
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - r);
+            ctx.lineTo(cx + r, cy);
+            ctx.lineTo(cx, cy + r);
+            ctx.lineTo(cx - r, cy);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        // Exact mathematical silhouette of the reference image
+        function getReferenceContour(ny) {
+            if (ny < 0.25) {
+                const t = ny / 0.25;
+                return 0.40 + 0.18 * Math.sin(t * Math.PI * 0.5);
+            } else if (ny < 0.62) {
+                const t = (ny - 0.25) / 0.37;
+                return 0.58 - 0.24 * Math.sin(t * Math.PI * 0.5);
+            } else {
+                const t = (ny - 0.62) / 0.38;
+                return 0.34 + 0.56 * Math.pow(t, 1.35);
+            }
+        }
+
+        let startTime = performance.now();
+        let lastDrawTime = 0;
+
+        function render(currentTime) {
+            const authContainer = document.getElementById('auth-container');
+            if (!authContainer || authContainer.classList.contains('hidden') || authContainer.classList.contains('auth-hiding')) {
+                animationFrameId = null;
+                return;
+            }
+
+            animationFrameId = requestAnimationFrame(render);
+
+            // Throttle to ~30 FPS for optimal power efficiency and silky smoothness
+            if (currentTime - lastDrawTime < 32) return;
+            lastDrawTime = currentTime;
+
+            const time = (currentTime - startTime) * 0.0011;
+            const isDark = document.documentElement.classList.contains('dark');
+
+            ctx.clearRect(0, 0, width, height);
+
+            const cellSize = 8;
+            const cols = Math.floor(width / cellSize);
+            const rows = Math.floor(height / cellSize);
+
+            const glyphColor = isDark ? '#FFFFFF' : '#0A0A0C';
+            ctx.fillStyle = glyphColor;
+            ctx.font = '7px "Courier New", Courier, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            for (let r = 0; r < rows; r++) {
+                const ny = r / rows;
+                const baseContour = getReferenceContour(ny);
+                const wave = 0.024 * Math.sin(ny * 7.5 + time * 1.4) + 0.014 * Math.cos(ny * 12.0 - time * 1.0);
+                const boundary = baseContour + wave;
+
+                for (let c = 0; c < cols; c++) {
+                    const nx = c / cols;
+                    const dist = nx - boundary;
+
+                    if (dist > -0.05) {
+                        const microNoise = 0.12 * Math.sin(c * 0.35 + time * 1.6) * Math.cos(r * 0.35 - time * 1.2)
+                                         + (Math.sin(c * 23.7 + r * 41.3) * 0.07);
+
+                        const density = Math.min(1, Math.max(0, (dist + 0.05) * 1.85 + microNoise));
+
+                        if (density > 0.06) {
+                            const cx = c * cellSize + cellSize / 2;
+                            const cy = r * cellSize + cellSize / 2;
+
+                            ctx.globalAlpha = Math.min(1, 0.40 + density * 0.60);
+
+                            if (density < 0.22) {
+                                // Isolated dither dot / plus
+                                if ((c + r) % 2 === 0) {
+                                    drawDiamond(cx, cy, 1.1);
+                                } else {
+                                    ctx.fillText('+', cx, cy);
+                                }
+                            } else if (density < 0.42) {
+                                drawDiamond(cx, cy, 2.0);
+                            } else if (density < 0.65) {
+                                drawDiamond(cx, cy, 3.0);
+                            } else if (density < 0.86) {
+                                drawDiamond(cx, cy, 4.2);
+                            } else {
+                                // Full connecting diamonds (seamless halftone texture)
+                                drawDiamond(cx, cy, 5.6);
+                            }
+                        }
+                    }
+                }
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        function start() {
+            if (!animationFrameId) {
+                resize();
+                animationFrameId = requestAnimationFrame(render);
+            }
+        }
+
+        function stop() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        }
+
+        window.addEventListener('resize', resize);
+        start();
+
+    }
+
     function showAppScreenSmoothly() {
+        if (window.authAscii) window.authAscii.stop();
+
         if (authContainer && !authContainer.classList.contains('hidden')) {
             authContainer.classList.add('auth-hiding');
             setTimeout(() => {
@@ -678,20 +842,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btnLogout) btnLogout.classList.add('hidden');
         const mobileVoiceBtn = document.getElementById('mobile-voice-btn');
         if (mobileVoiceBtn) mobileVoiceBtn.classList.add('hidden');
+        if (window.authAscii) window.authAscii.start();
     }
 
     function toggleAuthMode() {
         isRegisterMode = !isRegisterMode;
+        const promptEl = document.getElementById('auth-toggle-prompt');
         if (isRegisterMode) {
             if (authTitle) authTitle.textContent = 'Реєстрація';
-            if (authSubtitle) authSubtitle.textContent = 'Створіть новий акаунт для синхронізації даних';
+            if (authSubtitle) authSubtitle.textContent = 'Створіть акаунт для синхронізації даних';
             if (authSubmitBtn) authSubmitBtn.textContent = 'Зареєструватися';
-            if (authToggleModeBtn) authToggleModeBtn.textContent = 'Вже є акаунт? Увійти';
+            if (promptEl) promptEl.textContent = 'Вже є акаунт?';
+            if (authToggleModeBtn) authToggleModeBtn.textContent = 'Увійти';
         } else {
             if (authTitle) authTitle.textContent = 'Вхід у систему';
-            if (authSubtitle) authSubtitle.textContent = 'Введіть свої облікові дані для доступу до дешборду';
+            if (authSubtitle) authSubtitle.textContent = 'Введіть свої облікові дані для доступу';
             if (authSubmitBtn) authSubmitBtn.textContent = 'Увійти';
-            if (authToggleModeBtn) authToggleModeBtn.textContent = 'Немає акаунту? Зареєструватися';
+            if (promptEl) promptEl.textContent = 'Немає акаунту?';
+            if (authToggleModeBtn) authToggleModeBtn.textContent = 'Зареєструватися';
         }
     }
 
@@ -725,6 +893,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function startDemoMode() {
+        if (window.authAscii) window.authAscii.stop();
         isDemoMode = true;
         currentUser = null;
         

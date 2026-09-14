@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=117">
+    <link rel="stylesheet" href="styles.css?v=118">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -904,46 +904,63 @@
     </div>
 
     <!-- Auth Screen (Login/Register) -->
-    <div id="auth-container" class="fixed inset-0 z-50 bg-[#0A0A0C] flex items-center justify-center p-6">
-        <div class="bg-[#111113] border border-[#202024] p-8 rounded-3xl max-w-md w-full shadow-2xl space-y-6">
-            <div class="flex items-center gap-3 justify-center mb-6">
-                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L4 10L12 18L20 10L12 2Z" fill="#FF5A36"/>
-                    <path d="M12 9L9 12L12 15L15 12L12 9Z" fill="#FFFFFF"/>
-                </svg>
-                <span class="font-outfit font-bold text-[24px] tracking-tight text-white">MonoFinance</span>
-            </div>
+    <div id="auth-container" class="fixed inset-0 z-50 bg-[#EFEFEF] dark:bg-[#070709] flex items-center justify-center p-4 sm:p-6 transition-colors duration-300">
+        <!-- Theme Switcher Button (Floating in viewport corner) -->
+        <button type="button" id="auth-theme-toggle" class="fixed top-5 right-5 sm:top-6 sm:right-6 z-40 w-10 h-10 rounded-full bg-white/90 hover:bg-white dark:bg-[#161619]/90 dark:hover:bg-[#202024] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-700 dark:text-zinc-300 transition-all cursor-pointer shadow-md backdrop-blur-md" title="Змінити тему оформлення">
+            <span class="material-symbols-outlined text-[20px] dark:hidden">dark_mode</span>
+            <span class="material-symbols-outlined text-[20px] hidden dark:inline">light_mode</span>
+        </button>
+
+        <!-- Central Card / Pill Modal -->
+        <div id="auth-card-pill" class="relative w-full max-w-3xl min-h-[480px] sm:min-h-[520px] bg-white dark:bg-[#0E0E11] border border-black/[0.08] dark:border-white/[0.08] rounded-[28px] sm:rounded-[36px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12)] dark:shadow-[0_25px_70px_-15px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col justify-center p-6 sm:p-12 md:p-14 transition-all duration-300">
             
-            <div class="space-y-1 text-center">
-                <h2 id="auth-title" class="text-xl font-bold text-white">Вхід у систему</h2>
-                <p id="auth-subtitle" class="text-xs text-brand-textSecondary">Введіть свої облікові дані для доступу до дешборду</p>
-            </div>
-            
-            <form id="auth-form" class="space-y-4">
-                <div class="flex flex-col gap-2">
-                    <label for="auth-username" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Ім'я користувача</label>
-                    <input type="text" id="auth-username" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" required autocomplete="username">
-                </div>
-                <div class="flex flex-col gap-2">
-                    <label for="auth-password" class="text-[10px] text-brand-textSecondary font-bold uppercase tracking-wider">Пароль</label>
-                    <input type="password" id="auth-password" class="bg-black border border-[#202024] rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent transition-all text-xs" required autocomplete="current-password">
+            <!-- Animated ASCII Halftone Art in Top Right Corner -->
+            <canvas id="auth-ascii-canvas" class="absolute top-0 right-0 h-full pointer-events-none z-0 transition-opacity duration-300"></canvas>
+
+            <!-- Left Form Column -->
+            <div class="relative z-10 w-full max-w-[320px] sm:max-w-[340px]">
+                
+                <!-- Minimalist Monochrome Logo Mark -->
+                <div class="flex items-center gap-2.5 mb-6 sm:mb-7">
+                    <svg class="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L4 10L12 18L20 10L12 2Z" class="fill-zinc-950 dark:fill-white transition-colors"/>
+                        <path d="M12 9L9 12L12 15L15 12L12 9Z" class="fill-white dark:fill-zinc-950 transition-colors"/>
+                    </svg>
                 </div>
                 
-                <button type="submit" id="auth-submit-btn" class="w-full py-3 bg-brand-accent hover:opacity-90 text-xs font-semibold rounded-xl text-white transition-all font-outfit mt-4">Увійти</button>
-            </form>
-            
-            <div class="text-center pt-2">
-                <button id="auth-toggle-mode" class="text-xs text-brand-purple hover:underline">Немає акаунту? Зареєструватися</button>
-            </div>
-            
-            <div class="relative flex py-2 items-center">
-                <div class="flex-grow border-t border-[#202024]"></div>
-                <span class="flex-shrink mx-4 text-[10px] text-brand-textSecondary uppercase tracking-widest font-semibold">Або</span>
-                <div class="flex-grow border-t border-[#202024]"></div>
-            </div>
-            
-            <div class="flex flex-col gap-3">
-                <button id="auth-demo-btn" class="w-full py-2.5 border border-[#202024] hover:bg-[#161619] text-xs font-semibold rounded-xl text-white transition-colors">Переглянути локально (Демо)</button>
+                <!-- Title & Subtitle -->
+                <div class="space-y-1 mb-6 sm:mb-7">
+                    <h2 id="auth-title" class="text-2xl sm:text-3xl font-bold text-zinc-950 dark:text-white tracking-tight font-outfit">Вхід у систему</h2>
+                    <p id="auth-subtitle" class="font-mono text-xs text-zinc-500 dark:text-zinc-400 tracking-tight">Введіть свої облікові дані для доступу</p>
+                </div>
+                
+                <!-- Credentials Form -->
+                <form id="auth-form" class="space-y-3.5">
+                    <div>
+                        <label for="auth-username" class="block font-mono text-[11px] font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">Ім'я користувача</label>
+                        <input type="text" id="auth-username" placeholder="Введіть ім'я користувача" class="auth-pill-input w-full px-4 py-2.5 sm:py-3 rounded-2xl bg-zinc-50 dark:bg-[#151518] border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:border-zinc-950 dark:focus:border-white focus:ring-1 focus:ring-zinc-950 dark:focus:ring-white transition-all text-xs font-sans" required autocomplete="username">
+                    </div>
+                    <div>
+                        <label for="auth-password" class="block font-mono text-[11px] font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">Пароль</label>
+                        <input type="password" id="auth-password" placeholder="Введіть пароль" class="auth-pill-input w-full px-4 py-2.5 sm:py-3 rounded-2xl bg-zinc-50 dark:bg-[#151518] border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:border-zinc-950 dark:focus:border-white focus:ring-1 focus:ring-zinc-950 dark:focus:ring-white transition-all text-xs font-sans" required autocomplete="current-password">
+                    </div>
+                    
+                    <button type="submit" id="auth-submit-btn" class="w-full py-3 sm:py-3.5 px-6 font-semibold rounded-2xl transition-all font-outfit text-xs tracking-wide shadow-sm hover:shadow active:scale-[0.99] mt-3 cursor-pointer">Увійти</button>
+                </form>
+                
+                <!-- Toggle Mode Link -->
+                <div class="text-center pt-4 sm:pt-5">
+                    <span id="auth-toggle-prompt" class="font-mono text-xs text-zinc-500 dark:text-zinc-400">Немає акаунту?</span>
+                    <button type="button" id="auth-toggle-mode" class="font-mono text-xs font-semibold text-zinc-950 dark:text-white underline hover:opacity-80 transition-opacity ml-1 cursor-pointer">Зареєструватися</button>
+                </div>
+                
+                <!-- Demo Mode Link -->
+                <div class="pt-3.5 mt-3.5 border-t border-zinc-100 dark:border-zinc-800/70 text-center">
+                    <button type="button" id="auth-demo-btn" class="font-mono text-[11px] text-zinc-400 hover:text-zinc-800 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors cursor-pointer">
+                        Переглянути локально (Демо)
+                    </button>
+                </div>
+
             </div>
         </div>
     </div>
@@ -1505,6 +1522,6 @@
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
-    <script src="app.js?v=137" defer></script>
+    <script src="app.js?v=138" defer></script>
 </body>
 </html>

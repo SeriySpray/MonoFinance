@@ -358,6 +358,57 @@ svg line {
     pointer-events: none;
 }
 
+/* Auth Pill Card & Reference Design Elements */
+#auth-card-pill {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+#auth-submit-btn {
+    background-color: #0A0A0C !important;
+    color: #FFFFFF !important;
+}
+#auth-submit-btn:hover {
+    background-color: #27272A !important;
+}
+html.dark #auth-submit-btn,
+html.dark #auth-submit-btn * {
+    background-color: #FFFFFF !important;
+    color: #0A0A0C !important;
+}
+html.dark #auth-submit-btn:hover {
+    background-color: #E4E4E7 !important;
+}
+
+.auth-pill-input {
+    transition: all 0.2s ease;
+}
+.auth-pill-input:focus {
+    outline: none !important;
+}
+html:not(.dark) .auth-pill-input:focus {
+    border-color: #0A0A0C !important;
+    box-shadow: 0 0 0 1px #0A0A0C !important;
+}
+html.dark .auth-pill-input:focus {
+    border-color: #FFFFFF !important;
+    box-shadow: 0 0 0 1px #FFFFFF !important;
+}
+
+#auth-ascii-canvas {
+    width: 58%;
+    right: 0;
+    top: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+@media (max-width: 640px) {
+    #auth-ascii-canvas {
+        width: 100%;
+        opacity: 0.16;
+    }
+}
+
 #app-container {
     transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }

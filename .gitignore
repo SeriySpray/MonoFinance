@@ -12,3 +12,6 @@ MonoFinanceAndroid/**/build/
 MonoFinanceAndroid/.idea/
 MonoFinanceAndroid/local.properties
 
+# Reference images
+*.jpg
+
