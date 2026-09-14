@@ -455,46 +455,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btnLogout) btnLogout.addEventListener('click', handleLogout);
             if (btnImportLocal) btnImportLocal.addEventListener('click', handleImportLocal);
 
-            // Auth Screen Theme Toggle (Sliding Switch)
-            const authThemeToggleBtn = document.getElementById('auth-theme-toggle');
-            if (authThemeToggleBtn) {
-                let startX = 0;
-                let isDragging = false;
-
-                authThemeToggleBtn.addEventListener('click', () => {
-                    toggleTheme();
-                    if (window.authAscii) window.authAscii.resize();
-                });
-
-                authThemeToggleBtn.addEventListener('touchstart', (e) => {
-                    if (e.touches && e.touches.length === 1) {
-                        startX = e.touches[0].clientX;
-                        isDragging = false;
-                    }
-                }, { passive: true });
-
-                authThemeToggleBtn.addEventListener('touchmove', (e) => {
-                    if (e.touches && e.touches.length === 1) {
-                        const diffX = e.touches[0].clientX - startX;
-                        if (Math.abs(diffX) > 6) {
-                            isDragging = true;
-                        }
-                    }
-                }, { passive: true });
-
-                authThemeToggleBtn.addEventListener('touchend', (e) => {
-                    if (isDragging && e.changedTouches && e.changedTouches.length > 0) {
-                        const diffX = e.changedTouches[0].clientX - startX;
-                        const isDark = document.documentElement.classList.contains('dark');
-                        if (diffX > 10 && !isDark) {
-                            toggleTheme();
-                        } else if (diffX < -10 && isDark) {
-                            toggleTheme();
-                        }
-                        if (window.authAscii) window.authAscii.resize();
-                    }
-                });
-            }
 
             // Initialize Animated ASCII Halftone Art
             window.authAscii = initAuthAsciiCanvas();
@@ -679,7 +639,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (rect.width <= 0 || rect.height <= 0) return;
 
             const isMobile = window.innerWidth < 640;
-            const widthFactor = isMobile ? 0.58 : 0.60;
+            const widthFactor = isMobile ? 0.82 : 0.60;
             width = Math.floor(rect.width * widthFactor) + 16;
             height = Math.floor(rect.height);
 
@@ -701,10 +661,10 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fill();
         }
 
-        // Exact mathematical silhouette of the reference image (shifted right for clean breathing room on all screens)
+        // Exact mathematical silhouette of the reference image (voluminous & clean on all screens)
         function getReferenceContour(ny) {
             const isMobile = window.innerWidth < 640;
-            const shift = isMobile ? 0.12 : 0.08;
+            const shift = isMobile ? 0.02 : 0.08;
             if (ny < 0.25) {
                 const t = ny / 0.25;
                 return (0.40 + shift) + 0.18 * Math.sin(t * Math.PI * 0.5);
@@ -734,17 +694,17 @@ document.addEventListener('DOMContentLoaded', () => {
             lastDrawTime = currentTime;
 
             const time = (currentTime - startTime) * 0.0011;
-            const isDark = document.documentElement.classList.contains('dark');
+            const isMobile = window.innerWidth < 640;
 
             ctx.clearRect(0, 0, width, height);
 
-            const cellSize = 8;
+            const cellSize = isMobile ? 6.5 : 8;
             const cols = Math.floor(width / cellSize);
             const rows = Math.floor(height / cellSize);
 
-            const glyphColor = isDark ? '#FFFFFF' : '#0A0A0C';
+            const glyphColor = '#FFFFFF';
             ctx.fillStyle = glyphColor;
-            ctx.font = '7px "Courier New", Courier, monospace';
+            ctx.font = (isMobile ? '6px' : '7px') + ' "Courier New", Courier, monospace';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
@@ -773,19 +733,19 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (density < 0.22) {
                                 // Isolated dither dot / plus
                                 if ((c + r) % 2 === 0) {
-                                    drawDiamond(cx, cy, 1.1);
+                                    drawDiamond(cx, cy, isMobile ? 0.9 : 1.1);
                                 } else {
                                     ctx.fillText('+', cx, cy);
                                 }
                             } else if (density < 0.42) {
-                                drawDiamond(cx, cy, 2.0);
+                                drawDiamond(cx, cy, isMobile ? 1.6 : 2.0);
                             } else if (density < 0.65) {
-                                drawDiamond(cx, cy, 3.0);
+                                drawDiamond(cx, cy, isMobile ? 2.4 : 3.0);
                             } else if (density < 0.86) {
-                                drawDiamond(cx, cy, 4.2);
+                                drawDiamond(cx, cy, isMobile ? 3.4 : 4.2);
                             } else {
                                 // Full connecting diamonds (seamless halftone texture)
-                                drawDiamond(cx, cy, 5.6);
+                                drawDiamond(cx, cy, isMobile ? 4.6 : 5.6);
                             }
                         }
                     }
@@ -797,9 +757,8 @@ document.addEventListener('DOMContentLoaded', () => {
         function start() {
             if (!animationFrameId) {
                 resize();
-                if (width === 0 || height === 0) {
-                    setTimeout(resize, 60);
-                }
+                setTimeout(resize, 60);
+                setTimeout(resize, 180);
                 startTime = performance.now();
                 animationFrameId = requestAnimationFrame(render);
             }

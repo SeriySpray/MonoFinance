@@ -359,84 +359,103 @@ svg line {
 }
 
 /* Auth Pill Card & Reference Design Elements */
+#auth-container {
+    background-color: #070709 !important;
+    color: #FFFFFF !important;
+}
+
 #auth-card-pill {
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    background-color: #0E0E11 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
-/* Auth Theme Toggle Slider (Bottom Left) */
-.auth-theme-slider-track {
-    transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-}
-
-.auth-theme-slider-thumb {
-    transform: translateX(0);
-    transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.25s ease;
-    background-color: #0A0A0C !important;
-}
-
-.auth-theme-slider-thumb span {
+#auth-container h2#auth-title,
+html:not(.dark) #auth-container h2#auth-title {
     color: #FFFFFF !important;
 }
 
-html.dark .auth-theme-slider-thumb {
-    transform: translateX(28px);
-    background-color: #FFFFFF !important;
+#auth-container #auth-subtitle,
+html:not(.dark) #auth-container #auth-subtitle {
+    color: #A1A1AA !important;
 }
 
-html.dark .auth-theme-slider-thumb span {
-    color: #0A0A0C !important;
+#auth-container label,
+html:not(.dark) #auth-container label {
+    color: #D4D4D8 !important;
 }
 
-@media (min-width: 640px) {
-    html.dark .auth-theme-slider-thumb {
-        transform: translateX(32px);
-    }
-}
-
-#auth-submit-btn {
-    background-color: #0A0A0C !important;
+#auth-container input.auth-pill-input,
+html:not(.dark) #auth-container input.auth-pill-input {
+    background-color: #151518 !important;
+    border-color: #27272A !important;
     color: #FFFFFF !important;
 }
-#auth-submit-btn:hover {
-    background-color: #27272A !important;
+
+#auth-container input.auth-pill-input::placeholder,
+html:not(.dark) #auth-container input.auth-pill-input::placeholder {
+    color: #52525B !important;
 }
-html.dark #auth-submit-btn,
-html.dark #auth-submit-btn * {
+
+#auth-container input.auth-pill-input:focus,
+html:not(.dark) #auth-container input.auth-pill-input:focus {
+    border-color: #FFFFFF !important;
+    box-shadow: 0 0 0 1px #FFFFFF !important;
+    outline: none !important;
+}
+
+#auth-submit-btn,
+html:not(.dark) #auth-submit-btn,
+html.dark #auth-submit-btn {
     background-color: #FFFFFF !important;
-    color: #0A0A0C !important;
+    color: #09090B !important;
 }
+
+#auth-submit-btn:hover,
+html:not(.dark) #auth-submit-btn:hover,
 html.dark #auth-submit-btn:hover {
     background-color: #E4E4E7 !important;
+    color: #09090B !important;
+}
+
+#auth-toggle-prompt,
+html:not(.dark) #auth-toggle-prompt {
+    color: #A1A1AA !important;
+}
+
+#auth-toggle-mode,
+html:not(.dark) #auth-toggle-mode {
+    color: #FFFFFF !important;
+}
+
+#auth-demo-btn,
+html:not(.dark) #auth-demo-btn {
+    color: #71717A !important;
+}
+
+#auth-demo-btn:hover,
+html:not(.dark) #auth-demo-btn:hover {
+    color: #D4D4D8 !important;
 }
 
 .auth-pill-input {
     transition: all 0.2s ease;
 }
-.auth-pill-input:focus {
-    outline: none !important;
-}
-html:not(.dark) .auth-pill-input:focus {
-    border-color: #0A0A0C !important;
-    box-shadow: 0 0 0 1px #0A0A0C !important;
-}
-html.dark .auth-pill-input:focus {
-    border-color: #FFFFFF !important;
-    box-shadow: 0 0 0 1px #FFFFFF !important;
-}
 
 #auth-ascii-canvas {
     width: 60%;
-    right: -8px;
+    right: 0px;
     top: 0;
     user-select: none;
     -webkit-user-select: none;
 }
+
 @media (max-width: 640px) {
     #auth-ascii-canvas {
-        width: 58%;
-        right: -8px;
-        opacity: 0.35;
+        width: 82%;
+        right: 0px;
+        opacity: 0.32;
     }
 }
 
@@ -858,10 +877,8 @@ html:not(.dark) button.bg-brand-purple,
 html:not(.dark) button.bg-brand-purple *,
 html:not(.dark) button.bg-\[\#FF5A36\],
 html:not(.dark) button.bg-\[\#FF5A36\] *,
-html:not(.dark) button[type="submit"]:not(#daily-limit-cancel-btn),
-html:not(.dark) button[type="submit"]:not(#daily-limit-cancel-btn) *,
-html:not(.dark) #auth-submit-btn,
-html:not(.dark) #auth-submit-btn *,
+html:not(.dark) button[type="submit"]:not(#daily-limit-cancel-btn):not(#auth-submit-btn),
+html:not(.dark) button[type="submit"]:not(#daily-limit-cancel-btn):not(#auth-submit-btn) *,
 html:not(.dark) #mobile-voice-btn,
 html:not(.dark) #mobile-voice-btn *,
 html:not(.dark) #voice-save-btn,
@@ -1350,25 +1367,3 @@ html:not(.dark) .chart-guide-line {
     white-space: nowrap;
     max-width: 100%;
 }
-
-/* Ensure the theme toggle slider thumb icons are strictly monochrome in both themes */
-#auth-theme-toggle .auth-theme-slider-thumb,
-html:not(.dark) #auth-theme-toggle .auth-theme-slider-thumb {
-    background-color: #0A0A0C !important;
-}
-
-#auth-theme-toggle .auth-theme-slider-thumb span,
-html:not(.dark) #auth-theme-toggle .auth-theme-slider-thumb span {
-    color: #FFFFFF !important;
-}
-
-html.dark #auth-theme-toggle .auth-theme-slider-thumb {
-    background-color: #FFFFFF !important;
-}
-
-html.dark #auth-theme-toggle .auth-theme-slider-thumb span {
-    color: #0A0A0C !important;
-}
-
-
-
