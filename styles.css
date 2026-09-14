@@ -364,22 +364,40 @@ svg line {
     -webkit-backdrop-filter: blur(20px);
 }
 
-/* Animated bouncing inner diamond inside Auth logo */
+/* Linear moving inner diamond inside Auth logo */
 .auth-logo-inner-diamond {
     transform-box: fill-box;
     transform-origin: center;
-    animation: authLogoDiamondBounce 1.5s cubic-bezier(0.35, 0.05, 0.35, 0.95) infinite;
+    animation: authLogoDiamondLinear 2.2s linear infinite;
     will-change: transform;
 }
 
-@keyframes authLogoDiamondBounce {
+@keyframes authLogoDiamondLinear {
     0%, 100% {
-        transform: translateY(0.6px);
-        animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+        transform: translateY(1.5px);
     }
     50% {
-        transform: translateY(-3.4px);
-        animation-timing-function: cubic-bezier(0.5, 0, 0.75, 0);
+        transform: translateY(-1.5px);
+    }
+}
+
+/* Auth Theme Toggle Slider (Bottom Left) */
+.auth-theme-slider-track {
+    transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.auth-theme-slider-thumb {
+    transform: translateX(0);
+    transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.25s ease;
+}
+
+html.dark .auth-theme-slider-thumb {
+    transform: translateX(28px);
+}
+
+@media (min-width: 640px) {
+    html.dark .auth-theme-slider-thumb {
+        transform: translateX(32px);
     }
 }
 
@@ -415,8 +433,8 @@ html.dark .auth-pill-input:focus {
 }
 
 #auth-ascii-canvas {
-    width: 58%;
-    right: 0;
+    width: 60%;
+    right: -8px;
     top: 0;
     user-select: none;
     -webkit-user-select: none;
@@ -424,6 +442,7 @@ html.dark .auth-pill-input:focus {
 @media (max-width: 640px) {
     #auth-ascii-canvas {
         width: 100%;
+        right: 0;
         opacity: 0.16;
     }
 }

@@ -455,12 +455,44 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btnLogout) btnLogout.addEventListener('click', handleLogout);
             if (btnImportLocal) btnImportLocal.addEventListener('click', handleImportLocal);
 
-            // Auth Screen Theme Toggle
+            // Auth Screen Theme Toggle (Sliding Switch)
             const authThemeToggleBtn = document.getElementById('auth-theme-toggle');
             if (authThemeToggleBtn) {
+                let startX = 0;
+                let isDragging = false;
+
                 authThemeToggleBtn.addEventListener('click', () => {
                     toggleTheme();
                     if (window.authAscii) window.authAscii.resize();
+                });
+
+                authThemeToggleBtn.addEventListener('touchstart', (e) => {
+                    if (e.touches && e.touches.length === 1) {
+                        startX = e.touches[0].clientX;
+                        isDragging = false;
+                    }
+                }, { passive: true });
+
+                authThemeToggleBtn.addEventListener('touchmove', (e) => {
+                    if (e.touches && e.touches.length === 1) {
+                        const diffX = e.touches[0].clientX - startX;
+                        if (Math.abs(diffX) > 6) {
+                            isDragging = true;
+                        }
+                    }
+                }, { passive: true });
+
+                authThemeToggleBtn.addEventListener('touchend', (e) => {
+                    if (isDragging && e.changedTouches && e.changedTouches.length > 0) {
+                        const diffX = e.changedTouches[0].clientX - startX;
+                        const isDark = document.documentElement.classList.contains('dark');
+                        if (diffX > 10 && !isDark) {
+                            toggleTheme();
+                        } else if (diffX < -10 && isDark) {
+                            toggleTheme();
+                        }
+                        if (window.authAscii) window.authAscii.resize();
+                    }
                 });
             }
 
@@ -647,7 +679,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (rect.width <= 0 || rect.height <= 0) return;
 
             const isMobile = window.innerWidth < 640;
-            width = isMobile ? Math.floor(rect.width) : Math.floor(rect.width * 0.60);
+            width = isMobile ? Math.floor(rect.width) : Math.floor(rect.width * 0.60) + 16;
             height = Math.floor(rect.height);
 
             dpr = window.devicePixelRatio || 1;
@@ -668,17 +700,18 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fill();
         }
 
-        // Exact mathematical silhouette of the reference image
+        // Exact mathematical silhouette of the reference image (shifted right for clean breathing room)
         function getReferenceContour(ny) {
+            const shift = 0.08;
             if (ny < 0.25) {
                 const t = ny / 0.25;
-                return 0.40 + 0.18 * Math.sin(t * Math.PI * 0.5);
+                return (0.40 + shift) + 0.18 * Math.sin(t * Math.PI * 0.5);
             } else if (ny < 0.62) {
                 const t = (ny - 0.25) / 0.37;
-                return 0.58 - 0.24 * Math.sin(t * Math.PI * 0.5);
+                return (0.58 + shift) - 0.24 * Math.sin(t * Math.PI * 0.5);
             } else {
                 const t = (ny - 0.62) / 0.38;
-                return 0.34 + 0.56 * Math.pow(t, 1.35);
+                return (0.34 + shift) + 0.56 * Math.pow(t, 1.35);
             }
         }
 
