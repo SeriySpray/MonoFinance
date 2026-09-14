@@ -444,17 +444,19 @@ html:not(.dark) #auth-demo-btn:hover {
 }
 
 #auth-ascii-canvas {
-    width: 60%;
-    right: 0px;
-    top: 0;
+    position: absolute;
+    width: 65%;
+    right: -24px !important;
+    top: -10px !important;
     user-select: none;
     -webkit-user-select: none;
 }
 
 @media (max-width: 640px) {
     #auth-ascii-canvas {
-        width: 82%;
-        right: 0px;
+        width: 88%;
+        right: -36px !important;
+        top: -10px !important;
         opacity: 0.32;
     }
 }

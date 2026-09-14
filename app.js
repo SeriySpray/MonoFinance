@@ -639,15 +639,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if (rect.width <= 0 || rect.height <= 0) return;
 
             const isMobile = window.innerWidth < 640;
-            const widthFactor = isMobile ? 0.82 : 0.60;
-            width = Math.floor(rect.width * widthFactor) + 16;
-            height = Math.floor(rect.height);
+            const widthFactor = isMobile ? 0.88 : 0.65;
+            const extraRight = isMobile ? 48 : 32;
+            const extraTop = 20;
+            width = Math.floor(rect.width * widthFactor) + extraRight;
+            height = Math.floor(rect.height) + extraTop;
 
             dpr = window.devicePixelRatio || 1;
             canvas.width = Math.floor(width * dpr);
             canvas.height = Math.floor(height * dpr);
             canvas.style.width = width + 'px';
             canvas.style.height = height + 'px';
+            canvas.style.right = (isMobile ? -36 : -24) + 'px';
+            canvas.style.top = '-10px';
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
 
@@ -664,7 +668,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Exact mathematical silhouette of the reference image (voluminous & clean on all screens)
         function getReferenceContour(ny) {
             const isMobile = window.innerWidth < 640;
-            const shift = isMobile ? 0.02 : 0.08;
+            const shift = isMobile ? 0.04 : 0.08;
             if (ny < 0.25) {
                 const t = ny / 0.25;
                 return (0.40 + shift) + 0.18 * Math.sin(t * Math.PI * 0.5);
