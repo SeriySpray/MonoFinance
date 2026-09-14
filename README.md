@@ -151,7 +151,7 @@ Managing personal finances often suffers from cluttered interfaces, rigid third-
 - **Hosting**: Oracle Cloud Infrastructure (Ubuntu VPS)
 - **Web Server**: Nginx (Reverse Proxy & HTTP/2 termination)
 - **Domain & SSL**: DuckDNS Dynamic DNS, Let's Encrypt Certbot SSL
-- **Tunnels & Remote Access**: Cloudflare Tunnel, LocalTunnel, Ngrok support scripts
+- **Process Management**: Systemd service with Gunicorn WSGI server
 
 ---
 
@@ -167,17 +167,8 @@ MonoFinance/
 |-- manifest.json                    # PWA installation manifest for iOS and Android
 |-- monofinance.db                   # SQLite database file (runtime)
 |-- deploy.sh                        # Bash automated deployment script for Oracle Cloud VPS
-|-- enable_monofinance_ssl.sh        # SSL configuration and renewal helper script
-|-- fix_monofinance_duckdns_http.sh  # HTTP fallback and port proxy script
-|-- restore_nginx.sh                 # Nginx configuration restoration utility
-|-- setup_https.sh                   # Automated HTTPS provisioning script
-|-- setup_localtunnel.sh             # LocalTunnel developer tunnel script
-|-- setup_monofinance_duckdns.sh     # DuckDNS dynamic DNS updater configuration
-|-- setup_ngrok.sh                   # Ngrok secure tunnel setup script
-|-- setup_ssl_domain.sh              # Custom domain SSL certificate setup
-|-- start_cloudflare_tunnel.sh       # Cloudflare Tunnel execution script
-|-- update_server.py                 # Remote migration and database update script
 |-- favicon.svg                      # Vector branding icon
+|-- dashboard_preview.png            # Interface screenshot for documentation
 |-- MonoFinanceAndroid/              # Native Android application source code
 |   |-- app/                         # Android application module (Kotlin source, layouts)
 |   |-- build.gradle.kts             # Module Gradle configuration
