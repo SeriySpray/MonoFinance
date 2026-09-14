@@ -762,6 +762,10 @@ document.addEventListener('DOMContentLoaded', () => {
         function start() {
             if (!animationFrameId) {
                 resize();
+                if (width === 0 || height === 0) {
+                    setTimeout(resize, 60);
+                }
+                startTime = performance.now();
                 animationFrameId = requestAnimationFrame(render);
             }
         }
@@ -776,6 +780,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('resize', resize);
         start();
 
+        return {
+            start,
+            stop,
+            resize
+        };
     }
 
     function showAppScreenSmoothly() {
@@ -835,6 +844,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showAuthScreen() {
+        // Ensure settings modal and any open modal overlays are closed
+        const settingsModal = document.getElementById('settings-modal');
+        if (settingsModal) settingsModal.classList.remove('active');
+        document.querySelectorAll('.modal-overlay.active').forEach(modal => modal.classList.remove('active'));
+
         if (authContainer) authContainer.classList.remove('hidden');
         if (appContainer) appContainer.classList.add('hidden');
         if (userInfoSection) userInfoSection.classList.add('hidden');
@@ -842,7 +856,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btnLogout) btnLogout.classList.add('hidden');
         const mobileVoiceBtn = document.getElementById('mobile-voice-btn');
         if (mobileVoiceBtn) mobileVoiceBtn.classList.add('hidden');
-        if (window.authAscii) window.authAscii.start();
+
+        if (window.authAscii) {
+            window.authAscii.resize();
+            window.authAscii.start();
+        } else {
+            window.authAscii = initAuthAsciiCanvas();
+        }
     }
 
     function toggleAuthMode() {
@@ -916,6 +936,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function handleLogout() {
+        // Immediately close settings modal
+        const settingsModal = document.getElementById('settings-modal');
+        if (settingsModal) settingsModal.classList.remove('active');
+        document.querySelectorAll('.modal-overlay.active').forEach(modal => modal.classList.remove('active'));
+
         if (isDemoMode) {
             isDemoMode = false;
             showToast('Вихід з демо-режиму', 'info');

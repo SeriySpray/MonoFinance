@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=118">
+    <link rel="stylesheet" href="styles.css?v=119">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -905,26 +905,29 @@
 
     <!-- Auth Screen (Login/Register) -->
     <div id="auth-container" class="fixed inset-0 z-50 bg-[#EFEFEF] dark:bg-[#070709] flex items-center justify-center p-4 sm:p-6 transition-colors duration-300">
-        <!-- Theme Switcher Button (Floating in viewport corner) -->
-        <button type="button" id="auth-theme-toggle" class="fixed top-5 right-5 sm:top-6 sm:right-6 z-40 w-10 h-10 rounded-full bg-white/90 hover:bg-white dark:bg-[#161619]/90 dark:hover:bg-[#202024] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-700 dark:text-zinc-300 transition-all cursor-pointer shadow-md backdrop-blur-md" title="Змінити тему оформлення">
-            <span class="material-symbols-outlined text-[20px] dark:hidden">dark_mode</span>
-            <span class="material-symbols-outlined text-[20px] hidden dark:inline">light_mode</span>
-        </button>
 
         <!-- Central Card / Pill Modal -->
         <div id="auth-card-pill" class="relative w-full max-w-3xl min-h-[480px] sm:min-h-[520px] bg-white dark:bg-[#0E0E11] border border-black/[0.08] dark:border-white/[0.08] rounded-[28px] sm:rounded-[36px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12)] dark:shadow-[0_25px_70px_-15px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col justify-center p-6 sm:p-12 md:p-14 transition-all duration-300">
             
+            <!-- Theme Switcher Button (Inside pill modal, top-right) -->
+            <button type="button" id="auth-theme-toggle" class="absolute top-5 right-5 sm:top-6 sm:right-6 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-zinc-100/80 hover:bg-zinc-200/90 dark:bg-[#1A1A1E]/80 dark:hover:bg-[#25252A] border border-zinc-200/80 dark:border-zinc-700/60 flex items-center justify-center text-zinc-700 dark:text-zinc-300 transition-all cursor-pointer shadow-sm backdrop-blur-md" title="Змінити тему оформлення">
+                <span class="material-symbols-outlined text-[19px] sm:text-[20px] dark:hidden">dark_mode</span>
+                <span class="material-symbols-outlined text-[19px] sm:text-[20px] hidden dark:inline">light_mode</span>
+            </button>
+
             <!-- Animated ASCII Halftone Art in Top Right Corner -->
             <canvas id="auth-ascii-canvas" class="absolute top-0 right-0 h-full pointer-events-none z-0 transition-opacity duration-300"></canvas>
 
             <!-- Left Form Column -->
             <div class="relative z-10 w-full max-w-[320px] sm:max-w-[340px]">
                 
-                <!-- Minimalist Monochrome Logo Mark -->
+                <!-- Minimalist Monochrome Logo Mark with Bouncing Inner Diamond -->
                 <div class="flex items-center gap-2.5 mb-6 sm:mb-7">
-                    <svg class="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="w-6 h-6 sm:w-7 sm:h-7 overflow-visible" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 2L4 10L12 18L20 10L12 2Z" class="fill-zinc-950 dark:fill-white transition-colors"/>
-                        <path d="M12 9L9 12L12 15L15 12L12 9Z" class="fill-white dark:fill-zinc-950 transition-colors"/>
+                        <g class="auth-logo-inner-diamond">
+                            <path d="M12 9L9 12L12 15L15 12L12 9Z" class="fill-white dark:fill-zinc-950 transition-colors"/>
+                        </g>
                     </svg>
                 </div>
                 
@@ -1522,6 +1525,6 @@
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
-    <script src="app.js?v=138" defer></script>
+    <script src="app.js?v=139" defer></script>
 </body>
 </html>

@@ -364,6 +364,25 @@ svg line {
     -webkit-backdrop-filter: blur(20px);
 }
 
+/* Animated bouncing inner diamond inside Auth logo */
+.auth-logo-inner-diamond {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: authLogoDiamondBounce 1.5s cubic-bezier(0.35, 0.05, 0.35, 0.95) infinite;
+    will-change: transform;
+}
+
+@keyframes authLogoDiamondBounce {
+    0%, 100% {
+        transform: translateY(0.6px);
+        animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    50% {
+        transform: translateY(-3.4px);
+        animation-timing-function: cubic-bezier(0.5, 0, 0.75, 0);
+    }
+}
+
 #auth-submit-btn {
     background-color: #0A0A0C !important;
     color: #FFFFFF !important;
