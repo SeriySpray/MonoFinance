@@ -391,6 +391,7 @@ html:not(.dark) #auth-container input.auth-pill-input {
     background-color: #151518 !important;
     border-color: #27272A !important;
     color: #FFFFFF !important;
+    color-scheme: dark !important;
 }
 
 #auth-container input.auth-pill-input::placeholder,
@@ -405,19 +406,129 @@ html:not(.dark) #auth-container input.auth-pill-input:focus {
     outline: none !important;
 }
 
+/* Prevent browser autofill from turning inputs white in dark mode */
+@keyframes onAuthAutofillStart { from { /**/ } to { /**/ } }
+
+#auth-container input.auth-pill-input:-webkit-autofill,
+#auth-container input.auth-pill-input:-webkit-autofill:hover,
+#auth-container input.auth-pill-input:-webkit-autofill:focus,
+#auth-container input.auth-pill-input:-webkit-autofill:active {
+    -webkit-text-fill-color: #FFFFFF !important;
+    -webkit-box-shadow: 0 0 0 1000px #151518 inset !important;
+    box-shadow: 0 0 0 1000px #151518 inset !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+    caret-color: #FFFFFF !important;
+    border-color: #27272A !important;
+    color-scheme: dark !important;
+    animation-name: onAuthAutofillStart;
+}
+
+#auth-container input.auth-pill-input:-webkit-autofill:focus {
+    border-color: #FFFFFF !important;
+    -webkit-box-shadow: 0 0 0 1000px #151518 inset, 0 0 0 1px #FFFFFF !important;
+    box-shadow: 0 0 0 1000px #151518 inset, 0 0 0 1px #FFFFFF !important;
+}
+
+#auth-container input.auth-pill-input:autofill {
+    background-color: #151518 !important;
+    color: #FFFFFF !important;
+    border-color: #27272A !important;
+    color-scheme: dark !important;
+}
+
+/* Auth Submit Button States (Dormant Blocked vs Charged Active) */
 #auth-submit-btn,
 html:not(.dark) #auth-submit-btn,
 html.dark #auth-submit-btn {
-    background-color: #FFFFFF !important;
-    color: #09090B !important;
+    position: relative;
+    overflow: hidden;
+    background-color: #1A1A1E !important;
+    color: #52525B !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: none !important;
+    cursor: not-allowed !important;
+    opacity: 0.65;
+    transition: background-color 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                color 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.15s ease !important;
 }
 
-#auth-submit-btn:hover,
-html:not(.dark) #auth-submit-btn:hover,
-html.dark #auth-submit-btn:hover {
+#auth-submit-btn.auth-btn-charged,
+html:not(.dark) #auth-submit-btn.auth-btn-charged,
+html.dark #auth-submit-btn.auth-btn-charged {
+    background-color: #FFFFFF !important;
+    color: #09090B !important;
+    border-color: #FFFFFF !important;
+    box-shadow: 0 4px 20px -2px rgba(255, 255, 255, 0.25) !important;
+    cursor: pointer !important;
+    opacity: 1 !important;
+}
+
+#auth-submit-btn.auth-btn-charged:hover,
+html:not(.dark) #auth-submit-btn.auth-btn-charged:hover,
+html.dark #auth-submit-btn.auth-btn-charged:hover {
     background-color: #E4E4E7 !important;
     color: #09090B !important;
+    box-shadow: 0 6px 24px -2px rgba(255, 255, 255, 0.4) !important;
+    transform: translateY(-1px);
 }
+
+#auth-submit-btn.auth-btn-charged:active,
+html:not(.dark) #auth-submit-btn.auth-btn-charged:active,
+html.dark #auth-submit-btn.auth-btn-charged:active {
+    transform: scale(0.99) translateY(0);
+}
+
+@keyframes authBtnChargePulse {
+    0% {
+        background-color: #1A1A1E;
+        color: #52525B;
+        box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+        transform: scale(0.98);
+    }
+    45% {
+        background-color: #FFFFFF;
+        color: #09090B;
+        box-shadow: 0 0 28px rgba(255, 255, 255, 0.6);
+        transform: scale(1.025);
+    }
+    100% {
+        background-color: #FFFFFF;
+        color: #09090B;
+        box-shadow: 0 4px 20px -2px rgba(255, 255, 255, 0.25);
+        transform: scale(1);
+    }
+}
+
+.auth-btn-charging {
+    animation: authBtnChargePulse 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+#auth-submit-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+    pointer-events: none;
+    opacity: 0;
+}
+
+#auth-submit-btn.auth-btn-charging::before {
+    animation: authBtnShine 0.45s ease-out forwards;
+}
+
+@keyframes authBtnShine {
+    0% { left: -100%; opacity: 0; }
+    40% { opacity: 0.8; }
+    100% { left: 100%; opacity: 0; }
+}
+
 
 #auth-toggle-prompt,
 html:not(.dark) #auth-toggle-prompt {

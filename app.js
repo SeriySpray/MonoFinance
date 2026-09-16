@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const authForm = document.getElementById('auth-form');
     const authUsernameInput = document.getElementById('auth-username');
     const authPasswordInput = document.getElementById('auth-password');
+    const authConfirmPasswordInput = document.getElementById('auth-confirm-password');
     const authSubmitBtn = document.getElementById('auth-submit-btn');
     const authToggleModeBtn = document.getElementById('auth-toggle-mode');
     const authTitle = document.getElementById('auth-title');
@@ -455,12 +456,33 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btnLogout) btnLogout.addEventListener('click', handleLogout);
             if (btnImportLocal) btnImportLocal.addEventListener('click', handleImportLocal);
 
-            const authConfirmPasswordInput = document.getElementById('auth-confirm-password');
             if (authConfirmPasswordInput) {
                 authConfirmPasswordInput.addEventListener('input', () => authConfirmPasswordInput.classList.remove('auth-input-error'));
             }
             if (authPasswordInput) {
                 authPasswordInput.addEventListener('input', () => authPasswordInput.classList.remove('auth-input-error'));
+            }
+
+            // Real-time Auth Submit Button State & Autofill Detection
+            const authInputs = [authUsernameInput, authPasswordInput, authConfirmPasswordInput];
+            authInputs.forEach(input => {
+                if (!input) return;
+                ['input', 'change', 'paste', 'keyup', 'blur'].forEach(evt => {
+                    input.addEventListener(evt, () => updateAuthSubmitState(false));
+                });
+                input.addEventListener('animationstart', (e) => {
+                    if (e.animationName === 'onAuthAutofillStart') {
+                        updateAuthSubmitState(false);
+                    }
+                });
+            });
+
+            if (authSubmitBtn) {
+                authSubmitBtn.addEventListener('animationend', (e) => {
+                    if (e.animationName === 'authBtnChargePulse') {
+                        authSubmitBtn.classList.remove('auth-btn-charging');
+                    }
+                });
             }
 
 
@@ -849,6 +871,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function updateAuthSubmitState(skipAnimation = false) {
+        if (!authSubmitBtn) return;
+        const confirmInput = authConfirmPasswordInput || document.getElementById('auth-confirm-password');
+        const userVal = authUsernameInput ? authUsernameInput.value.trim() : '';
+        const passVal = authPasswordInput ? authPasswordInput.value : '';
+        const confirmVal = (isRegisterMode && confirmInput) ? confirmInput.value : '';
+
+        const isReady = isRegisterMode
+            ? (userVal.length > 0 && passVal.length > 0 && confirmVal.length > 0)
+            : (userVal.length > 0 && passVal.length > 0);
+
+        const wasCharged = authSubmitBtn.classList.contains('auth-btn-charged');
+
+        if (isReady) {
+            authSubmitBtn.disabled = false;
+            if (!wasCharged) {
+                authSubmitBtn.classList.add('auth-btn-charged');
+                if (!skipAnimation) {
+                    authSubmitBtn.classList.remove('auth-btn-charging');
+                    void authSubmitBtn.offsetWidth;
+                    authSubmitBtn.classList.add('auth-btn-charging');
+                }
+            }
+        } else {
+            authSubmitBtn.disabled = true;
+            authSubmitBtn.classList.remove('auth-btn-charged');
+            authSubmitBtn.classList.remove('auth-btn-charging');
+        }
+    }
+
     function showAuthScreen() {
         // Ensure settings modal and any open modal overlays are closed
         const settingsModal = document.getElementById('settings-modal');
@@ -893,6 +945,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             window.authAscii = initAuthAsciiCanvas();
         }
+
+        updateAuthSubmitState(true);
+        setTimeout(() => updateAuthSubmitState(false), 50);
+        setTimeout(() => updateAuthSubmitState(false), 200);
+        setTimeout(() => updateAuthSubmitState(false), 500);
     }
 
     function toggleAuthMode() {
@@ -949,11 +1006,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (authTitle) authTitle.classList.remove('auth-text-flip');
             if (authSubtitle) authSubtitle.classList.remove('auth-text-flip');
             if (authSubmitBtn) authSubmitBtn.classList.remove('auth-text-flip');
+            updateAuthSubmitState(false);
         }, 120);
     }
 
     async function handleAuthSubmit(e) {
         e.preventDefault();
+        if (authSubmitBtn && authSubmitBtn.disabled) return;
         const username = authUsernameInput ? authUsernameInput.value.trim() : '';
         const password = authPasswordInput ? authPasswordInput.value : '';
         const confirmInput = document.getElementById('auth-confirm-password');
@@ -985,6 +1044,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const url = isRegisterMode ? 'api/register' : 'api/login';
         try {
+            if (authSubmitBtn) authSubmitBtn.disabled = true;
             const response = await fetch(getApiUrl(url), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -997,12 +1057,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (authUsernameInput) authUsernameInput.value = '';
                 if (authPasswordInput) authPasswordInput.value = '';
                 if (confirmInput) confirmInput.value = '';
+                updateAuthSubmitState(true);
                 await checkAuth();
             } else {
                 showToast(result.message || 'Помилка авторизації', 'delete');
+                updateAuthSubmitState(true);
             }
         } catch (err) {
             showToast('Не вдалося зв\'язатися з сервером', 'delete');
+            updateAuthSubmitState(true);
         }
     }
 
