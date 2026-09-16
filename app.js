@@ -4003,7 +4003,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     delete descInput.dataset.hasAmountPlaceholder;
                     updateExpenseCategoryPreview();
                     updateExpenseAmountSuggestions();
-                    descInput.focus();
+                    if (typeof descInput.blur === 'function') descInput.blur();
+                }
+                if (amountInput && typeof amountInput.blur === 'function') {
+                    amountInput.blur();
+                }
+                if (document.activeElement && typeof document.activeElement.blur === 'function') {
+                    document.activeElement.blur();
                 }
             });
             scrollTrack.appendChild(btn);
@@ -4102,7 +4108,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     delete descInput.dataset.hasAmountPlaceholder;
                     updateIncomeCategoryPreview();
                     updateIncomeAmountSuggestions();
-                    descInput.focus();
+                    if (typeof descInput.blur === 'function') descInput.blur();
+                }
+                if (amountInput && typeof amountInput.blur === 'function') {
+                    amountInput.blur();
+                }
+                if (document.activeElement && typeof document.activeElement.blur === 'function') {
+                    document.activeElement.blur();
                 }
             });
             scrollTrack.appendChild(btn);
