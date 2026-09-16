@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120" fill="none">
+  <g transform="translate(20, 16)">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M44 4C21.9086 4 4 21.9086 4 44C4 66.0914 21.9086 84 44 84C66.0914 84 84 66.0914 84 44C84 21.9086 66.0914 4 44 4ZM44 24L64 44L44 64L24 44L44 24Z" fill="#FFFFFF"/>
+  </g>
+  <text x="132" y="72" font-family="'Outfit', 'Inter', -apple-system, sans-serif" font-size="46" font-weight="700" letter-spacing="-1.5" fill="#FFFFFF">MonoFinance</text>
+</svg>

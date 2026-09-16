@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Outer Rim Ring -->
+  <circle cx="256" cy="256" r="212" fill="#F4F4F6" stroke="#0A0A0C" stroke-width="12"/>
+  <!-- Inner Rim Contour -->
+  <circle cx="256" cy="256" r="184" stroke="#0A0A0C" stroke-opacity="0.2" stroke-width="3" stroke-dasharray="6 6"/>
+  <!-- Coin Field Recess -->
+  <circle cx="256" cy="256" r="176" fill="#FFFFFF"/>
+  <!-- Inner Diamond Raised Border -->
+  <polygon points="256,128 384,256 256,384 128,256" fill="#EAEAEF" stroke="#0A0A0C" stroke-opacity="0.3" stroke-width="4"/>
+  <!-- Central Diamond Cutout Hole -->
+  <polygon points="256,152 360,256 256,360 152,256" fill="#F4F4F6" stroke="#0A0A0C" stroke-width="8"/>
+</svg>

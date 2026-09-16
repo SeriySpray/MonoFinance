@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <rect width="512" height="512" rx="124" fill="#F4F4F6"/>
+  <rect x="16" y="16" width="480" height="480" rx="108" fill="#FFFFFF" stroke="#E4E4E7" stroke-width="4"/>
+  <!-- Minted Coin Emblem -->
+  <circle cx="256" cy="256" r="160" fill="#F4F4F6" stroke="#0A0A0C" stroke-width="8"/>
+  <circle cx="256" cy="256" r="140" stroke="#0A0A0C" stroke-opacity="0.15" stroke-width="2" stroke-dasharray="4 4"/>
+  <!-- Raised Diamond Border -->
+  <polygon points="256,164 348,256 256,348 164,256" fill="#E5E5EA" stroke="#0A0A0C" stroke-opacity="0.25" stroke-width="3"/>
+  <!-- Central Diamond Hole -->
+  <polygon points="256,182 330,256 256,330 182,256" fill="#F4F4F6" stroke="#0A0A0C" stroke-width="6"/>
+</svg>

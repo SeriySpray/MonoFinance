@@ -1,12 +1,15 @@
 // MonoFinance PWA Service Worker
-const CACHE_NAME = 'monofinance-pwa-v86';
+const CACHE_NAME = 'monofinance-pwa-v87';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  './styles.css?v=123',
-  './app.js?v=143',
+  './styles.css?v=124',
+  './app.js?v=144',
   './manifest.json',
-  './favicon.svg'
+  './favicon.svg',
+  './assets/logo/logo_icon_24.svg',
+  './assets/logo/logo_app_icon_192.png',
+  './assets/logo/logo_app_icon_512.png'
 ];
 
 // Install Event

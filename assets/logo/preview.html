@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="uk" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MonoFinance - Презентація нового логотипу</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    },
+                    colors: {
+                        brand: {
+                            bg: '#0A0A0C',
+                            surface: '#111113',
+                            card: '#161619',
+                            border: '#202024',
+                            accent: '#FF5A36'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-checkerboard-dark {
+            background-color: #0E0E11;
+            background-image: linear-gradient(45deg, #151519 25%, transparent 25%), linear-gradient(-45deg, #151519 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #151519 75%), linear-gradient(-45deg, transparent 75%, #151519 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+        }
+        .custom-checkerboard-light {
+            background-color: #F8F8FA;
+            background-image: linear-gradient(45deg, #ECECEF 25%, transparent 25%), linear-gradient(-45deg, #ECECEF 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ECECEF 75%), linear-gradient(-45deg, transparent 75%, #ECECEF 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+        }
+    </style>
+</head>
+<body class="bg-[#0A0A0C] text-zinc-100 min-h-screen py-10 px-4 sm:px-8 font-sans antialiased transition-colors duration-300" id="body-root">
+
+    <div class="max-w-6xl mx-auto space-y-12">
+        
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row md:items-center justify-between pb-8 border-b border-[#202024] gap-4">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="px-2.5 py-1 rounded-full text-[11px] font-mono tracking-wider uppercase bg-white/10 text-white border border-white/10">Brand Identity</span>
+                    <span class="text-xs font-mono text-zinc-400">Версія 2.0 / Вересень 2026</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-extrabold font-outfit tracking-tight text-white">Переосмислення логотипу MonoFinance</h1>
+                <p class="text-sm sm:text-base text-zinc-400 mt-1 max-w-2xl">
+                    Традиційна кругла китайська монета зі збереженням ромбічного ДНК MonoFinance у суворій монохромній естетиці.
+                </p>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <button id="theme-btn" onclick="toggleTheme()" class="px-4 py-2 rounded-xl bg-[#161619] border border-[#202024] text-xs font-medium text-zinc-300 hover:text-white hover:bg-[#202024] transition-all flex items-center gap-2 cursor-pointer">
+                    <span id="theme-text">Світлий фон</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Concept & Geometry Section -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-[#111113] border border-[#202024] rounded-2xl p-6 space-y-4">
+                <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center font-mono text-xs font-bold text-white">01</div>
+                <h3 class="font-outfit font-bold text-lg text-white">Кругла монета (Небо)</h3>
+                <p class="text-xs text-zinc-400 leading-relaxed">
+                    Форма зовнішнього кола бере свій початок від традиційних монет давнього Китаю (Фанкунцянь). У східній філософії коло символізує небесну гармонію, нескінченний рух капіталу та глобальний фінансовий баланс.
+                </p>
+            </div>
+
+            <div class="bg-[#111113] border border-[#202024] rounded-2xl p-6 space-y-4">
+                <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center font-mono text-xs font-bold text-white">02</div>
+                <h3 class="font-outfit font-bold text-lg text-white">Ромбічний отвір (Земля)</h3>
+                <p class="text-xs text-zinc-400 leading-relaxed">
+                    Квадратний отвір монети розвернуто під кутом 45 градусів. Це утворює чіткий геометричний ромб, який бездоганно спадкує оригінальний силует попереднього логотипу MonoFinance та ASCII-арт на екрані авторизації.
+                </p>
+            </div>
+
+            <div class="bg-[#111113] border border-[#202024] rounded-2xl p-6 space-y-4">
+                <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center font-mono text-xs font-bold text-white">03</div>
+                <h3 class="font-outfit font-bold text-lg text-white">Монохромна суворість</h3>
+                <p class="text-xs text-zinc-400 leading-relaxed">
+                    Чиста чорно-біла палітра підкреслює технологічність, статусність та точність фінтех-інструменту. Логотип залишається контрастним та бездоганно читабельним у будь-яких розмірах — від 16px до 512px.
+                </p>
+            </div>
+        </section>
+
+        <!-- Side-by-side comparison with Previous Logo -->
+        <section class="bg-[#111113] border border-[#202024] rounded-3xl p-6 sm:p-8 space-y-6">
+            <div>
+                <h2 class="text-xl font-bold font-outfit text-white">Порівняння: Попередній та новий логотип</h2>
+                <p class="text-xs text-zinc-400 mt-0.5">Еволюція візуального стилю бренду MonoFinance</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Old Logo Card -->
+                <div class="bg-[#161619] border border-[#202024] rounded-2xl p-6 flex flex-col items-center text-center space-y-4">
+                    <span class="text-[11px] font-mono text-zinc-500 uppercase tracking-wider">Попередній варіант (V1)</span>
+                    <div class="w-32 h-32 flex items-center justify-center bg-[#0A0A0C] border border-[#202024] rounded-2xl p-4 shadow-inner">
+                        <svg class="w-20 h-20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L4 10L12 18L20 10L12 2Z" fill="#FF5A36"/>
+                            <path d="M12 9L9 12L12 15L15 12L12 9Z" fill="#FFFFFF"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold text-zinc-300">Подвійний помаранчевий ромб</h4>
+                        <p class="text-xs text-zinc-500 mt-1 max-w-xs">Яскравий акцентний знак, орієнтований на первинний червоно-оранжевий стиль дешборду.</p>
+                    </div>
+                </div>
+
+                <!-- New Logo Card -->
+                <div class="bg-[#161619] border border-white/20 rounded-2xl p-6 flex flex-col items-center text-center space-y-4 relative overflow-hidden">
+                    <div class="absolute top-3 right-3 px-2 py-0.5 rounded-md bg-white text-black text-[10px] font-bold uppercase tracking-wider font-mono">Актуальний</div>
+                    <span class="text-[11px] font-mono text-zinc-300 uppercase tracking-wider">Новий варіант (V2)</span>
+                    <div class="w-32 h-32 flex items-center justify-center bg-[#0A0A0C] border border-white/10 rounded-2xl p-4 shadow-xl">
+                        <img src="logo_app_icon_dark.svg" alt="New Logo" class="w-20 h-20">
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold text-white">Монета з ромбічним отвором</h4>
+                        <p class="text-xs text-zinc-400 mt-1 max-w-xs">Символ грошового обігу та стабільності у чистій монохромній естетиці.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Primary Vector Variants Showcase -->
+        <section class="space-y-6">
+            <div>
+                <h2 class="text-xl font-bold font-outfit text-white">Створені векторні та растрові асети</h2>
+                <p class="text-xs text-zinc-400 mt-0.5">Всі файли згенеровано безпосередньо у директорії <code class="text-zinc-300 font-mono">assets/logo/</code></p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1: App Icon Dark -->
+                <div class="bg-[#111113] border border-[#202024] rounded-2xl p-5 flex flex-col space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono text-zinc-400">logo_app_icon_dark.svg</span>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-zinc-300">Dark App</span>
+                    </div>
+                    <div class="h-44 rounded-xl bg-[#0A0A0C] border border-[#202024] flex items-center justify-center p-4">
+                        <img src="logo_app_icon_dark.svg" alt="App Icon Dark" class="w-28 h-28 drop-shadow-md">
+                    </div>
+                    <p class="text-xs text-zinc-400">Повноцінна іконка додатку з округленим контуром для темного оформлення.</p>
+                </div>
+
+                <!-- Card 2: App Icon Light -->
+                <div class="bg-[#111113] border border-[#202024] rounded-2xl p-5 flex flex-col space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono text-zinc-400">logo_app_icon_light.svg</span>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-zinc-300">Light App</span>
+                    </div>
+                    <div class="h-44 rounded-xl bg-[#F4F4F6] border border-zinc-300 flex items-center justify-center p-4">
+                        <img src="logo_app_icon_light.svg" alt="App Icon Light" class="w-28 h-28 drop-shadow-md">
+                    </div>
+                    <p class="text-xs text-zinc-400">Іконка для світлих інтерфейсів або світлого оформлення домашнього екрана.</p>
+                </div>
+
+                <!-- Card 3: Solid Coin White -->
+                <div class="bg-[#111113] border border-[#202024] rounded-2xl p-5 flex flex-col space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono text-zinc-400">logo_coin_solid_white.svg</span>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-zinc-300">Solid White</span>
+                    </div>
+                    <div class="h-44 rounded-xl custom-checkerboard-dark border border-[#202024] flex items-center justify-center p-4">
+                        <img src="logo_coin_solid_white.svg" alt="Solid White" class="w-28 h-28 drop-shadow">
+                    </div>
+                    <p class="text-xs text-zinc-400">Суцільний білий силует монети з прозорим ромбічним отвором.</p>
+                </div>
+
+                <!-- Card 4: Solid Coin Black -->
+                <div class="bg-[#111113] border border-[#202024] rounded-2xl p-5 flex flex-col space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono text-zinc-400">logo_coin_solid_black.svg</span>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-zinc-300">Solid Black</span>
+                    </div>
+                    <div class="h-44 rounded-xl custom-checkerboard-light border border-zinc-300 flex items-center justify-center p-4">
+                        <img src="logo_coin_solid_black.svg" alt="Solid Black" class="w-28 h-28 drop-shadow">
+                    </div>
+                    <p class="text-xs text-zinc-400">Суцільний чорний силует монети з прозорим ромбічним отвором.</p>
+                </div>
+            </div>
+
+            <!-- Second Row: Minted & Horizontal Lockups -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Minted White -->
+                <div class="bg-[#111113] border border-[#202024] rounded-2xl p-5 flex flex-col space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono text-zinc-400">logo_coin_minted_white.svg</span>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-zinc-300">Minted Dark</span>
+                    </div>
+                    <div class="h-44 rounded-xl bg-[#0A0A0C] border border-[#202024] flex items-center justify-center p-4">
+                        <img src="logo_coin_minted_white.svg" alt="Minted White" class="w-28 h-28">
+                    </div>
+                    <p class="text-xs text-zinc-400">Монетне карбування з рельєфним зовнішнім та внутрішнім кантом.</p>
+                </div>
+
+                <!-- Favicon Coin -->
+                <div class="bg-[#111113] border border-[#202024] rounded-2xl p-5 flex flex-col space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono text-zinc-400">favicon_coin.svg</span>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-zinc-300">Favicon PWA</span>
+                    </div>
+                    <div class="h-44 rounded-xl bg-[#0A0A0C] border border-[#202024] flex items-center justify-center p-4">
+                        <img src="favicon_coin.svg" alt="Favicon" class="w-28 h-28">
+                    </div>
+                    <p class="text-xs text-zinc-400">Висококонтрастна версія з чітким читанням у вкладці браузера (16/32px).</p>
+                </div>
+
+                <!-- 24px Icon Component -->
+                <div class="bg-[#111113] border border-[#202024] rounded-2xl p-5 flex flex-col space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono text-zinc-400">logo_icon_24.svg</span>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-zinc-300">Inline 24x24</span>
+                    </div>
+                    <div class="h-44 rounded-xl bg-[#0A0A0C] border border-[#202024] flex items-center justify-center gap-6 p-4">
+                        <div class="flex flex-col items-center gap-1 text-zinc-400 text-[10px] font-mono">
+                            <img src="logo_icon_24.svg" class="w-6 h-6 text-white invert" alt="24px">
+                            <span>24px</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 text-zinc-400 text-[10px] font-mono">
+                            <img src="logo_icon_24.svg" class="w-8 h-8 text-white invert" alt="32px">
+                            <span>32px</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 text-zinc-400 text-[10px] font-mono">
+                            <img src="logo_icon_24.svg" class="w-12 h-12 text-white invert" alt="48px">
+                            <span>48px</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-zinc-400">Точний векторний компонент для вбудовування безпосередньо в код інтерфейсу.</p>
+                </div>
+            </div>
+
+            <!-- Horizontal Lockups -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-[#111113] border border-[#202024] rounded-2xl p-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono text-zinc-400">logo_horizontal_dark.svg</span>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-zinc-300">Horizontal Dark</span>
+                    </div>
+                    <div class="h-28 rounded-xl bg-[#0A0A0C] border border-[#202024] flex items-center justify-center p-4">
+                        <img src="logo_horizontal_dark.svg" alt="Horizontal Dark" class="max-h-16 w-auto">
+                    </div>
+                </div>
+
+                <div class="bg-[#111113] border border-[#202024] rounded-2xl p-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono text-zinc-400">logo_horizontal_light.svg</span>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-zinc-300">Horizontal Light</span>
+                    </div>
+                    <div class="h-28 rounded-xl bg-[#F4F4F6] border border-zinc-300 flex items-center justify-center p-4">
+                        <img src="logo_horizontal_light.svg" alt="Horizontal Light" class="max-h-16 w-auto">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Scalability / Retina Matrix Test -->
+        <section class="bg-[#111113] border border-[#202024] rounded-3xl p-6 sm:p-8 space-y-6">
+            <div>
+                <h2 class="text-xl font-bold font-outfit text-white">Тест масштабованості та оптичної чіткості</h2>
+                <p class="text-xs text-zinc-400 mt-0.5">Перевірка читабельності форми монети та ромбічного отвору на різних масштабах</p>
+            </div>
+
+            <div class="flex flex-wrap items-end justify-between gap-6 py-6 px-4 bg-[#0A0A0C] border border-[#202024] rounded-2xl">
+                <!-- 16px -->
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-10 h-10 flex items-center justify-center border border-dashed border-[#202024] rounded-lg">
+                        <img src="favicon_coin.svg" class="w-4 h-4" alt="16px">
+                    </div>
+                    <span class="text-[10px] font-mono text-zinc-400">16px</span>
+                </div>
+
+                <!-- 24px -->
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-12 h-12 flex items-center justify-center border border-dashed border-[#202024] rounded-lg">
+                        <img src="favicon_coin.svg" class="w-6 h-6" alt="24px">
+                    </div>
+                    <span class="text-[10px] font-mono text-zinc-400">24px</span>
+                </div>
+
+                <!-- 32px -->
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-14 h-14 flex items-center justify-center border border-dashed border-[#202024] rounded-lg">
+                        <img src="favicon_coin.svg" class="w-8 h-8" alt="32px">
+                    </div>
+                    <span class="text-[10px] font-mono text-zinc-400">32px</span>
+                </div>
+
+                <!-- 48px -->
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-16 h-16 flex items-center justify-center border border-dashed border-[#202024] rounded-lg">
+                        <img src="favicon_coin.svg" class="w-12 h-12" alt="48px">
+                    </div>
+                    <span class="text-[10px] font-mono text-zinc-400">48px</span>
+                </div>
+
+                <!-- 64px -->
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-20 h-20 flex items-center justify-center border border-dashed border-[#202024] rounded-lg">
+                        <img src="favicon_coin.svg" class="w-16 h-16" alt="64px">
+                    </div>
+                    <span class="text-[10px] font-mono text-zinc-400">64px</span>
+                </div>
+
+                <!-- 96px -->
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-28 h-28 flex items-center justify-center border border-dashed border-[#202024] rounded-lg">
+                        <img src="favicon_coin.svg" class="w-24 h-24" alt="96px">
+                    </div>
+                    <span class="text-[10px] font-mono text-zinc-400">96px</span>
+                </div>
+
+                <!-- 128px -->
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-36 h-36 flex items-center justify-center border border-dashed border-[#202024] rounded-lg">
+                        <img src="favicon_coin.svg" class="w-32 h-32" alt="128px">
+                    </div>
+                    <span class="text-[10px] font-mono text-zinc-400">128px</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Manifest of files -->
+        <section class="bg-[#111113] border border-[#202024] rounded-3xl p-6 sm:p-8 space-y-4">
+            <h2 class="text-xl font-bold font-outfit text-white">Реєстр згенерованих файлів асетів</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs font-mono">
+                    <thead class="text-zinc-400 border-b border-[#202024]">
+                        <tr>
+                            <th class="py-2.5 px-3">Файл</th>
+                            <th class="py-2.5 px-3">Формат</th>
+                            <th class="py-2.5 px-3">Розміри</th>
+                            <th class="py-2.5 px-3">Призначення</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#202024] text-zinc-300">
+                        <tr>
+                            <td class="py-2.5 px-3 text-white font-semibold">logo_icon_24.svg</td>
+                            <td class="py-2.5 px-3">SVG (Vector)</td>
+                            <td class="py-2.5 px-3">24x24</td>
+                            <td class="py-2.5 px-3">Сайдбар, шапка мобільної версії, внутрішні кнопки</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2.5 px-3 text-white font-semibold">favicon_coin.svg</td>
+                            <td class="py-2.5 px-3">SVG (Vector)</td>
+                            <td class="py-2.5 px-3">512x512</td>
+                            <td class="py-2.5 px-3">Пряма заміна для favicon.svg та PWA маніфесту</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2.5 px-3 text-white font-semibold">logo_app_icon_dark.svg</td>
+                            <td class="py-2.5 px-3">SVG (Vector)</td>
+                            <td class="py-2.5 px-3">512x512</td>
+                            <td class="py-2.5 px-3">Головна іконка додатку (iOS / Android PWA)</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2.5 px-3 text-white font-semibold">logo_app_icon_light.svg</td>
+                            <td class="py-2.5 px-3">SVG (Vector)</td>
+                            <td class="py-2.5 px-3">512x512</td>
+                            <td class="py-2.5 px-3">Світла іконка додатку для відповідних тем</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2.5 px-3 text-white font-semibold">logo_coin_solid_white.svg</td>
+                            <td class="py-2.5 px-3">SVG (Vector)</td>
+                            <td class="py-2.5 px-3">512x512</td>
+                            <td class="py-2.5 px-3">Суцільний білий знак на прозорому фоні</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2.5 px-3 text-white font-semibold">logo_coin_solid_black.svg</td>
+                            <td class="py-2.5 px-3">SVG (Vector)</td>
+                            <td class="py-2.5 px-3">512x512</td>
+                            <td class="py-2.5 px-3">Суцільний чорний знак на прозорому фоні</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2.5 px-3 text-white font-semibold">logo_coin_minted_white.svg</td>
+                            <td class="py-2.5 px-3">SVG (Vector)</td>
+                            <td class="py-2.5 px-3">512x512</td>
+                            <td class="py-2.5 px-3">Рельєфна монета темної теми</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2.5 px-3 text-white font-semibold">logo_horizontal_dark.svg</td>
+                            <td class="py-2.5 px-3">SVG (Vector)</td>
+                            <td class="py-2.5 px-3">600x120</td>
+                            <td class="py-2.5 px-3">Горизонтальний логотип з написом для темних фонів</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2.5 px-3 text-white font-semibold">logo_horizontal_light.svg</td>
+                            <td class="py-2.5 px-3">SVG (Vector)</td>
+                            <td class="py-2.5 px-3">600x120</td>
+                            <td class="py-2.5 px-3">Горизонтальний логотип з написом для світлих фонів</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2.5 px-3 text-white font-semibold">logo_app_icon_512.png</td>
+                            <td class="py-2.5 px-3">PNG (Raster)</td>
+                            <td class="py-2.5 px-3">512x512</td>
+                            <td class="py-2.5 px-3">4x згладжена растрова іконка для магазинів та PWA</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2.5 px-3 text-white font-semibold">logo_app_icon_192.png</td>
+                            <td class="py-2.5 px-3">PNG (Raster)</td>
+                            <td class="py-2.5 px-3">192x192</td>
+                            <td class="py-2.5 px-3">Стандартний растровий розмір Android / iOS PWA</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.getElementById('body-root');
+            const themeBtnText = document.getElementById('theme-text');
+            if (body.classList.contains('bg-[#0A0A0C]')) {
+                body.classList.remove('bg-[#0A0A0C]', 'text-zinc-100');
+                body.classList.add('bg-[#F4F4F6]', 'text-zinc-900');
+                themeBtnText.textContent = 'Темний фон';
+            } else {
+                body.classList.remove('bg-[#F4F4F6]', 'text-zinc-900');
+                body.classList.add('bg-[#0A0A0C]', 'text-zinc-100');
+                themeBtnText.textContent = 'Світлий фон';
+            }
+        }
+    </script>
+</body>
+</html>

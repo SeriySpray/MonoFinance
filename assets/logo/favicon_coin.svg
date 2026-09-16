@@ -1,5 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
   <rect width="512" height="512" rx="120" fill="#0A0A0C"/>
   <rect x="24" y="24" width="464" height="464" rx="96" fill="#111113" stroke="#202024" stroke-width="8"/>
-  <path fill-rule="evenodd" clip-rule="evenodd" d="M256 96C167.634 96 96 167.634 96 256C96 344.366 167.634 416 256 416C344.366 416 416 344.366 416 256C416 167.634 344.366 96 256 96ZM256 168L344 256L256 344L168 256L256 168Z" fill="#FFFFFF"/>
+  <!-- High Contrast Coin with Diamond Hole -->
+  <circle cx="256" cy="256" r="168" fill="#FFFFFF"/>
+  <polygon points="256,168 344,256 256,344 168,256" fill="#111113"/>
 </svg>

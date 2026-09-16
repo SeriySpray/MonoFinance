@@ -1369,3 +1369,13 @@ html:not(.dark) .chart-guide-line {
     white-space: nowrap;
     max-width: 100%;
 }
+
+/* Brand Logo Coin Adaptability */
+.brand-logo-coin {
+    color: #FFFFFF;
+    transition: color 0.2s ease;
+}
+
+html:not(.dark) .brand-logo-coin {
+    color: #0F0F11 !important;
+}

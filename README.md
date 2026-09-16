@@ -166,8 +166,10 @@ MonoFinance/
 |-- sw.js                            # PWA Service Worker for offline caching and assets
 |-- manifest.json                    # PWA installation manifest for iOS and Android
 |-- monofinance.db                   # SQLite database file (runtime)
+|-- assets/                          # Brand assets and visual resources
+|   `-- logo/                        # Vector and raster logo assets (SVG, PNG, preview.html)
 |-- deploy.sh                        # Bash automated deployment script for Oracle Cloud VPS
-|-- favicon.svg                      # Vector branding icon
+|-- favicon.svg                      # Vector branding icon (Chinese cash coin mark)
 |-- dashboard_preview.png            # Interface screenshot for documentation
 |-- MonoFinanceAndroid/              # Native Android application source code
 |   |-- app/                         # Android application module (Kotlin source, layouts)
