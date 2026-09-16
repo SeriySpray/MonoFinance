@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=126">
+    <link rel="stylesheet" href="styles.css?v=127">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -44,6 +44,20 @@
                 }
             }
         }
+    </script>
+
+    <!-- Anti-Flicker Pre-render Session Check -->
+    <script>
+        (function() {
+            try {
+                var hasSession = localStorage.getItem('monofinance_session_active');
+                var isDemo = localStorage.getItem('monofinance_demo_mode') === 'true';
+                var isAuth = (hasSession === 'true') || (hasSession === null && localStorage.getItem('mono_transactions') !== null) || isDemo;
+                if (!isAuth) {
+                    document.documentElement.classList.add('auth-required');
+                }
+            } catch(e) {}
+        })();
     </script>
 </head>
 <body class="bg-[#0A0A0C] text-white antialiased min-h-screen overflow-x-hidden font-sans custom-scrollbar p-6">
@@ -902,7 +916,7 @@
     </div>
 
     <!-- Auth Screen (Login/Register) - Strictly Dark Mode -->
-    <div id="auth-container" class="fixed inset-0 z-50 bg-[#070709] flex items-center justify-center p-4 sm:p-6 transition-colors duration-300">
+    <div id="auth-container" class="fixed inset-0 z-50 bg-[#070709] flex items-center justify-center p-4 sm:p-6 transition-colors duration-300 hidden">
 
         <!-- Central Card / Pill Modal -->
         <div id="auth-card-pill" class="relative w-full max-w-3xl min-h-[480px] sm:min-h-[520px] bg-[#0E0E11] border border-white/[0.08] rounded-[28px] sm:rounded-[36px] shadow-[0_25px_70px_-15px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col justify-center p-6 sm:p-12 md:p-14 transition-all duration-300">
@@ -1526,6 +1540,6 @@
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
-    <script src="app.js?v=147" defer></script>
+    <script src="app.js?v=148" defer></script>
 </body>
 </html>

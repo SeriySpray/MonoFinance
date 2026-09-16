@@ -359,6 +359,19 @@ svg line {
 }
 
 /* Auth Pill Card & Reference Design Elements */
+/* Auth Screen State Control & Anti-Flicker Protection */
+#auth-container.hidden {
+    display: none !important;
+}
+
+html.auth-required #auth-container {
+    display: flex !important;
+}
+
+html.auth-required #app-container {
+    display: none !important;
+}
+
 #auth-container {
     background-color: #070709 !important;
     color: #FFFFFF !important;

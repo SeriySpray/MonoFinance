@@ -486,8 +486,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
 
-            // Initialize Animated ASCII Halftone Art
-            window.authAscii = initAuthAsciiCanvas();
+            // Initialize Animated ASCII Halftone Art only if auth screen is actively required on startup
+            if (document.documentElement.classList.contains('auth-required') || (authContainer && !authContainer.classList.contains('hidden'))) {
+                window.authAscii = initAuthAsciiCanvas();
+            }
 
             // Settings Modal Event Listeners
             const settingsModal = document.getElementById('settings-modal');
@@ -818,22 +820,34 @@ document.addEventListener('DOMContentLoaded', () => {
     function showAppScreenSmoothly() {
         if (window.authAscii) window.authAscii.stop();
 
-        if (authContainer && !authContainer.classList.contains('hidden')) {
-            authContainer.classList.add('auth-hiding');
-            setTimeout(() => {
+        const wasAuthVisible = document.documentElement.classList.contains('auth-required') ||
+            (authContainer && !authContainer.classList.contains('hidden'));
+
+        document.documentElement.classList.remove('auth-required');
+
+        if (authContainer) {
+            if (wasAuthVisible) {
+                authContainer.classList.add('auth-hiding');
+                setTimeout(() => {
+                    authContainer.classList.add('hidden');
+                    authContainer.classList.remove('auth-hiding');
+                }, 300);
+            } else {
                 authContainer.classList.add('hidden');
                 authContainer.classList.remove('auth-hiding');
-            }, 300);
-        } else if (authContainer) {
-            authContainer.classList.add('hidden');
+            }
         }
 
         if (appContainer) {
             appContainer.classList.remove('hidden');
-            appContainer.classList.add('app-entering');
-            setTimeout(() => {
+            if (wasAuthVisible) {
+                appContainer.classList.add('app-entering');
+                setTimeout(() => {
+                    appContainer.classList.remove('app-entering');
+                }, 450);
+            } else {
                 appContainer.classList.remove('app-entering');
-            }, 450);
+            }
         }
     }
 
@@ -846,7 +860,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentUser = data.username;
                 isDemoMode = false;
                 
-                // Smooth UI transition
+                // Persist session state for instantaneous pre-render on next app launch
+                localStorage.setItem('monofinance_session_active', 'true');
+                localStorage.setItem('monofinance_last_user', currentUser);
+                localStorage.removeItem('monofinance_demo_mode');
+
+                // Smooth UI transition (seamless if already in app)
                 showAppScreenSmoothly();
 
                 if (userInfoSection) userInfoSection.classList.remove('hidden');
@@ -863,11 +882,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Fetch user data from server
                 await fetchUserData();
             } else {
+                localStorage.removeItem('monofinance_session_active');
+                localStorage.removeItem('monofinance_last_user');
                 showAuthScreen();
             }
         } catch (e) {
-            console.error('Auth check failed, falling back to offline check', e);
-            showAuthScreen();
+            console.warn('Network auth check failed, checking offline session', e);
+            const savedUser = localStorage.getItem('monofinance_last_user');
+            const hasSession = localStorage.getItem('monofinance_session_active') === 'true';
+            if (hasSession && savedUser) {
+                currentUser = savedUser;
+                showAppScreenSmoothly();
+                loadLocalData();
+                showToast('Офлайн режим (локальні дані)', 'info');
+            } else {
+                showAuthScreen();
+            }
         }
     }
 
@@ -902,12 +932,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showAuthScreen() {
+        localStorage.removeItem('monofinance_session_active');
+        localStorage.removeItem('monofinance_last_user');
+        localStorage.removeItem('monofinance_demo_mode');
+        document.documentElement.classList.add('auth-required');
+
         // Ensure settings modal and any open modal overlays are closed
         const settingsModal = document.getElementById('settings-modal');
         if (settingsModal) settingsModal.classList.remove('active');
         document.querySelectorAll('.modal-overlay.active').forEach(modal => modal.classList.remove('active'));
 
-        if (authContainer) authContainer.classList.remove('hidden');
+        if (authContainer) {
+            authContainer.classList.remove('hidden');
+            authContainer.classList.remove('auth-hiding');
+        }
         if (appContainer) appContainer.classList.add('hidden');
         if (userInfoSection) userInfoSection.classList.add('hidden');
         if (btnImportLocal) btnImportLocal.classList.add('hidden');
@@ -1073,6 +1111,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.authAscii) window.authAscii.stop();
         isDemoMode = true;
         currentUser = null;
+        localStorage.setItem('monofinance_demo_mode', 'true');
+        localStorage.removeItem('monofinance_session_active');
+        document.documentElement.classList.remove('auth-required');
         
         if (authContainer) authContainer.classList.add('hidden');
         if (appContainer) appContainer.classList.remove('hidden');
@@ -1100,6 +1141,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isDemoMode) {
             isDemoMode = false;
+            localStorage.removeItem('monofinance_demo_mode');
             showToast('Вихід з демо-режиму', 'info');
             showAuthScreen();
             return;
@@ -1108,6 +1150,8 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(getApiUrl('api/logout'), { method: 'POST', credentials: 'same-origin' });
             if (response.ok) {
+                localStorage.removeItem('monofinance_session_active');
+                localStorage.removeItem('monofinance_last_user');
                 showToast('Вихід з акаунту успішний', 'info');
                 showAuthScreen();
             }
