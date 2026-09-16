@@ -455,6 +455,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btnLogout) btnLogout.addEventListener('click', handleLogout);
             if (btnImportLocal) btnImportLocal.addEventListener('click', handleImportLocal);
 
+            const authConfirmPasswordInput = document.getElementById('auth-confirm-password');
+            if (authConfirmPasswordInput) {
+                authConfirmPasswordInput.addEventListener('input', () => authConfirmPasswordInput.classList.remove('auth-input-error'));
+            }
+            if (authPasswordInput) {
+                authPasswordInput.addEventListener('input', () => authPasswordInput.classList.remove('auth-input-error'));
+            }
+
 
             // Initialize Animated ASCII Halftone Art
             window.authAscii = initAuthAsciiCanvas();
@@ -855,6 +863,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const mobileVoiceBtn = document.getElementById('mobile-voice-btn');
         if (mobileVoiceBtn) mobileVoiceBtn.classList.add('hidden');
 
+        // Reset to default login mode state
+        if (isRegisterMode) {
+            isRegisterMode = false;
+            const promptEl = document.getElementById('auth-toggle-prompt');
+            const confirmWrapper = document.getElementById('auth-confirm-password-wrapper');
+            const confirmInput = document.getElementById('auth-confirm-password');
+            if (authTitle) authTitle.textContent = 'Вхід у систему';
+            if (authSubtitle) authSubtitle.textContent = 'Введіть свої облікові дані для доступу';
+            if (authSubmitBtn) authSubmitBtn.textContent = 'Увійти';
+            if (promptEl) promptEl.textContent = 'Немає акаунту?';
+            if (authToggleModeBtn) authToggleModeBtn.textContent = 'Зареєструватися';
+            if (authUsernameInput) authUsernameInput.placeholder = 'Введіть ім\'я користувача';
+            if (authPasswordInput) {
+                authPasswordInput.placeholder = 'Введіть пароль';
+                authPasswordInput.autocomplete = 'current-password';
+            }
+            if (confirmWrapper) confirmWrapper.classList.remove('open');
+            if (confirmInput) {
+                confirmInput.required = false;
+                confirmInput.value = '';
+                confirmInput.classList.remove('auth-input-error');
+            }
+        }
+
         if (window.authAscii) {
             window.authAscii.resize();
             window.authAscii.start();
@@ -866,27 +898,90 @@ document.addEventListener('DOMContentLoaded', () => {
     function toggleAuthMode() {
         isRegisterMode = !isRegisterMode;
         const promptEl = document.getElementById('auth-toggle-prompt');
-        if (isRegisterMode) {
-            if (authTitle) authTitle.textContent = 'Реєстрація';
-            if (authSubtitle) authSubtitle.textContent = 'Створіть акаунт для синхронізації даних';
-            if (authSubmitBtn) authSubmitBtn.textContent = 'Зареєструватися';
-            if (promptEl) promptEl.textContent = 'Вже є акаунт?';
-            if (authToggleModeBtn) authToggleModeBtn.textContent = 'Увійти';
-        } else {
-            if (authTitle) authTitle.textContent = 'Вхід у систему';
-            if (authSubtitle) authSubtitle.textContent = 'Введіть свої облікові дані для доступу';
-            if (authSubmitBtn) authSubmitBtn.textContent = 'Увійти';
-            if (promptEl) promptEl.textContent = 'Немає акаунту?';
-            if (authToggleModeBtn) authToggleModeBtn.textContent = 'Зареєструватися';
-        }
+        const fieldsContainer = document.getElementById('auth-fields-container');
+        const confirmWrapper = document.getElementById('auth-confirm-password-wrapper');
+        const confirmInput = document.getElementById('auth-confirm-password');
+
+        // Trigger smooth fade/slide out on changing elements
+        if (fieldsContainer) fieldsContainer.classList.add('auth-fields-transitioning');
+        if (authTitle) authTitle.classList.add('auth-text-flip');
+        if (authSubtitle) authSubtitle.classList.add('auth-text-flip');
+        if (authSubmitBtn) authSubmitBtn.classList.add('auth-text-flip');
+
+        setTimeout(() => {
+            if (isRegisterMode) {
+                if (authTitle) authTitle.textContent = 'Реєстрація';
+                if (authSubtitle) authSubtitle.textContent = 'Створіть акаунт для синхронізації даних';
+                if (authSubmitBtn) authSubmitBtn.textContent = 'Зареєструватися';
+                if (promptEl) promptEl.textContent = 'Вже є акаунт?';
+                if (authToggleModeBtn) authToggleModeBtn.textContent = 'Увійти';
+                if (authUsernameInput) authUsernameInput.placeholder = 'Придумайте ім\'я користувача';
+                if (authPasswordInput) {
+                    authPasswordInput.placeholder = 'Придумайте пароль';
+                    authPasswordInput.autocomplete = 'new-password';
+                }
+                if (confirmWrapper) confirmWrapper.classList.add('open');
+                if (confirmInput) {
+                    confirmInput.required = true;
+                    setTimeout(() => confirmInput.focus(), 150);
+                }
+            } else {
+                if (authTitle) authTitle.textContent = 'Вхід у систему';
+                if (authSubtitle) authSubtitle.textContent = 'Введіть свої облікові дані для доступу';
+                if (authSubmitBtn) authSubmitBtn.textContent = 'Увійти';
+                if (promptEl) promptEl.textContent = 'Немає акаунту?';
+                if (authToggleModeBtn) authToggleModeBtn.textContent = 'Зареєструватися';
+                if (authUsernameInput) authUsernameInput.placeholder = 'Введіть ім\'я користувача';
+                if (authPasswordInput) {
+                    authPasswordInput.placeholder = 'Введіть пароль';
+                    authPasswordInput.autocomplete = 'current-password';
+                }
+                if (confirmWrapper) confirmWrapper.classList.remove('open');
+                if (confirmInput) {
+                    confirmInput.required = false;
+                    confirmInput.value = '';
+                    confirmInput.classList.remove('auth-input-error');
+                }
+            }
+
+            // Smooth fade/slide in
+            if (fieldsContainer) fieldsContainer.classList.remove('auth-fields-transitioning');
+            if (authTitle) authTitle.classList.remove('auth-text-flip');
+            if (authSubtitle) authSubtitle.classList.remove('auth-text-flip');
+            if (authSubmitBtn) authSubmitBtn.classList.remove('auth-text-flip');
+        }, 120);
     }
 
     async function handleAuthSubmit(e) {
         e.preventDefault();
         const username = authUsernameInput ? authUsernameInput.value.trim() : '';
         const password = authPasswordInput ? authPasswordInput.value : '';
+        const confirmInput = document.getElementById('auth-confirm-password');
+        const confirmPassword = confirmInput ? confirmInput.value : '';
         
         if (!username || !password) return;
+
+        if (isRegisterMode) {
+            if (password.length < 4) {
+                if (authPasswordInput) {
+                    authPasswordInput.classList.add('auth-shake', 'auth-input-error');
+                    setTimeout(() => authPasswordInput.classList.remove('auth-shake'), 450);
+                    authPasswordInput.focus();
+                }
+                showToast('Пароль має містити щонайменше 4 символи', 'delete');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                if (confirmInput) {
+                    confirmInput.classList.add('auth-shake', 'auth-input-error');
+                    setTimeout(() => confirmInput.classList.remove('auth-shake'), 450);
+                    confirmInput.focus();
+                }
+                showToast('Паролі не збігаються', 'delete');
+                return;
+            }
+        }
         
         const url = isRegisterMode ? 'api/register' : 'api/login';
         try {
@@ -901,6 +996,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast(isRegisterMode ? 'Акаунт успішно створено' : 'Успішний вхід', 'success');
                 if (authUsernameInput) authUsernameInput.value = '';
                 if (authPasswordInput) authPasswordInput.value = '';
+                if (confirmInput) confirmInput.value = '';
                 await checkAuth();
             } else {
                 showToast(result.message || 'Помилка авторизації', 'delete');
