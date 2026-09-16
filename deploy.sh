@@ -15,7 +15,7 @@ ssh -o StrictHostKeyChecking=no -i $SSH_KEY $REMOTE_USER@$SERVER_IP "mkdir -p $R
 
 # 2. Upload files
 echo "Uploading files to server..."
-scp -o StrictHostKeyChecking=no -i $SSH_KEY index.html styles.css app.js app_server.py manifest.json favicon.svg sw.js $REMOTE_USER@$SERVER_IP:$REMOTE_DIR/
+scp -r -o StrictHostKeyChecking=no -i $SSH_KEY index.html styles.css app.js app_server.py manifest.json favicon.svg sw.js assets $REMOTE_USER@$SERVER_IP:$REMOTE_DIR/
 
 # 3. Setup virtual environment and configure services
 echo "Configuring environment and services on server..."
