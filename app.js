@@ -5611,15 +5611,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const startRecording = () => {
             if (isRecording || isMediaRecording) return;
 
-            const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-            // On PC / Desktop, always prefer MediaRecorder + Whisper AI because it captures physical PC microphones reliably across all browsers (Chrome, Edge, Firefox, Brave)
-            // On mobile Android, try SpeechRecognition if available, with immediate watchdog fallback to MediaRecorder
-            if (!isMobile) {
-                startMediaRecording();
-                return;
-            }
-
             if (SpeechRecognition) {
                 try {
                     if (recognition) {
@@ -5641,7 +5632,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             try { recognition.abort(); } catch (e) {}
                             startMediaRecording();
                         }
-                    }, 1500);
+                    }, 3500);
 
                     recognition.onstart = () => {
                         hasStarted = true;
@@ -5684,7 +5675,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         isRecording = false;
                         if (voiceRecordPulseBtn) voiceRecordPulseBtn.classList.remove('mic-recording');
 
-                        if (event.error === 'not-allowed' || event.error === 'service-not-allowed' || event.error === 'audio-capture' || event.error === 'network') {
+                        if (event.error === 'not-allowed' || event.error === 'service-not-allowed' || event.error === 'audio-capture') {
+                            if (voiceStatusText) {
+                                voiceStatusText.textContent = 'Надайте дозвіл на використання мікрофона в браузері';
+                                showToast('Дозвольте доступ до мікрофона у браузері', 'info');
+                            }
+                        } else if (event.error === 'network') {
                             startMediaRecording();
                         } else if (voiceStatusText) {
                             if (event.error === 'no-speech') {
