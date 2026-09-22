@@ -5434,6 +5434,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let shouldTranscribe = true;
         let autoStopTimeout = null;
+        let speechSilenceTimer = null;
+        let noSpeechTimeout = null;
+        let mediaSilenceTimer = null;
+        let audioCtx = null;
 
         const openVoiceModal = () => {
             isVoiceSaving = false;
@@ -5539,6 +5543,65 @@ document.addEventListener('DOMContentLoaded', () => {
                 audioChunks = [];
                 shouldTranscribe = true;
 
+                // Voice Activity Detection (VAD) using Web Audio API for auto-stop on silence
+                try {
+                    const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+                    if (AudioCtxClass) {
+                        audioCtx = new AudioCtxClass();
+                        const source = audioCtx.createMediaStreamSource(mediaStream);
+                        const analyser = audioCtx.createAnalyser();
+                        analyser.fftSize = 512;
+                        analyser.smoothingTimeConstant = 0.3;
+                        source.connect(analyser);
+
+                        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+                        let speechHasStarted = false;
+
+                        const checkSilence = () => {
+                            if (!isMediaRecording) {
+                                if (audioCtx) {
+                                    try { audioCtx.close(); } catch(e) {}
+                                    audioCtx = null;
+                                }
+                                return;
+                            }
+
+                            analyser.getByteFrequencyData(dataArray);
+                            let sum = 0;
+                            for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+                            const avgVolume = sum / dataArray.length;
+
+                            if (avgVolume > 14) {
+                                if (!speechHasStarted) {
+                                    speechHasStarted = true;
+                                    if (voiceStatusText) {
+                                        voiceStatusText.textContent = 'Слухаю... Говоріть';
+                                        voiceStatusText.classList.add('text-brand-accent');
+                                    }
+                                }
+                                if (mediaSilenceTimer) {
+                                    clearTimeout(mediaSilenceTimer);
+                                    mediaSilenceTimer = null;
+                                }
+                            } else if (speechHasStarted) {
+                                if (!mediaSilenceTimer) {
+                                    mediaSilenceTimer = setTimeout(() => {
+                                        // Auto-stop after 1.2s silence following speech
+                                        if (isMediaRecording && mediaRecorder && mediaRecorder.state === 'recording') {
+                                            stopRecording();
+                                        }
+                                    }, 1200);
+                                }
+                            }
+
+                            requestAnimationFrame(checkSilence);
+                        };
+                        checkSilence();
+                    }
+                } catch (vadErr) {
+                    console.warn('VAD AudioContext warning:', vadErr);
+                }
+
                 mediaRecorder.ondataavailable = (event) => {
                     if (event.data && event.data.size > 0) {
                         audioChunks.push(event.data);
@@ -5552,6 +5615,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (autoStopTimeout) {
                         clearTimeout(autoStopTimeout);
                         autoStopTimeout = null;
+                    }
+                    if (mediaSilenceTimer) {
+                        clearTimeout(mediaSilenceTimer);
+                        mediaSilenceTimer = null;
+                    }
+                    if (audioCtx) {
+                        try { audioCtx.close(); } catch(e) {}
+                        audioCtx = null;
                     }
 
                     if (mediaStream) {
@@ -5572,20 +5643,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (voiceRecordPulseBtn) voiceRecordPulseBtn.classList.add('mic-recording');
                 if (voiceStatusText) {
-                    voiceStatusText.textContent = 'Слухаю... Говоріть (Натисніть мікрофон для завершення)';
+                    voiceStatusText.textContent = 'Слухаю... Говоріть';
                     voiceStatusText.classList.add('text-brand-accent');
                 }
                 if (voiceTranscriptPreview) {
-                    voiceTranscriptPreview.textContent = '"Запис аудіо... Наприклад: Кава 75 гривень і обід 200 грн"';
+                    voiceTranscriptPreview.textContent = '"Говоріть операцію... Наприклад: Кава 75 гривень і обід 200 грн"';
                 }
 
-                // Safety timeout: auto stop after 20 seconds of recording
+                // Safety timeout: auto stop after 10 seconds max
                 if (autoStopTimeout) clearTimeout(autoStopTimeout);
                 autoStopTimeout = setTimeout(() => {
                     if (isMediaRecording && mediaRecorder && mediaRecorder.state === 'recording') {
                         stopRecording();
                     }
-                }, 20000);
+                }, 10000);
 
             } catch (err) {
                 console.error('MediaRecorder start error:', err);
@@ -5621,31 +5692,48 @@ document.addEventListener('DOMContentLoaded', () => {
                     recognition.lang = 'uk-UA';
                     recognition.continuous = false;
                     recognition.interimResults = true;
+                    recognition.maxAlternatives = 1;
 
                     let hasStarted = false;
                     let lastTranscriptText = '';
                     let hasHandledResult = false;
 
-                    const watchdog = setTimeout(() => {
-                        if (!hasStarted && !hasHandledResult) {
-                            console.warn('SpeechRecognition timeout, falling back to MediaRecorder');
-                            try { recognition.abort(); } catch (e) {}
-                            startMediaRecording();
+                    // Stop if silence persists for 6 seconds without speaking
+                    if (noSpeechTimeout) clearTimeout(noSpeechTimeout);
+                    noSpeechTimeout = setTimeout(() => {
+                        if (isRecording && !lastTranscriptText) {
+                            stopRecording();
+                            if (voiceStatusText) voiceStatusText.textContent = 'Мову не виявлено. Натисніть ще раз';
                         }
-                    }, 3500);
+                    }, 6000);
 
                     recognition.onstart = () => {
                         hasStarted = true;
-                        clearTimeout(watchdog);
                         isRecording = true;
                         if (voiceRecordPulseBtn) voiceRecordPulseBtn.classList.add('mic-recording');
                         if (voiceStatusText) {
-                            voiceStatusText.textContent = 'Слухаю... Говоріть (Натисніть мікрофон для завершення)';
+                            voiceStatusText.textContent = 'Слухаю... Говоріть';
+                            voiceStatusText.classList.add('text-brand-accent');
+                        }
+                    };
+
+                    recognition.onspeechstart = () => {
+                        if (noSpeechTimeout) {
+                            clearTimeout(noSpeechTimeout);
+                            noSpeechTimeout = null;
+                        }
+                        if (voiceStatusText) {
+                            voiceStatusText.textContent = 'Розпізнаю мову...';
                             voiceStatusText.classList.add('text-brand-accent');
                         }
                     };
 
                     recognition.onresult = (event) => {
+                        if (noSpeechTimeout) {
+                            clearTimeout(noSpeechTimeout);
+                            noSpeechTimeout = null;
+                        }
+
                         let interimTranscript = '';
                         let finalTranscript = '';
 
@@ -5658,29 +5746,54 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
 
                         const currentText = finalTranscript || interimTranscript;
-                        lastTranscriptText = currentText;
+                        if (currentText && currentText.trim()) {
+                            lastTranscriptText = currentText.trim();
+                            if (voiceTranscriptPreview) {
+                                voiceTranscriptPreview.textContent = `"${lastTranscriptText}"`;
+                            }
 
-                        if (currentText && voiceTranscriptPreview) {
-                            voiceTranscriptPreview.textContent = `"${currentText}"`;
+                            // Dynamic silence detector: auto stop 1.2s after user stops speaking
+                            if (speechSilenceTimer) clearTimeout(speechSilenceTimer);
+                            speechSilenceTimer = setTimeout(() => {
+                                if (isRecording) {
+                                    try { recognition.stop(); } catch (e) {}
+                                }
+                            }, 1200);
                         }
 
-                        if (finalTranscript) {
-                            hasHandledResult = true;
-                            handleVoiceResult(finalTranscript);
+                        if (finalTranscript && finalTranscript.trim()) {
+                            // When browser provides final transcript, finalize after brief pause
+                            if (speechSilenceTimer) clearTimeout(speechSilenceTimer);
+                            speechSilenceTimer = setTimeout(() => {
+                                if (isRecording) {
+                                    try { recognition.stop(); } catch (e) {}
+                                }
+                            }, 350);
                         }
                     };
 
+                    recognition.onspeechend = () => {
+                        // Native speech-end detector from browser
+                        if (speechSilenceTimer) clearTimeout(speechSilenceTimer);
+                        speechSilenceTimer = setTimeout(() => {
+                            if (isRecording) {
+                                try { recognition.stop(); } catch (e) {}
+                            }
+                        }, 250);
+                    };
+
                     recognition.onerror = (event) => {
-                        clearTimeout(watchdog);
+                        if (noSpeechTimeout) clearTimeout(noSpeechTimeout);
+                        if (speechSilenceTimer) clearTimeout(speechSilenceTimer);
                         isRecording = false;
                         if (voiceRecordPulseBtn) voiceRecordPulseBtn.classList.remove('mic-recording');
 
-                        if (event.error === 'not-allowed' || event.error === 'service-not-allowed' || event.error === 'audio-capture') {
+                        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
                             if (voiceStatusText) {
                                 voiceStatusText.textContent = 'Надайте дозвіл на використання мікрофона в браузері';
                                 showToast('Дозвольте доступ до мікрофона у браузері', 'info');
                             }
-                        } else if (event.error === 'network') {
+                        } else if (event.error === 'network' || event.error === 'audio-capture') {
                             startMediaRecording();
                         } else if (voiceStatusText) {
                             if (event.error === 'no-speech') {
@@ -5692,7 +5805,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
 
                     recognition.onend = () => {
-                        clearTimeout(watchdog);
+                        if (noSpeechTimeout) clearTimeout(noSpeechTimeout);
+                        if (speechSilenceTimer) clearTimeout(speechSilenceTimer);
                         isRecording = false;
                         if (voiceRecordPulseBtn) voiceRecordPulseBtn.classList.remove('mic-recording');
                         if (voiceStatusText) voiceStatusText.classList.remove('text-brand-accent');
@@ -5718,6 +5832,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearTimeout(autoStopTimeout);
                 autoStopTimeout = null;
             }
+            if (speechSilenceTimer) {
+                clearTimeout(speechSilenceTimer);
+                speechSilenceTimer = null;
+            }
+            if (noSpeechTimeout) {
+                clearTimeout(noSpeechTimeout);
+                noSpeechTimeout = null;
+            }
+            if (mediaSilenceTimer) {
+                clearTimeout(mediaSilenceTimer);
+                mediaSilenceTimer = null;
+            }
 
             if (cancelOnly) {
                 shouldTranscribe = false;
@@ -5742,6 +5868,11 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (mediaStream) {
                 mediaStream.getTracks().forEach(track => track.stop());
                 mediaStream = null;
+            }
+
+            if (audioCtx) {
+                try { audioCtx.close(); } catch(e) {}
+                audioCtx = null;
             }
 
             isRecording = false;
