@@ -17,6 +17,12 @@ ssh -o StrictHostKeyChecking=no -i $SSH_KEY $REMOTE_USER@$SERVER_IP "mkdir -p $R
 echo "Uploading files to server..."
 scp -r -o StrictHostKeyChecking=no -i $SSH_KEY index.html styles.css app.js app_server.py manifest.json favicon.svg sw.js assets $REMOTE_USER@$SERVER_IP:$REMOTE_DIR/
 
+if [ -f .env ]; then
+  echo "Uploading .env configuration to server..."
+  scp -o StrictHostKeyChecking=no -i $SSH_KEY .env $REMOTE_USER@$SERVER_IP:$REMOTE_DIR/.env
+  ssh -o StrictHostKeyChecking=no -i $SSH_KEY $REMOTE_USER@$SERVER_IP "chmod 600 $REMOTE_DIR/.env"
+fi
+
 # 3. Setup virtual environment and configure services
 echo "Configuring environment and services on server..."
 ssh -o StrictHostKeyChecking=no -i $SSH_KEY $REMOTE_USER@$SERVER_IP "bash -s" << 'EOF'
@@ -44,7 +50,6 @@ After=network.target
 User=ubuntu
 WorkingDirectory=/home/ubuntu/MonoFinance
 EnvironmentFile=-/home/ubuntu/MonoFinance/.env
-Environment="GROQ_API_KEY=${GROQ_API_KEY:-}"
 ExecStart=/home/ubuntu/MonoFinance/venv/bin/gunicorn --workers 1 --threads 4 --bind 127.0.0.1:5001 --timeout 120 app_server:app
 Restart=always
 
