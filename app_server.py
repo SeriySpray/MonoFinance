@@ -517,7 +517,7 @@ def voice_transcribe():
     ext = os.path.splitext(orig_name)[1]
     if not ext:
         ext = '.webm'
-    file_path = os.path.join(temp_dir, f"voice_{int(time.time())}{ext}")
+    file_path = os.path.join(temp_dir, f"voice_{int(time.time())}_{os.getpid()}{ext}")
     audio_file.save(file_path)
     
     groq_api_key = os.environ.get("GROQ_API_KEY", "")
@@ -526,19 +526,23 @@ def voice_transcribe():
     transcribed_text = ""
     
     try:
+        raw_mime = audio_file.content_type or 'audio/webm'
+        clean_mime = raw_mime.split(';')[0].strip() or 'audio/webm'
+
         # 1. Try Groq Whisper API if key is present
         if groq_api_key:
             import requests
-            mime_type = audio_file.content_type or 'audio/webm'
             with open(file_path, 'rb') as f:
                 response = requests.post(
                     "https://api.groq.com/openai/v1/audio/transcriptions",
                     headers={"Authorization": f"Bearer {groq_api_key}"},
-                    files={"file": (os.path.basename(file_path), f, mime_type)},
+                    files={"file": (os.path.basename(file_path), f, clean_mime)},
                     data={"model": "whisper-large-v3-turbo", "language": "uk"}
                 )
             if response.status_code == 200:
                 transcribed_text = response.json().get("text", "")
+            else:
+                print(f"Groq Whisper error {response.status_code}: {response.text}")
                 
         # 2. Try OpenAI Whisper API if key is present
         elif openai_api_key:
@@ -547,11 +551,13 @@ def voice_transcribe():
                 response = requests.post(
                     "https://api.openai.com/v1/audio/transcriptions",
                     headers={"Authorization": f"Bearer {openai_api_key}"},
-                    files={"file": (os.path.basename(file_path), f, "audio/webm")},
+                    files={"file": (os.path.basename(file_path), f, clean_mime)},
                     data={"model": "whisper-1", "language": "uk"}
                 )
             if response.status_code == 200:
                 transcribed_text = response.json().get("text", "")
+            else:
+                print(f"OpenAI Whisper error {response.status_code}: {response.text}")
     except Exception as e:
         print(f"Error in transcription API: {e}")
     finally:
@@ -570,7 +576,7 @@ def voice_transcribe():
         
     return jsonify({
         'success': True,
-        'text': transcribed_text
+        'text': transcribed_text.strip()
     })
 
 ALLOWED_EXPENSE_CATEGORIES = [

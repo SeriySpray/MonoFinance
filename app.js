@@ -878,6 +878,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 const mobileVoiceBtn = document.getElementById('mobile-voice-btn');
                 if (mobileVoiceBtn) mobileVoiceBtn.classList.remove('hidden');
+                const sidebarVoiceBtn = document.getElementById('sidebar-voice-btn');
+                if (sidebarVoiceBtn) sidebarVoiceBtn.classList.remove('hidden');
                 
                 // Fetch user data from server
                 await fetchUserData();
@@ -952,6 +954,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btnLogout) btnLogout.classList.add('hidden');
         const mobileVoiceBtn = document.getElementById('mobile-voice-btn');
         if (mobileVoiceBtn) mobileVoiceBtn.classList.add('hidden');
+        const sidebarVoiceBtn = document.getElementById('sidebar-voice-btn');
+        if (sidebarVoiceBtn) sidebarVoiceBtn.classList.add('hidden');
 
         // Reset to default login mode state
         if (isRegisterMode) {
@@ -1128,6 +1132,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const mobileVoiceBtn = document.getElementById('mobile-voice-btn');
         if (mobileVoiceBtn) mobileVoiceBtn.classList.remove('hidden');
+        const sidebarVoiceBtn = document.getElementById('sidebar-voice-btn');
+        if (sidebarVoiceBtn) sidebarVoiceBtn.classList.remove('hidden');
         
         // Load local storage data
         loadLocalData();
@@ -5426,6 +5432,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!voiceModal) return;
 
+        let shouldTranscribe = true;
+        let autoStopTimeout = null;
+
         const openVoiceModal = () => {
             isVoiceSaving = false;
             if (voiceSaveBtn) {
@@ -5435,7 +5444,7 @@ document.addEventListener('DOMContentLoaded', () => {
             voiceModal.classList.add('active');
             if (voiceParsedContainer) voiceParsedContainer.classList.add('hidden');
             if (voiceTranscriptPreview) voiceTranscriptPreview.textContent = '"Наприклад: Кава 75 гривень і обід 200 грн"';
-            if (voiceStatusText) voiceStatusText.textContent = 'Натисніть мікрофон та говоріть';
+            if (voiceStatusText) voiceStatusText.textContent = 'Підключення мікрофона...';
             if (voiceItemsList) voiceItemsList.innerHTML = '';
 
             const hasMediaRecorder = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
@@ -5448,7 +5457,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         const closeVoiceModal = () => {
-            stopRecording();
+            stopRecording(true);
             voiceModal.classList.remove('active');
             isVoiceSaving = false;
             if (voiceSaveBtn) {
@@ -5463,7 +5472,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 voiceStatusText.classList.add('text-brand-accent');
             }
             if (voiceTranscriptPreview) {
-                voiceTranscriptPreview.textContent = '"Обробка запису..."';
+                voiceTranscriptPreview.textContent = '"Обробка аудіозапису..."';
             }
 
             try {
@@ -5479,11 +5488,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const data = await response.json();
 
-                if (data.success && data.text) {
+                if (data.success && data.text && data.text.trim()) {
+                    const trimmedText = data.text.trim();
                     if (voiceTranscriptPreview) {
-                        voiceTranscriptPreview.textContent = `"${data.text}"`;
+                        voiceTranscriptPreview.textContent = `"${trimmedText}"`;
                     }
-                    handleVoiceResult(data.text);
+                    handleVoiceResult(trimmedText);
                 } else {
                     if (voiceStatusText) {
                         voiceStatusText.textContent = data.message || 'Не вдалося розпізнати мову. Спробуйте ще раз';
@@ -5500,6 +5510,8 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         const startMediaRecording = async () => {
+            if (isMediaRecording) return;
+
             try {
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
                     if (voiceStatusText) voiceStatusText.textContent = 'Голосовий ввід не підтримується пристроєм';
@@ -5510,12 +5522,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
                 let mimeType = '';
-                if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('audio/mp4')) {
+                if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+                    mimeType = 'audio/webm;codecs=opus';
+                } else if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('audio/webm')) {
+                    mimeType = 'audio/webm';
+                } else if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('audio/mp4')) {
                     mimeType = 'audio/mp4';
                 } else if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('audio/aac')) {
                     mimeType = 'audio/aac';
-                } else if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('audio/webm')) {
-                    mimeType = 'audio/webm';
                 } else if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('audio/wav')) {
                     mimeType = 'audio/wav';
                 }
@@ -5523,6 +5537,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const options = mimeType ? { mimeType } : {};
                 mediaRecorder = new MediaRecorder(mediaStream, options);
                 audioChunks = [];
+                shouldTranscribe = true;
 
                 mediaRecorder.ondataavailable = (event) => {
                     if (event.data && event.data.size > 0) {
@@ -5534,42 +5549,76 @@ document.addEventListener('DOMContentLoaded', () => {
                     isMediaRecording = false;
                     isRecording = false;
                     if (voiceRecordPulseBtn) voiceRecordPulseBtn.classList.remove('mic-recording');
+                    if (autoStopTimeout) {
+                        clearTimeout(autoStopTimeout);
+                        autoStopTimeout = null;
+                    }
 
                     if (mediaStream) {
                         mediaStream.getTracks().forEach(track => track.stop());
                         mediaStream = null;
                     }
 
-                    if (audioChunks.length > 0) {
-                        const audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/mp4' });
+                    if (shouldTranscribe && audioChunks.length > 0) {
+                        const recMime = mediaRecorder.mimeType || mimeType || 'audio/webm';
+                        const audioBlob = new Blob(audioChunks, { type: recMime });
                         await sendAudioForTranscription(audioBlob);
                     }
                 };
 
-                mediaRecorder.start();
+                mediaRecorder.start(250);
                 isMediaRecording = true;
                 isRecording = true;
 
                 if (voiceRecordPulseBtn) voiceRecordPulseBtn.classList.add('mic-recording');
                 if (voiceStatusText) {
-                    voiceStatusText.textContent = 'Слухаю... Говоріть (Натисніть ще раз для завершення)';
+                    voiceStatusText.textContent = 'Слухаю... Говоріть (Натисніть мікрофон для завершення)';
                     voiceStatusText.classList.add('text-brand-accent');
                 }
+                if (voiceTranscriptPreview) {
+                    voiceTranscriptPreview.textContent = '"Запис аудіо... Наприклад: Кава 75 гривень і обід 200 грн"';
+                }
+
+                // Safety timeout: auto stop after 20 seconds of recording
+                if (autoStopTimeout) clearTimeout(autoStopTimeout);
+                autoStopTimeout = setTimeout(() => {
+                    if (isMediaRecording && mediaRecorder && mediaRecorder.state === 'recording') {
+                        stopRecording();
+                    }
+                }, 20000);
+
             } catch (err) {
                 console.error('MediaRecorder start error:', err);
                 isMediaRecording = false;
                 isRecording = false;
                 if (voiceRecordPulseBtn) voiceRecordPulseBtn.classList.remove('mic-recording');
                 if (voiceStatusText) {
-                    voiceStatusText.textContent = 'Надайте дозвіл на використання мікрофона';
+                    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                        voiceStatusText.textContent = 'Надайте дозвіл на використання мікрофона в браузері';
+                        showToast('Дозвольте доступ до мікрофона у браузері', 'info');
+                    } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                        voiceStatusText.textContent = 'Мікрофон не знайдено на вашому комп\'ютері';
+                        showToast('Мікрофон не підключено', 'info');
+                    } else {
+                        voiceStatusText.textContent = 'Не вдалося отримати доступ до мікрофона';
+                        showToast('Помилка доступу до мікрофона', 'info');
+                    }
                     voiceStatusText.classList.remove('text-brand-accent');
                 }
-                showToast('Потрібен дозвіл на мікрофон у налаштуваннях Safari', 'info');
             }
         };
 
         const startRecording = () => {
-            if (isRecording) return;
+            if (isRecording || isMediaRecording) return;
+
+            const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+            // On PC / Desktop, always prefer MediaRecorder + Whisper AI because it captures physical PC microphones reliably across all browsers (Chrome, Edge, Firefox, Brave)
+            // On mobile Android, try SpeechRecognition if available, with immediate watchdog fallback to MediaRecorder
+            if (!isMobile) {
+                startMediaRecording();
+                return;
+            }
 
             if (SpeechRecognition) {
                 try {
@@ -5582,11 +5631,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     recognition.continuous = false;
                     recognition.interimResults = true;
 
+                    let hasStarted = false;
+                    let lastTranscriptText = '';
+                    let hasHandledResult = false;
+
+                    const watchdog = setTimeout(() => {
+                        if (!hasStarted && !hasHandledResult) {
+                            console.warn('SpeechRecognition timeout, falling back to MediaRecorder');
+                            try { recognition.abort(); } catch (e) {}
+                            startMediaRecording();
+                        }
+                    }, 1500);
+
                     recognition.onstart = () => {
+                        hasStarted = true;
+                        clearTimeout(watchdog);
                         isRecording = true;
                         if (voiceRecordPulseBtn) voiceRecordPulseBtn.classList.add('mic-recording');
                         if (voiceStatusText) {
-                            voiceStatusText.textContent = 'Слухаю... Говоріть';
+                            voiceStatusText.textContent = 'Слухаю... Говоріть (Натисніть мікрофон для завершення)';
                             voiceStatusText.classList.add('text-brand-accent');
                         }
                     };
@@ -5604,19 +5667,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
 
                         const currentText = finalTranscript || interimTranscript;
+                        lastTranscriptText = currentText;
+
                         if (currentText && voiceTranscriptPreview) {
                             voiceTranscriptPreview.textContent = `"${currentText}"`;
                         }
 
                         if (finalTranscript) {
+                            hasHandledResult = true;
                             handleVoiceResult(finalTranscript);
                         }
                     };
 
                     recognition.onerror = (event) => {
+                        clearTimeout(watchdog);
                         isRecording = false;
                         if (voiceRecordPulseBtn) voiceRecordPulseBtn.classList.remove('mic-recording');
-                        if (event.error === 'not-allowed' || event.error === 'service-not-allowed' || event.error === 'audio-capture') {
+
+                        if (event.error === 'not-allowed' || event.error === 'service-not-allowed' || event.error === 'audio-capture' || event.error === 'network') {
                             startMediaRecording();
                         } else if (voiceStatusText) {
                             if (event.error === 'no-speech') {
@@ -5628,9 +5696,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
 
                     recognition.onend = () => {
+                        clearTimeout(watchdog);
                         isRecording = false;
                         if (voiceRecordPulseBtn) voiceRecordPulseBtn.classList.remove('mic-recording');
                         if (voiceStatusText) voiceStatusText.classList.remove('text-brand-accent');
+
+                        if (!hasHandledResult && lastTranscriptText && lastTranscriptText.trim()) {
+                            hasHandledResult = true;
+                            handleVoiceResult(lastTranscriptText.trim());
+                        }
                     };
 
                     recognition.start();
@@ -5643,15 +5717,40 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        const stopRecording = () => {
+        const stopRecording = (cancelOnly = false) => {
+            if (autoStopTimeout) {
+                clearTimeout(autoStopTimeout);
+                autoStopTimeout = null;
+            }
+
+            if (cancelOnly) {
+                shouldTranscribe = false;
+            }
+
             if (recognition && isRecording && !isMediaRecording) {
-                try { recognition.stop(); } catch (e) {}
+                try {
+                    if (cancelOnly) {
+                        recognition.abort();
+                    } else {
+                        recognition.stop();
+                    }
+                } catch (e) {}
                 isRecording = false;
                 if (voiceRecordPulseBtn) voiceRecordPulseBtn.classList.remove('mic-recording');
             }
+
             if (mediaRecorder && mediaRecorder.state === 'recording') {
-                try { mediaRecorder.stop(); } catch (e) {}
+                try {
+                    mediaRecorder.stop();
+                } catch (e) {}
+            } else if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
             }
+
+            isRecording = false;
+            isMediaRecording = false;
+            if (voiceRecordPulseBtn) voiceRecordPulseBtn.classList.remove('mic-recording');
         };
 
         const renderItemRow = (desc = '', amount = '', type = 'expense') => {
@@ -5711,7 +5810,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     renderItemRow(item.description, item.amount, item.type);
                 });
             } else {
-                renderItemRow();
+                renderItemRow(text, '', 'expense');
             }
 
             if (voiceParsedContainer) voiceParsedContainer.classList.remove('hidden');
@@ -5731,9 +5830,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (closeVoiceModalBtn) closeVoiceModalBtn.addEventListener('click', closeVoiceModal);
         if (voiceCancelBtn) voiceCancelBtn.addEventListener('click', closeVoiceModal);
 
+        if (voiceModal) {
+            voiceModal.addEventListener('click', (e) => {
+                if (e.target === voiceModal) {
+                    closeVoiceModal();
+                }
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && voiceModal && voiceModal.classList.contains('active')) {
+                closeVoiceModal();
+            }
+        });
+
         if (voiceRecordPulseBtn) {
             voiceRecordPulseBtn.addEventListener('click', () => {
-                if (isRecording) {
+                if (isRecording || isMediaRecording) {
                     stopRecording();
                 } else {
                     startRecording();

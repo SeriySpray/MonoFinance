@@ -1007,6 +1007,8 @@ html:not(.dark) button[type="submit"]:not(#daily-limit-cancel-btn):not(#auth-sub
 html:not(.dark) button[type="submit"]:not(#daily-limit-cancel-btn):not(#auth-submit-btn) *,
 html:not(.dark) #mobile-voice-btn,
 html:not(.dark) #mobile-voice-btn *,
+html:not(.dark) #sidebar-voice-btn,
+html:not(.dark) #sidebar-voice-btn *,
 html:not(.dark) #voice-save-btn,
 html:not(.dark) #voice-save-btn *,
 html:not(.dark) #confirm-btn-ok,
