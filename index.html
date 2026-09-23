@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=128">
+    <link rel="stylesheet" href="styles.css?v=129">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1008,6 +1008,11 @@
                         <span>Імпорт локальних даних</span>
                     </button>
                     
+                    <button id="modal-btn-clear-data" class="w-full py-3 bg-[#241414] border border-[#3D1A1A] hover:border-[#FF453A] text-[#FF453A] font-semibold rounded-xl text-xs flex items-center justify-center gap-2 transition-all" title="Очистити всі дані з акаунта та LocalStorage">
+                        <span class="material-symbols-outlined text-[16px]">delete_sweep</span>
+                        <span>Очистити всі дані</span>
+                    </button>
+                    
                     <button id="modal-btn-logout" class="w-full py-3 bg-[#2E1B18] border border-[#2E1B18] hover:border-brand-accent text-brand-accent font-semibold rounded-xl text-xs flex items-center justify-center gap-2 transition-all" title="Вийти з акаунту">
                         <span class="material-symbols-outlined text-[16px]">logout</span>
                         <span>Вийти з акаунту</span>
@@ -1209,6 +1214,36 @@
             <div class="flex gap-3 pt-2">
                 <button type="button" id="confirm-btn-cancel" class="flex-1 py-3 bg-[#161619] border border-[#202024] text-white hover:bg-[#202024] rounded-xl text-xs font-semibold transition-all">Скасувати</button>
                 <button type="button" id="confirm-btn-ok" class="flex-1 py-3 bg-[#FF5A36] hover:bg-[#FF5A36]/90 text-white font-semibold rounded-xl text-xs transition-all shadow-lg shadow-[#FF5A36]/20">Підтвердити</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clear All Data Confirmation Modal with 10s Countdown -->
+    <div id="clear-data-modal" class="modal-overlay">
+        <div class="modal bg-[#111113] border border-[#2D1B1B] p-6 sm:p-8 rounded-3xl max-w-sm w-full space-y-5 shadow-2xl text-center">
+            <div class="w-14 h-14 rounded-2xl bg-[#FF453A]/10 border border-[#FF453A]/25 flex items-center justify-center text-[#FF453A] mx-auto relative">
+                <span class="material-symbols-outlined text-[28px]">delete_forever</span>
+                <div id="clear-data-timer-badge" class="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-[#FF453A] text-white font-mono text-[11px] font-bold flex items-center justify-center shadow-lg">10</div>
+            </div>
+            
+            <div class="space-y-1.5">
+                <h3 class="font-semibold text-base text-white">Очищення всіх даних</h3>
+                <p class="text-xs text-brand-textSecondary leading-relaxed">Ця дія безповоротно видалить усі ваші транзакції, витрати, доходи, конверти та регулярні платежі з акаунта та локального сховища (LocalStorage).</p>
+            </div>
+
+            <!-- 10-second Countdown Progress -->
+            <div class="space-y-2 pt-1">
+                <div class="w-full bg-[#1A1A1E] rounded-full h-1.5 overflow-hidden">
+                    <div id="clear-data-progress" class="bg-[#FF453A] h-full rounded-full transition-all duration-1000 ease-linear" style="width: 100%;"></div>
+                </div>
+                <p id="clear-data-timer-text" class="text-[11px] font-medium text-brand-textSecondary">
+                    Підтвердження стане активним через <span class="font-mono text-white font-bold" id="clear-data-countdown-num">10</span> с
+                </p>
+            </div>
+            
+            <div class="flex gap-3 pt-2">
+                <button type="button" id="clear-data-btn-cancel" class="flex-1 py-3 bg-[#161619] border border-[#202024] text-white hover:bg-[#202024] rounded-xl text-xs font-semibold transition-all">Скасувати</button>
+                <button type="button" id="clear-data-btn-confirm" disabled class="flex-1 py-3 bg-[#241616] border border-[#3A1E1E] text-zinc-500 rounded-xl text-xs font-semibold cursor-not-allowed transition-all opacity-60">Підтвердити (10с)</button>
             </div>
         </div>
     </div>
@@ -1540,6 +1575,6 @@
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
 
-    <script src="app.js?v=151" defer></script>
+    <script src="app.js?v=152" defer></script>
 </body>
 </html>

@@ -505,6 +505,33 @@ def save_user_data():
     conn.commit()
     conn.close()
     return jsonify({'message': 'Дані успішно збережено'}), 200
+
+@app.route('/api/data', methods=['DELETE'])
+def clear_user_data():
+    if 'user_id' not in session:
+        return jsonify({'message': 'Неавторизовано'}), 401
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute('''
+            INSERT INTO user_data (user_id, transactions, savings_target, recurring_expenses, savings_goals, daily_expense_limit, weekly_expense_limit, monthly_expense_limit, expense_limit_period)
+            VALUES (?, '[]', 10000.0, '[]', '[]', 1000.0, 7000.0, 30000.0, 'day')
+            ON CONFLICT(user_id) DO UPDATE SET
+                transactions = '[]',
+                savings_target = 10000.0,
+                recurring_expenses = '[]',
+                savings_goals = '[]',
+                daily_expense_limit = 1000.0,
+                weekly_expense_limit = 7000.0,
+                monthly_expense_limit = 30000.0,
+                expense_limit_period = 'day'
+        ''', (session['user_id'],))
+        conn.commit()
+    finally:
+        conn.close()
+    
+    return jsonify({'status': 'success', 'message': 'Всі дані акаунта успішно очищено'}), 200
     
 @app.route('/api/voice-transcribe', methods=['POST'])
 def voice_transcribe():

@@ -327,7 +327,8 @@ svg line {
     z-index: 999999 !important;
 }
 
-#custom-confirm-modal {
+#custom-confirm-modal,
+#clear-data-modal {
     z-index: 9999999 !important;
 }
 
@@ -858,6 +859,33 @@ html:not(.dark) #daily-details-modal .bg-black\/40 {
 html:not(.dark) #daily-details-modal .border-\[\#202024\],
 html:not(.dark) #daily-details-modal .border-\[\#202024\]\/50 {
     border-color: #E2E2E6 !important;
+}
+
+/* Light Theme Overrides for Clear Data Button & Confirmation Modal */
+html:not(.dark) #modal-btn-clear-data {
+    background-color: #FFF0F0 !important;
+    border-color: #FFD1D1 !important;
+    color: #E02E24 !important;
+}
+html:not(.dark) #modal-btn-clear-data:hover {
+    background-color: #FFE5E5 !important;
+    border-color: #E02E24 !important;
+}
+
+html:not(.dark) #clear-data-modal .bg-\[\#111113\] {
+    background-color: #ffffff !important;
+    border-color: #F0D0D0 !important;
+}
+html:not(.dark) #clear-data-modal .bg-\[\#1A1A1E\] {
+    background-color: #F0F0F4 !important;
+}
+html:not(.dark) #clear-data-modal #clear-data-btn-cancel {
+    background-color: #F1F1F5 !important;
+    border-color: #E2E2E6 !important;
+    color: #0F0F11 !important;
+}
+html:not(.dark) #clear-data-modal #clear-data-btn-cancel:hover {
+    background-color: #E2E2E6 !important;
 }
 
 /* Hide default browser spinner buttons (arrows) for numeric inputs */

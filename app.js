@@ -73,6 +73,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentUsernameDisplay = document.getElementById('current-username-display');
     const btnLogout = document.getElementById('modal-btn-logout');
     const btnImportLocal = document.getElementById('modal-btn-import-local');
+    const btnClearData = document.getElementById('modal-btn-clear-data');
+
+    // DOM Elements - Clear Data Modal
+    const clearDataModal = document.getElementById('clear-data-modal');
+    const clearDataCancelBtn = document.getElementById('clear-data-btn-cancel');
+    const clearDataConfirmBtn = document.getElementById('clear-data-btn-confirm');
+    const clearDataTimerBadge = document.getElementById('clear-data-timer-badge');
+    const clearDataCountdownNum = document.getElementById('clear-data-countdown-num');
+    const clearDataProgress = document.getElementById('clear-data-progress');
+    const clearDataTimerText = document.getElementById('clear-data-timer-text');
+    let clearDataTimer = null;
+    let clearDataSecondsLeft = 10;
 
     // DOM Elements - Metrics
     const totalBalanceEl = document.getElementById('total-balance');
@@ -455,6 +467,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (authDemoBtn) authDemoBtn.addEventListener('click', startDemoMode);
             if (btnLogout) btnLogout.addEventListener('click', handleLogout);
             if (btnImportLocal) btnImportLocal.addEventListener('click', handleImportLocal);
+            if (btnClearData) btnClearData.addEventListener('click', openClearDataModal);
 
             if (authConfirmPasswordInput) {
                 authConfirmPasswordInput.addEventListener('input', () => authConfirmPasswordInput.classList.remove('auth-input-error'));
@@ -506,6 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             const closeSettingsModal = () => {
+                closeClearDataModal();
                 if (settingsModal) settingsModal.classList.remove('active');
             };
 
@@ -519,6 +533,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             }
+
+            // Clear Data Confirmation Modal Listeners
+            if (clearDataCancelBtn) clearDataCancelBtn.addEventListener('click', closeClearDataModal);
+            if (clearDataConfirmBtn) clearDataConfirmBtn.addEventListener('click', handleClearAllData);
+            if (clearDataModal) {
+                clearDataModal.addEventListener('click', (e) => {
+                    if (e.target === clearDataModal) {
+                        closeClearDataModal();
+                    }
+                });
+            }
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && clearDataModal && clearDataModal.classList.contains('active')) {
+                    closeClearDataModal();
+                }
+            });
 
             // Mobile Bottom Navigation Event Listeners
             document.querySelectorAll('.mobile-nav-item').forEach(item => {
@@ -871,6 +902,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (userInfoSection) userInfoSection.classList.remove('hidden');
                 if (currentUsernameDisplay) currentUsernameDisplay.textContent = currentUser;
                 if (btnImportLocal) btnImportLocal.classList.remove('hidden');
+                if (btnClearData) btnClearData.classList.remove('hidden');
                 if (btnLogout) {
                     btnLogout.classList.remove('hidden');
                     const textSpan = btnLogout.querySelector('span:not(.material-symbols-outlined)');
@@ -942,6 +974,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Ensure settings modal and any open modal overlays are closed
         const settingsModal = document.getElementById('settings-modal');
         if (settingsModal) settingsModal.classList.remove('active');
+        closeClearDataModal();
         document.querySelectorAll('.modal-overlay.active').forEach(modal => modal.classList.remove('active'));
 
         if (authContainer) {
@@ -951,6 +984,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (appContainer) appContainer.classList.add('hidden');
         if (userInfoSection) userInfoSection.classList.add('hidden');
         if (btnImportLocal) btnImportLocal.classList.add('hidden');
+        if (btnClearData) btnClearData.classList.add('hidden');
         if (btnLogout) btnLogout.classList.add('hidden');
         const mobileVoiceBtn = document.getElementById('mobile-voice-btn');
         if (mobileVoiceBtn) mobileVoiceBtn.classList.add('hidden');
@@ -1125,6 +1159,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (userInfoSection) userInfoSection.classList.remove('hidden');
         if (currentUsernameDisplay) currentUsernameDisplay.textContent = 'Демо (Локально)';
         if (btnImportLocal) btnImportLocal.classList.add('hidden'); // Hide import in demo
+        if (btnClearData) btnClearData.classList.remove('hidden');
         if (btnLogout) {
             btnLogout.classList.remove('hidden');
             const textSpan = btnLogout.querySelector('span:not(.material-symbols-outlined)');
@@ -1143,6 +1178,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Immediately close settings modal
         const settingsModal = document.getElementById('settings-modal');
         if (settingsModal) settingsModal.classList.remove('active');
+        closeClearDataModal();
         document.querySelectorAll('.modal-overlay.active').forEach(modal => modal.classList.remove('active'));
 
         if (isDemoMode) {
@@ -1221,6 +1257,157 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (e) {
                 showToast('Помилка при з\'єднанні з сервером', 'delete');
+            }
+        }
+    }
+
+    function stopClearDataCountdown() {
+        if (clearDataTimer) {
+            clearInterval(clearDataTimer);
+            clearDataTimer = null;
+        }
+    }
+
+    function closeClearDataModal() {
+        stopClearDataCountdown();
+        if (clearDataModal) clearDataModal.classList.remove('active');
+    }
+
+    function openClearDataModal() {
+        stopClearDataCountdown();
+        clearDataSecondsLeft = 10;
+
+        if (clearDataTimerBadge) {
+            clearDataTimerBadge.textContent = '10';
+        }
+        if (clearDataCountdownNum) {
+            clearDataCountdownNum.textContent = '10';
+        }
+        if (clearDataProgress) {
+            clearDataProgress.style.transition = 'none';
+            clearDataProgress.style.width = '100%';
+            void clearDataProgress.offsetWidth;
+            clearDataProgress.style.transition = 'width 1s linear';
+        }
+        if (clearDataTimerText) {
+            clearDataTimerText.innerHTML = 'Підтвердження стане активним через <span class="font-mono text-white font-bold" id="clear-data-countdown-num">10</span> с';
+        }
+
+        if (clearDataConfirmBtn) {
+            clearDataConfirmBtn.disabled = true;
+            clearDataConfirmBtn.textContent = 'Підтвердити (10с)';
+            clearDataConfirmBtn.className = 'flex-1 py-3 bg-[#241616] border border-[#3A1E1E] text-zinc-500 rounded-xl text-xs font-semibold cursor-not-allowed transition-all opacity-60';
+        }
+
+        if (clearDataModal) clearDataModal.classList.add('active');
+
+        clearDataTimer = setInterval(() => {
+            clearDataSecondsLeft--;
+
+            if (clearDataSecondsLeft > 0) {
+                const numEl = document.getElementById('clear-data-countdown-num');
+                if (numEl) numEl.textContent = clearDataSecondsLeft;
+                if (clearDataTimerBadge) clearDataTimerBadge.textContent = clearDataSecondsLeft;
+                if (clearDataConfirmBtn) clearDataConfirmBtn.textContent = `Підтвердити (${clearDataSecondsLeft}с)`;
+                if (clearDataProgress) clearDataProgress.style.width = `${(clearDataSecondsLeft / 10) * 100}%`;
+            } else {
+                stopClearDataCountdown();
+                if (clearDataProgress) clearDataProgress.style.width = '0%';
+                if (clearDataTimerBadge) {
+                    clearDataTimerBadge.innerHTML = '<span class="material-symbols-outlined text-[14px]">priority_high</span>';
+                }
+                if (clearDataTimerText) {
+                    clearDataTimerText.innerHTML = '<span class="text-[#FF453A] font-medium">Тепер ви можете підтвердити очищення даних</span>';
+                }
+                if (clearDataConfirmBtn) {
+                    clearDataConfirmBtn.disabled = false;
+                    clearDataConfirmBtn.textContent = 'Підтвердити очищення';
+                    clearDataConfirmBtn.className = 'flex-1 py-3 bg-[#FF453A] hover:bg-[#E0382E] text-white font-semibold rounded-xl text-xs transition-all shadow-lg shadow-[#FF453A]/20 cursor-pointer active:scale-95';
+                }
+            }
+        }, 1000);
+    }
+
+    async function handleClearAllData() {
+        if (clearDataConfirmBtn) {
+            clearDataConfirmBtn.disabled = true;
+            clearDataConfirmBtn.textContent = 'Очищення...';
+        }
+
+        try {
+            // 1. If user is authenticated (not demo), reset data in database on server
+            if (!isDemoMode && currentUser && currentUser !== 'Гість') {
+                let serverSuccess = false;
+                try {
+                    const response = await fetch(getApiUrl('api/data'), {
+                        method: 'DELETE',
+                        credentials: 'same-origin'
+                    });
+                    if (response.ok) {
+                        serverSuccess = true;
+                    }
+                } catch (e) {
+                    console.warn('DELETE /api/data request failed, falling back to POST empty dataset', e);
+                }
+
+                if (!serverSuccess) {
+                    const emptyData = {
+                        transactions: [],
+                        savingsTarget: 10000.0,
+                        recurringExpenses: [],
+                        savingsGoals: [],
+                        dailyExpenseLimit: 1000.0,
+                        weeklyExpenseLimit: 7000.0,
+                        monthlyExpenseLimit: 30000.0,
+                        expenseLimitPeriod: 'day'
+                    };
+                    await fetch(getApiUrl('api/data'), {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'same-origin',
+                        body: JSON.stringify(emptyData)
+                    });
+                }
+            }
+
+            // 2. Clear all financial keys from LocalStorage
+            localStorage.removeItem('mono_transactions');
+            localStorage.removeItem('mono_savings_target');
+            localStorage.removeItem('mono_daily_expense_limit');
+            localStorage.removeItem('mono_weekly_expense_limit');
+            localStorage.removeItem('mono_monthly_expense_limit');
+            localStorage.removeItem('mono_expense_limit_period');
+            localStorage.removeItem('mono_recurring_expenses');
+            localStorage.removeItem('mono_savings_goals');
+
+            // 3. Reset in-memory application state
+            transactions = [];
+            savingsTarget = 10000.0;
+            dailyExpenseLimit = 1000.0;
+            weeklyExpenseLimit = 7000.0;
+            monthlyExpenseLimit = 30000.0;
+            expenseLimitPeriod = 'day';
+            recurringExpenses = [];
+            savingsGoals = [];
+
+            // 4. Save clean state into LocalStorage
+            saveToLocalStorage();
+
+            // 5. Re-render UI
+            renderAll();
+
+            // 6. Close modals
+            closeClearDataModal();
+            closeSettingsModal();
+
+            // 7. Feedback toast
+            showToast('Всі дані з акаунта та сховища очищено', 'delete');
+        } catch (err) {
+            console.error('Failed to clear user data:', err);
+            showToast('Помилка при очищенні даних', 'delete');
+        } finally {
+            if (clearDataConfirmBtn) {
+                clearDataConfirmBtn.disabled = false;
             }
         }
     }
